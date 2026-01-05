@@ -29,9 +29,10 @@ public class Juego extends ObservableRemoto implements IJuego {
         notificarObservadores(JUGADOR_AGREGADO);
         if(jugadores.size()==4){
             notificarObservadores(COMENZAR_JUEGO);
+            repartir();
         }
     }
-    private void repartir() throws RemoteException {
+    public void repartir() throws RemoteException {
         palo_triunfo=crupier.repartida(jugadores);
         notificarObservadores(CARTAS_REPARTIDAS);
     }
@@ -40,11 +41,25 @@ public class Juego extends ObservableRemoto implements IJuego {
         siguiente_id=siguiente_id+1;
         return siguiente_id;
     }
-    public ArrayList<Jugador> getJugadores(){
+    public ArrayList<Jugador> getJugadores() throws RemoteException{
         return jugadores;
     }
     public String getPalo_triunfo(){
         return palo_triunfo;
     }
+    /*public void tirar_carta(Carta c) throws RemoteException {
+        if(validar_carta(c)){
+            jugador_actual.recibir_carta(c);
+            actualizar_turno();
+            notificarObservadores(Eventos.ACTUALIZACION_TURNO);
+        }
+    }
+    private void actualizar_turno(){
+        int i=jugadores.indexOf(jugador_actual);
+    }
+    private Boolean validar_carta(Carta c){
+    }
+    */
+    //falta comprobar si la mano se termino y, en ese caso, determinar ganador donde el ganador es el nuevo jugador_actual.
 
 }

@@ -1,5 +1,6 @@
 package Controlador;
 
+import Model.Carta;
 import Model.Eventos;
 import Model.IJuego;
 import Model.Jugador;
@@ -26,6 +27,10 @@ public class Controlador implements IControladorRemoto {
         id_jugador=jugador.getId();
         juego.iniciar_jugador(jugador);
     }
+    public void tira_carta(Carta c){
+        juego.tirar_carta(c);
+    }
+
     @Override
     public <T extends IObservableRemoto> void setModeloRemoto(T t) throws RemoteException {
         this.juego= (IJuego) t;
@@ -37,18 +42,15 @@ public class Controlador implements IControladorRemoto {
             switch (evento){
                 case COMENZAR_JUEGO:
                     vistaPrincipal.no_mostrar_espera();
-                    juego.repartir();
                 case JUGADOR_AGREGADO:
                     vistaPrincipal.agregar_jugador_a_la_espera(juego.getJugadores());
                 case CARTAS_REPARTIDAS:
                     ArrayList<Jugador> jugadores=juego.getJugadores();
                     for(Jugador j : jugadores){
                         if(j.getId()==id_jugador){
-                            vistaPrincipal.mostrar_cartas(j.getMazo_jugador(), juego.getPalo_triunfo());
+                            vistaPrincipal.mostrar_mano(j.getMazo_jugador(), juego.getPalo_triunfo());
                         }
                     }
-
-
             }
         }
         catch (Exception e){

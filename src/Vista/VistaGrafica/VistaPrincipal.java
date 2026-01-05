@@ -1,6 +1,7 @@
 package Vista.VistaGrafica;
 
 import Controlador.Controlador;
+import Model.Carta;
 import Model.Jugador;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ public class VistaPrincipal {
     private Menu_principal menu_principal;
     private VentanaInicioJugador ventanaInicioJugador;
     private EsperandoJugadores esperando;
+    private Cartas_en_mano mano;
 
     public VistaPrincipal(Controlador controlador){
         this.controlador=controlador;
@@ -19,6 +21,8 @@ public class VistaPrincipal {
         ventanaInicioJugador=new VentanaInicioJugador(this, controlador);
         menu_principal=new Menu_principal(controlador, this);
         esperando= new EsperandoJugadores();
+        mano = new Cartas_en_mano(controlador, this);
+
         mostrar_menu_principal();
     }
     public void mostrar_menu_principal(){
@@ -29,6 +33,7 @@ public class VistaPrincipal {
     }
     public void mostrar_esperando(){
         esperando.setVisible(true);
+        mano.setTitle(ventanaInicioJugador.getNombreUsuario());
     }
     public void no_mostrar_espera(){
         esperando.setVisible(false);
@@ -36,6 +41,14 @@ public class VistaPrincipal {
     public void agregar_jugador_a_la_espera(ArrayList<Jugador> jugadores){
         esperando.agregar(jugadores);
     }
+    public void mostrar_mano(ArrayList<Carta> carta_jugador, String palo_triunfo){
+        mano.iniciar_cartas_jugador(carta_jugador);
+        mano.iniciar_palo_triunfo(palo_triunfo);
+        mano.setVisible(true);
+
+    }
+
+
 
 
 

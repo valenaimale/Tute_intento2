@@ -12,7 +12,7 @@ public class Mazo implements Serializable {
     public Mazo() {
         mazo = new ArrayList<>();
 
-        String[] palos = {"Espadas", "Bastos", "Oros", "Copas"};
+        String[] palos = {"ESPADA", "BASTO", "ORO", "COPA"};
         int[] numeros = {1, 2, 3, 4, 5, 6, 7, 10, 11, 12};
 
         // Mapa de jerarquía (orden): menor número = mayor jerarquía
