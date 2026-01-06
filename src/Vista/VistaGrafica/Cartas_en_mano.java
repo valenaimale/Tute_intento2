@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 public class Cartas_en_mano extends JFrame{
@@ -19,6 +20,9 @@ public class Cartas_en_mano extends JFrame{
     JLabel palo_triunfo_texto;
     JLabel palo_triunfo_carta;
     MapeoCartas mapeoCartas;
+    JButton boton_presionado; //esto puede ir si se rquiere la confirmacion del modelo para ver si la carta tirada es valida o no!
+                              //desde el modelo lo unico que tengo es la carta no el boton presionado. Si no tengo el ultimo boton presionado
+                              // no se a que boton corresponde la carta
 
 
     public Cartas_en_mano (Controlador controlador, VistaPrincipal vistaPrincipal){
@@ -58,7 +62,11 @@ public class Cartas_en_mano extends JFrame{
             cartas_jugador.getLast().addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    controlador.tira_carta(c);
+                    try {
+                        controlador.tira_carta(c);
+                    } catch (RemoteException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             });
         }
@@ -77,10 +85,7 @@ public class Cartas_en_mano extends JFrame{
             fondo.remove(l);
         }
     }
-    public void quitar_carta_jugador(Carta c){
 
-
-    }
     /*
     Cuando es el turno de un jugador, primero el controlador le pregunta al modelo que cartas puede tirar
     y cuales no. A partir de eso, el controlador habilita solo los botones de las cartas que puede tirar.
@@ -88,7 +93,7 @@ public class Cartas_en_mano extends JFrame{
     actualiza el turno. Es decir, los botones de las cartas de cada jugador estan SIEMPRE deshabilitados
     salvo cuando el jugador esta por tirar, habilitando solo los botones de las cartas permitidos.
     */
-
+    //un boton se puede hacer visible o no
 
 
 

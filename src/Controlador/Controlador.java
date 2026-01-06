@@ -27,8 +27,17 @@ public class Controlador implements IControladorRemoto {
         id_jugador=jugador.getId();
         juego.iniciar_jugador(jugador);
     }
-    public void tira_carta(Carta c){
-        juego.tirar_carta(c);
+    public void tira_carta(Carta c) throws RemoteException {
+        juego.tirada_de_carta(c);
+    }
+    public void canta_tute() throws RemoteException {
+        juego.canto_tute();
+    }
+    public void canta_las_40() throws RemoteException {
+        juego.canto_las_40();
+    }
+    public void canta_las_20() throws RemoteException {
+        juego.canto_las_20();
     }
 
     @Override

@@ -6,14 +6,13 @@ import java.util.ArrayList;
 public class Jugador implements Serializable {
     private String nombre;
     private int puntaje;
-    private ArrayList<Carta> mazo_jugador; // va en el constructor
-    private ArrayList<Carta> bazasGanadas; // va en el constructor
+    private ArrayList<Carta> mazo_jugador;
+    private ArrayList<Carta> bazasGanadas;
     private int id;
 
     public Jugador(String nombre) {
         inicializar(nombre);
-        //this.mazo_jugador = mazo_jugador;
-        //this.bazasGanadas = bazasGanadas;
+
     }
     private void inicializar(String nombre){
         this.nombre=nombre;
@@ -28,17 +27,13 @@ public class Jugador implements Serializable {
         return id;
     }
 
-
     public void recibir_carta(Carta carta1){
         this.mazo_jugador.add(carta1);
     }
-    /*public ArrayList<Carta> getMazo_jugador() {
-        return mazo_jugador;
-    }
 
-    public Carta tirar_carta(int i){
-        return mazo_jugador.get(i);
-    }*/
+    public void tirar_carta(Carta c){
+        mazo_jugador.remove(c);
+    }
 
     public String getNombre() {
         return nombre;
@@ -57,7 +52,7 @@ public class Jugador implements Serializable {
         this.puntaje+=puntaje;
     }
 
-    /*public ArrayList<Carta> getBazasGanadas() {
+    public ArrayList<Carta> getBazasGanadas() {
         return bazasGanadas;
     }
 
@@ -66,5 +61,9 @@ public class Jugador implements Serializable {
         for(Carta carta:bazasGanadas1){
             bazasGanadas.add(carta);
         }
-    }*/
+    }
+    public void setPuntaje(int incremento){
+        puntaje=puntaje+incremento;
+    }
+
 }
