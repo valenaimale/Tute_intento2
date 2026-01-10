@@ -27,8 +27,8 @@ public class Controlador implements IControladorRemoto {
         id_jugador=jugador.getId();
         juego.iniciar_jugador(jugador);
     }
-    public void tira_carta(Carta c) throws RemoteException {
-        juego.tirada_de_carta(c);
+    public void tira_carta(int indice) throws RemoteException {
+        juego.tirada_de_carta(indice);
     }
     public void canta_tute() throws RemoteException {
         juego.canto_tute();
@@ -39,6 +39,14 @@ public class Controlador implements IControladorRemoto {
     public void canta_las_20() throws RemoteException {
         juego.canto_las_20();
     }
+    public int getId_jugador(){
+        return id_jugador;
+    }
+    /*
+    public void agregar_carta_mano(int id_carta, int id_actual)
+    public void set_cartas_clicleables(ArrayList<Integer> id_cartas_posibles)
+    public void mostrar_mano(ArrayList<Integer> id_cartas_jugador, String palo_triunfo, int nombre_carta_de_triunfo)
+    */
 
     @Override
     public <T extends IObservableRemoto> void setModeloRemoto(T t) throws RemoteException {
@@ -50,16 +58,66 @@ public class Controlador implements IControladorRemoto {
             Eventos evento = (Eventos) o;
             switch (evento){
                 case COMENZAR_JUEGO:
+                    vistaPrincipal.iniciar_posiciones_mano(juego.getJugadores().size(),id_jugador);
                     vistaPrincipal.no_mostrar_espera();
+                    break;
                 case JUGADOR_AGREGADO:
                     vistaPrincipal.agregar_jugador_a_la_espera(juego.getJugadores());
+                    break;
                 case CARTAS_REPARTIDAS:
-                    ArrayList<Jugador> jugadores=juego.getJugadores();
-                    for(Jugador j : jugadores){
-                        if(j.getId()==id_jugador){
-                            vistaPrincipal.mostrar_mano(j.getMazo_jugador(), juego.getPalo_triunfo());
-                        }
+                    ArrayList<Integer> nombre_cartas=new ArrayList<>();
+                    for(Carta c:juego.getJugadores().get(id_jugador).getMazo_jugador()){
+                        nombre_cartas.add(c.getId());
                     }
+                    vistaPrincipal.mostrar_mano(nombre_cartas, juego.getPalo_triunfo().getPalo(),juego.getPalo_triunfo().getId());
+                    if(juego.getJugador_actual().getId()==id_jugador){
+                        vistaPrincipal.hacer_todas_clicleables();
+                    }
+                    break;
+                case OFRECER_TUTE:
+                    if(juego.getGanador_parcial().getId()==id_jugador){
+                        vistaPrincipal.oferta_tute();
+                    }
+                    break;
+                case OFRECER_LAS_40:
+                    if(juego.getGanador_parcial().getId()==id_jugador){
+                        vistaPrincipal.oferta_las_40();
+                    }
+                    break;
+                case OFRECER_LAS_20:
+                    if(juego.getGanador_parcial().getId()==id_jugador){
+                        vistaPrincipal.oferta_las_20();
+                    }
+                    break;
+                case GANADOR_POR_TUTE:
+                    vistaPrincipal.canta_tute(juego.getGanador_parcial().getNombre());
+                    break;
+                case CANTA_LAS_40:
+                    vistaPrincipal.canta_las_40(juego.getGanador_parcial().getNombre());
+                    break;
+                case CANTA_LAS_20:
+                    vistaPrincipal.canta_las_20(juego.getGanador_parcial().getNombre());
+                    break;
+                case MANO_TERMINADA:
+                    vistaPrincipal.limpiar_cartas_mesa();
+                    vistaPrincipal.puntajes(juego.getJugadores(),juego.getGanador_parcial());
+                    break;
+                case ULTIMAS_10:
+                    vistaPrincipal.gana_ultimas_10(juego.getJugadores(),juego.getGanador_parcial());
+                    break;
+                case GANADOR_POR_PUNTOS:
+                    vistaPrincipal.gana_por_puntos(juego.getGanador_parcial().getNombre());
+                    break;
+                case ACTUALIZACION_TURNO:
+                    if(juego.getJugador_actual().getId()==id_jugador){
+                        System.out.println("CONTROLADOR.ACTUALIZACION_TURNO jugador: " + id_jugador);
+                        vistaPrincipal.set_cartas_clicleables(juego.cartas_posibles());
+                    }
+                    break;
+                case CARTA_TIRADA:
+                    System.out.println("Controlador.CARTA_TIRADA. Id jugador: " + id_jugador);
+                    vistaPrincipal.agregar_carta_mano(juego.getCartas_jugadas_en_la_mano().getLast().getId(),juego.getJugador_actual().getId());
+                    break;
             }
         }
         catch (Exception e){

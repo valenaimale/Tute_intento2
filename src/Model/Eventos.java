@@ -14,5 +14,6 @@ public enum Eventos {
     CANTA_LAS_40,
     CANTA_LAS_20,
     GANADOR_POR_PUNTOS,
-    ULTIMAS_10
+    ULTIMAS_10,
+    CARTA_TIRADA
 }

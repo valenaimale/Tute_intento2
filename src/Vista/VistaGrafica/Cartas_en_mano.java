@@ -10,18 +10,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Cartas_en_mano extends JFrame{
-    ArrayList<JButton> cartas_jugador;
-    Controlador controlador;
-    VistaPrincipal vistaPrincipal;
-    JLabel fondo;
-    ArrayList<JLabel> cartas_mano;
-    JLabel palo_triunfo_texto;
-    JLabel palo_triunfo_carta;
-    MapeoCartas mapeoCartas;
-    JButton boton_presionado; //esto puede ir si se rquiere la confirmacion del modelo para ver si la carta tirada es valida o no!
-                              //desde el modelo lo unico que tengo es la carta no el boton presionado. Si no tengo el ultimo boton presionado
+    private ArrayList<JButton> cartas_jugador;
+    private HashMap<JButton ,Integer> mapeo_botones;
+    private Controlador controlador;
+    private VistaPrincipal vistaPrincipal;
+    private JLabel fondo;
+    private ArrayList<JLabel> cartas_mano;
+    private JLabel palo_triunfo_carta;
+    private MapeoCartas mapeoCartas;
+    private JPanel panel_cartas_jug;
+    private int centro;
+    private int este;
+    private int norte;
+    private int oeste;
+
+    private JButton boton_presionado; //esto puede ir si se rquiere la confirmacion del modelo para ver si la carta tirada es valida o no!
+
+    //desde el modelo lo unico que tengo es la carta no el boton presionado. Si no tengo el ultimo boton presionado
                               // no se a que boton corresponde la carta
 
 
@@ -30,26 +38,32 @@ public class Cartas_en_mano extends JFrame{
     }
     private void inicializar (Controlador controlador, VistaPrincipal vistaPrincipal){
         this.mapeoCartas=new MapeoCartas();
+        this.mapeo_botones=new HashMap<>();
         this.controlador=controlador;
         this.vistaPrincipal=vistaPrincipal;
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//que pasa al cerrar la ventana
+        setBounds(100, 100, 500, 500);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
+        setLocationRelativeTo(null);
         ImageIcon fondo_i = new ImageIcon("src/Imagenes_cartas/MESA.png");
         this.fondo= new JLabel(fondo_i);
         fondo.setLayout(new BorderLayout());
         this.cartas_jugador= new ArrayList<>();
         this.cartas_mano= new ArrayList<>();
+        this.panel_cartas_jug=new JPanel(new FlowLayout());
         setContentPane(fondo);
+        fondo.add(panel_cartas_jug,BorderLayout.SOUTH);
+    }
+    public void iniciar_palo_triunfo(String palo_triunfo, String nombre_user){
+        setTitle("El palo del triunfo es: " + palo_triunfo+ ". Vista de: "+ nombre_user);
 
+        //fondo.add(palo_triunfo_carta,BorderLayout.CENTER);
+    }
+    public void mostrar_carta_palo_triunfo(int id_carta_triunfo){
 
     }
-    public void iniciar_palo_triunfo(String palo_triunfo){
-        palo_triunfo_texto=new JLabel(palo_triunfo);
-        palo_triunfo_carta=new JLabel(mapeoCartas.obtener_carta(palo_triunfo));
-        fondo.add(palo_triunfo_carta,BorderLayout.NORTH);
-        fondo.add(palo_triunfo_texto,BorderLayout.CENTER);
-    }
-    public void iniciar_cartas_jugador(ArrayList<Carta> cartas_jugador1){
-        for(Carta c:cartas_jugador1){
-            ImageIcon original=mapeoCartas.obtener_carta(c.getNombre());
+    public void iniciar_cartas_jugador(ArrayList<Integer> id_cartas){//cambiar de id carta (del controlador)
+        for(Integer i:id_cartas){
+            ImageIcon original=mapeoCartas.obtener_carta(i);
             Image imagen=original.getImage().getScaledInstance(80,140,Image.SCALE_SMOOTH);
             ImageIcon carta_modificada=new ImageIcon(imagen);
             JButton boton_carta=new JButton(carta_modificada);
@@ -57,13 +71,18 @@ public class Cartas_en_mano extends JFrame{
             boton_carta.setContentAreaFilled(false);
             boton_carta.setFocusPainted(false);
             boton_carta.setEnabled(false);
-            cartas_jugador.add(boton_carta);
-            fondo.add(boton_carta,BorderLayout.SOUTH);
-            cartas_jugador.getLast().addActionListener(new ActionListener() {
+            mapeo_botones.put(boton_carta, i);
+            panel_cartas_jug.add(boton_carta);
+            boton_carta.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        controlador.tira_carta(c);
+                        boton_carta.setVisible(false);
+                        controlador.tira_carta(mapeo_botones.get(boton_carta));
+                        mapeo_botones.remove(boton_carta);
+                        for(JButton b:mapeo_botones.keySet()){
+                            b.setEnabled(false);
+                        }
                     } catch (RemoteException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -71,20 +90,63 @@ public class Cartas_en_mano extends JFrame{
             });
         }
     }
-    public void iniciar_cartas_mano(Carta carta){
-        ImageIcon original=mapeoCartas.obtener_carta(carta.getNombre());
+    public void iniciar_cartas_mano(int id_carta,int id_jugador){//cambiar a id de carta
+        ImageIcon original=mapeoCartas.obtener_carta(id_carta);
         Image imagen=original.getImage().getScaledInstance(80,140,Image.SCALE_SMOOTH);
         ImageIcon carta_modificada=new ImageIcon(imagen);
         JLabel carta_mano=new JLabel(carta_modificada);
         cartas_mano.add(carta_mano);
-        fondo.add(carta_mano);
-    }
-    public void reiniciar_cartas_mano(){
-        for(JLabel l:cartas_mano){
-            cartas_mano.remove(l);
-            fondo.remove(l);
+        if(id_jugador==centro){
+            carta_mano.setVisible(true);
+            fondo.add(carta_mano, BorderLayout.CENTER);
+        }
+        else if(id_jugador==este){
+            carta_mano.setVisible(true);
+            fondo.add(carta_mano,BorderLayout.EAST);
+        }
+        else if(id_jugador==norte){
+            carta_mano.setVisible(true);
+            fondo.add(carta_mano,BorderLayout.NORTH);
+        }
+        else if(id_jugador==oeste){
+            carta_mano.setVisible(true);
+            fondo.add(carta_mano,BorderLayout.WEST);
         }
     }
+    public void iniciar_posiciones(int cantidad_jug, int id){
+        centro=id;
+        id++;
+        este=id%cantidad_jug;
+        id++;
+        norte=id%cantidad_jug;
+        id++;
+        oeste=id%cantidad_jug;
+    }
+    public void reiniciar_cartas_mano(){
+        for(JLabel j:cartas_mano){
+            j.setVisible(false);
+        }
+        cartas_mano.clear();
+    }
+    public void cartas_clicleables(ArrayList<Integer> cartas_posibles ){//cambiar a id de carta
+        for(JButton b:mapeo_botones.keySet()){
+            int id=mapeo_botones.get(b);
+            for(int j:cartas_posibles){
+                if(j==id){
+                    System.out.println("Carta con id: "+id+" clicleable");
+                    b.setEnabled(true);
+                }
+            }
+        }
+
+
+    }
+    public void todas_cartas_clicleables(){//en caso de que el jugador sea el primero en tirar, puede tirar cualquier carta
+        for(JButton b:mapeo_botones.keySet()){
+            b.setEnabled(true);
+        }
+    }
+
 
     /*
     Cuando es el turno de un jugador, primero el controlador le pregunta al modelo que cartas puede tirar

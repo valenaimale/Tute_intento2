@@ -2,6 +2,7 @@ package Model;
 
 import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 
+import java.lang.reflect.Array;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -13,7 +14,7 @@ public class Juego extends ObservableRemoto implements IJuego {
     private Crupier crupier;
     private int siguiente_id=-1;
     private Jugador jugador_actual;
-    private String palo_triunfo;
+    private Carta carta_palo_triunfo;
     private ArrayList<Carta> cartas_jugadas_en_la_mano;
     private Regla reglas;
     private Jugador ganador_parcial;
@@ -30,6 +31,9 @@ public class Juego extends ObservableRemoto implements IJuego {
     }
     public void iniciar_jugador(Jugador jugador) throws RemoteException {
         jugadores.add(jugador);
+        if(jugadores.size()==1){
+            jugador_actual=jugador;
+        }
         notificarObservadores(JUGADOR_AGREGADO);
         if(jugadores.size()==4){
             reglas.setJugadores(jugadores);
@@ -38,47 +42,73 @@ public class Juego extends ObservableRemoto implements IJuego {
         }
     }
     public void repartir() throws RemoteException {
-        palo_triunfo=crupier.repartida(jugadores);
+        carta_palo_triunfo=crupier.repartida(jugadores);
+        System.out.println("A");
         notificarObservadores(CARTAS_REPARTIDAS);
     }
     public int siguienteId(){
         siguiente_id=siguiente_id+1;
         return siguiente_id;
     }
+    public Jugador getJugador_actual(){
+        return jugador_actual;
+    }
+    public Jugador getGanador_parcial(){
+        return ganador_parcial;
+    }
     public ArrayList<Jugador> getJugadores() throws RemoteException{
         return jugadores;
     }
-    public String getPalo_triunfo(){
-        return palo_triunfo;
+    public Regla getReglas(){
+        return reglas;
     }
-    public void tirada_de_carta(Carta c) throws RemoteException {
-        if(validar_carta(c)){
-            jugador_actual.tirar_carta(c);
-            cartas_jugadas_en_la_mano.add(c);
-            if(reglas.determinar_ganador_parcial(c,cartas_jugadas_en_la_mano)){
-                ganador_parcial=jugador_actual;
+    public ArrayList<Carta> getCartas_jugadas_en_la_mano(){
+        return cartas_jugadas_en_la_mano;
+    }
+    public Carta getPalo_triunfo(){
+        return carta_palo_triunfo;
+    }
+    public void tirada_de_carta(int id) throws RemoteException {
+        for(Carta c:jugador_actual.getMazo_jugador()) {
+            if(c.getId()==id){
+                jugador_actual.tirar_carta(c);
+                cartas_jugadas_en_la_mano.add(c);
+                System.out.println("B");
+                notificarObservadores(Eventos.CARTA_TIRADA);
+                if(reglas.determinar_ganador_parcial(c,cartas_jugadas_en_la_mano)){
+                    ganador_parcial=jugador_actual;
+                }
+                if(comprobar_termino_mano()==false){
+                    actualizar_turno();
+                }
+                else {
+                    jugador_actual=ganador_parcial;
+                }
+                notificarObservadores(Eventos.ACTUALIZACION_TURNO);
+                break;
             }
-            comprobar_termino_mano();
-            actualizar_turno();
-            notificarObservadores(Eventos.ACTUALIZACION_TURNO);
+
         }
-        else{
-            notificarObservadores(Eventos.CARTA_ERRONEA);//PUEDE NO IR, EL JUGADOR YA TENDRIA LOS BOTONES DE LAS CARTAS QUE NO PUEDE TIRAR DESACTIVADOS
-        }
+
     }
-    private void comprobar_termino_mano() throws RemoteException {
-        if(cartas_jugadas_en_la_mano.size()==4){
+    private Boolean comprobar_termino_mano() throws RemoteException {
+        Boolean rta=false;
+        if(cartas_jugadas_en_la_mano.size()==jugadores.size()){
+            rta=true;
             jugador_actual=ganador_parcial;
             ganador_parcial.setBazasGanadas(cartas_jugadas_en_la_mano);
+            cartas_jugadas_en_la_mano.clear();
             actualizar_puntaje();
             comprobar_cantos();
             notificarObservadores(Eventos.MANO_TERMINADA);//ACA SE DEBERIA MOSTRAR UN ANUNCIO DE QUE LA MANO TERMINO Y QUE
                                                           //EL GANADOR DE LA MISMA FUE TAL
             comprobar_termino_partida();
         }
+        return rta;
     }
     private void actualizar_puntaje(){
-        reglas.determinar_tantos(ganador_parcial.getBazasGanadas());
+        int sumado=reglas.determinar_tantos(ganador_parcial.getBazasGanadas());
+        ganador_parcial.incrementar_puntaje(sumado);
     }
     private void comprobar_cantos() throws RemoteException {
         if(reglas.determinar_si_puede_cantar_tute(ganador_parcial.getMazo_jugador())==true){
@@ -135,6 +165,19 @@ public class Juego extends ObservableRemoto implements IJuego {
     public void canto_las_20() throws RemoteException {//METODO PARA QUE LLAME EL CONTROLADOR
         ganador_parcial.setPuntaje(20);
         notificarObservadores(Eventos.CANTA_LAS_20);
+    }
+    public ArrayList<Integer> cartas_posibles(){
+        ArrayList<Carta> posibles=reglas.determinarQueCartaSiYQueNo(cartas_jugadas_en_la_mano,jugador_actual.getMazo_jugador());
+        ArrayList<Integer> ids_posibles=new ArrayList<>();
+        for(Carta c:jugador_actual.getMazo_jugador()){
+            for(Carta pos:posibles){
+                if(c==pos){
+                    ids_posibles.add(c.getId());
+                }
+            }
+        }
+        System.out.println("JUEGO. cartas_posibles retornando indices posibles para: "+jugador_actual.getNombre());
+        return ids_posibles;
     }
 
 

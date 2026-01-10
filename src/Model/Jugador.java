@@ -57,8 +57,8 @@ public class Jugador implements Serializable {
     }
 
 
-    public void setBazasGanadas(ArrayList<Carta> bazasGanadas1) {
-        for(Carta carta:bazasGanadas1){
+    public void setBazasGanadas(ArrayList<Carta> bazaGanadas) {
+        for(Carta carta:bazaGanadas){
             bazasGanadas.add(carta);
         }
     }

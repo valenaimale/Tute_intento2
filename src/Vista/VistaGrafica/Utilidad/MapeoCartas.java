@@ -4,55 +4,55 @@ import javax.swing.*;
 import java.util.HashMap;
 
 public class MapeoCartas {
-    private HashMap<String, String> mapeo;
+    private HashMap<Integer, String> mapeo;
 
     public MapeoCartas() {
         mapeo=new HashMap<>();
         mapear();
     }
     private void mapear(){
-        mapeo.put("1 BASTO","1 BASTO.png");
-        mapeo.put("2 BASTO","2 BASTO.png");
-        mapeo.put("3 BASTO","3 BASTO.png");
-        mapeo.put("4 BASTO","4 BASTO.png");
-        mapeo.put("5 BASTO","5 BASTO.png");
-        mapeo.put("6 BASTO","6 BASTO.png");
-        mapeo.put("7 BASTO","7 BASTO.png");
-        mapeo.put("10 BASTO","10 BASTO.png");
-        mapeo.put("11 BASTO","11 BASTO.png");
-        mapeo.put("12 BASTO","12 BASTO.png");
-        mapeo.put("1 COPA","1 COPA.png");
-        mapeo.put("2 COPA","2 COPA.png");
-        mapeo.put("3 COPA","3 COPA.png");
-        mapeo.put("4 COPA","4 COPA.png");
-        mapeo.put("5 COPA","5 COPA.png");
-        mapeo.put("6 COPA","6 COPA.png");
-        mapeo.put("7 COPA","7 COPA.png");
-        mapeo.put("10 COPA","10 COPA.png");
-        mapeo.put("11 COPA","11 COPA.png");
-        mapeo.put("12 COPA","12 COPA.png");
-        mapeo.put("1 ESPADA","1 ESPADA.png");
-        mapeo.put("2 ESPADA","2 ESPADA.png");
-        mapeo.put("3 ESPADA","3 ESPADA.png");
-        mapeo.put("4 ESPADA","4 ESPADA.png");
-        mapeo.put("5 ESPADA","5 ESPADA.png");
-        mapeo.put("6 ESPADA","6 ESPADA.png");
-        mapeo.put("7 ESPADA","7 ESPADA.png");
-        mapeo.put("10 ESPADA","10 ESPADA.png");
-        mapeo.put("11 ESPADA","11 ESPADA.png");
-        mapeo.put("12 ESPADA","12 ESPADA.png");
-        mapeo.put("1 ORO","1 ORO.png");
-        mapeo.put("2 ORO","2 ORO.png");
-        mapeo.put("3 ORO","3 ORO.png");
-        mapeo.put("4 ORO","4 ORO.png");
-        mapeo.put("5 ORO","5 ORO.png");
-        mapeo.put("6 ORO","6 ORO.png");
-        mapeo.put("7 ORO","7 ORO.png");
-        mapeo.put("10 ORO","10 ORO.png");
-        mapeo.put("11 ORO","11 ORO.png");
-        mapeo.put("12 ORO","12 ORO.png");
+        mapeo.put(1,"1 BASTO.png");
+        mapeo.put(2,"2 BASTO.png");
+        mapeo.put(3,"3 BASTO.png");
+        mapeo.put(4,"4 BASTO.png");
+        mapeo.put(5,"5 BASTO.png");
+        mapeo.put(6,"6 BASTO.png");
+        mapeo.put(7,"7 BASTO.png");
+        mapeo.put(8,"10 BASTO.png");
+        mapeo.put(9,"11 BASTO.png");
+        mapeo.put(10,"12 BASTO.png");
+        mapeo.put(11,"1 COPA.png");
+        mapeo.put(12,"2 COPA.png");
+        mapeo.put(13,"3 COPA.png");
+        mapeo.put(14,"4 COPA.png");
+        mapeo.put(15,"5 COPA.png");
+        mapeo.put(16,"6 COPA.png");
+        mapeo.put(17,"7 COPA.png");
+        mapeo.put(18,"10 COPA.png");
+        mapeo.put(19,"11 COPA.png");
+        mapeo.put(20,"12 COPA.png");
+        mapeo.put(21,"1 ESPADA.png");
+        mapeo.put(22,"2 ESPADA.png");
+        mapeo.put(23,"3 ESPADA.png");
+        mapeo.put(24,"4 ESPADA.png");
+        mapeo.put(25,"5 ESPADA.png");
+        mapeo.put(26,"6 ESPADA.png");
+        mapeo.put(27,"7 ESPADA.png");
+        mapeo.put(28,"10 ESPADA.png");
+        mapeo.put(29,"11 ESPADA.png");
+        mapeo.put(30,"12 ESPADA.png");
+        mapeo.put(31,"1 ORO.png");
+        mapeo.put(32,"2 ORO.png");
+        mapeo.put(33,"3 ORO.png");
+        mapeo.put(34,"4 ORO.png");
+        mapeo.put(35,"5 ORO.png");
+        mapeo.put(36,"6 ORO.png");
+        mapeo.put(37,"7 ORO.png");
+        mapeo.put(38,"10 ORO.png");
+        mapeo.put(39,"11 ORO.png");
+        mapeo.put(40,"12 ORO.png");
     }
-    public ImageIcon obtener_carta(String clave){
+    public ImageIcon obtener_carta(int clave){
         String nombre_real=mapeo.get(clave);
         ImageIcon imagen_carta= new ImageIcon("src/Imagenes_cartas/" + nombre_real);
         return imagen_carta;
