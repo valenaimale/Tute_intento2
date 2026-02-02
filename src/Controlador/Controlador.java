@@ -8,6 +8,7 @@ import Vista.VistaGrafica.VistaPrincipal;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
+import javax.swing.*;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -27,8 +28,8 @@ public class Controlador implements IControladorRemoto {
         id_jugador=jugador.getId();
         juego.iniciar_jugador(jugador);
     }
-    public void tira_carta(int indice) throws RemoteException {
-        juego.tirada_de_carta(indice);
+    public void tira_carta(int id_carta) throws RemoteException {
+        juego.tirada_de_carta(id_carta);
     }
     public void canta_tute() throws RemoteException {
         juego.canto_tute();
@@ -65,42 +66,70 @@ public class Controlador implements IControladorRemoto {
                     vistaPrincipal.agregar_jugador_a_la_espera(juego.getJugadores());
                     break;
                 case CARTAS_REPARTIDAS:
-                    ArrayList<Integer> nombre_cartas=new ArrayList<>();
+                    ArrayList<Integer> id_cartas=new ArrayList<>();
                     for(Carta c:juego.getJugadores().get(id_jugador).getMazo_jugador()){
-                        nombre_cartas.add(c.getId());
+                        id_cartas.add(c.getId());
                     }
-                    vistaPrincipal.mostrar_mano(nombre_cartas, juego.getPalo_triunfo().getPalo(),juego.getPalo_triunfo().getId());
+                    vistaPrincipal.mostrar_mano(id_cartas, juego.getPalo_triunfo().getPalo(),juego.getPalo_triunfo().getId());
                     if(juego.getJugador_actual().getId()==id_jugador){
                         vistaPrincipal.hacer_todas_clicleables();
                     }
                     break;
                 case OFRECER_TUTE:
                     if(juego.getGanador_parcial().getId()==id_jugador){
-                        vistaPrincipal.oferta_tute();
+                        System.out.println("CONTROLADOR. OFRECER_TUTE");
+                        SwingUtilities.invokeLater(() -> {
+                            vistaPrincipal.oferta_tute();
+                        });
                     }
                     break;
                 case OFRECER_LAS_40:
                     if(juego.getGanador_parcial().getId()==id_jugador){
-                        vistaPrincipal.oferta_las_40();
+                        System.out.println("CONTROLADOR. OFRECER_LAS_40");
+                        SwingUtilities.invokeLater(() -> {
+                            vistaPrincipal.oferta_las_40();
+                        });
                     }
                     break;
                 case OFRECER_LAS_20:
                     if(juego.getGanador_parcial().getId()==id_jugador){
-                        vistaPrincipal.oferta_las_20();
+                        System.out.println("CONTROLADOR. OFRECER_LAS_20");
+                        SwingUtilities.invokeLater(() -> {
+                            vistaPrincipal.oferta_las_20();
+                        });
                     }
                     break;
                 case GANADOR_POR_TUTE:
-                    vistaPrincipal.canta_tute(juego.getGanador_parcial().getNombre());
+                    SwingUtilities.invokeLater(() -> {
+                        try {
+                            vistaPrincipal.canta_tute(juego.getGanador_parcial().getNombre());
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
                     break;
                 case CANTA_LAS_40:
-                    vistaPrincipal.canta_las_40(juego.getGanador_parcial().getNombre());
+                    SwingUtilities.invokeLater(() -> {
+                        try {
+                            vistaPrincipal.canta_las_40(juego.getGanador_parcial().getNombre());
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
                     break;
                 case CANTA_LAS_20:
-                    vistaPrincipal.canta_las_20(juego.getGanador_parcial().getNombre());
+                    SwingUtilities.invokeLater(() -> {
+                        try {
+                            vistaPrincipal.canta_las_20(juego.getGanador_parcial().getNombre());
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
                     break;
                 case MANO_TERMINADA:
+                    System.out.println("CONTROLADOR. MANO_TERMINADA");
                     vistaPrincipal.limpiar_cartas_mesa();
-                    vistaPrincipal.puntajes(juego.getJugadores(),juego.getGanador_parcial());
+                    vistaPrincipal.actualizar_puntajes(juego.getJugadores(),juego.getGanador_parcial());
                     break;
                 case ULTIMAS_10:
                     vistaPrincipal.gana_ultimas_10(juego.getJugadores(),juego.getGanador_parcial());
@@ -110,8 +139,14 @@ public class Controlador implements IControladorRemoto {
                     break;
                 case ACTUALIZACION_TURNO:
                     if(juego.getJugador_actual().getId()==id_jugador){
-                        System.out.println("CONTROLADOR.ACTUALIZACION_TURNO jugador: " + id_jugador);
-                        vistaPrincipal.set_cartas_clicleables(juego.cartas_posibles());
+                        System.out.println("CONTROLADOR.ACTUALIZACION_TURNO turno del jugador: " + juego.getJugador_actual().getNombre());
+                        SwingUtilities.invokeLater(() -> {
+                            try {
+                                vistaPrincipal.set_cartas_clicleables(juego.cartas_posibles());
+                            } catch (RemoteException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
                     }
                     break;
                 case CARTA_TIRADA:
@@ -125,5 +160,7 @@ public class Controlador implements IControladorRemoto {
         }
 
     }
-
+    public IJuego getJuego(){
+        return juego;
+    }
 }

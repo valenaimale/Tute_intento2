@@ -55,8 +55,6 @@ public class Cartas_en_mano extends JFrame{
     }
     public void iniciar_palo_triunfo(String palo_triunfo, String nombre_user){
         setTitle("El palo del triunfo es: " + palo_triunfo+ ". Vista de: "+ nombre_user);
-
-        //fondo.add(palo_triunfo_carta,BorderLayout.CENTER);
     }
     public void mostrar_carta_palo_triunfo(int id_carta_triunfo){
 
@@ -99,18 +97,24 @@ public class Cartas_en_mano extends JFrame{
         if(id_jugador==centro){
             carta_mano.setVisible(true);
             fondo.add(carta_mano, BorderLayout.CENTER);
+            fondo.revalidate();
         }
         else if(id_jugador==este){
             carta_mano.setVisible(true);
             fondo.add(carta_mano,BorderLayout.EAST);
+            fondo.revalidate();
         }
         else if(id_jugador==norte){
             carta_mano.setVisible(true);
             fondo.add(carta_mano,BorderLayout.NORTH);
+            fondo.revalidate();
+
         }
         else if(id_jugador==oeste){
             carta_mano.setVisible(true);
             fondo.add(carta_mano,BorderLayout.WEST);
+            fondo.revalidate();
+
         }
     }
     public void iniciar_posiciones(int cantidad_jug, int id){
@@ -127,13 +131,21 @@ public class Cartas_en_mano extends JFrame{
             j.setVisible(false);
         }
         cartas_mano.clear();
+        System.out.println("Cartas_en_mano.reiniciar_cartas_mano. Cartas limpiadas de la mesa");
     }
-    public void cartas_clicleables(ArrayList<Integer> cartas_posibles ){//cambiar a id de carta
+    public void cartas_clicleables(ArrayList<Integer> cartas_posibles ) throws RemoteException {//cambiar a id de carta
         for(JButton b:mapeo_botones.keySet()){
             int id=mapeo_botones.get(b);
             for(int j:cartas_posibles){
                 if(j==id){
-                    System.out.println("Carta con id: "+id+" clicleable");
+                    System.out.println("Carta con id: "+id+" clicleable para: "+ controlador.getJuego().getJugador_actual().getNombre()+". Id asociado al boton: "+mapeo_botones.get(b));
+                    boolean rta=SwingUtilities.isEventDispatchThread();
+                    if(rta==true){
+                        System.out.println("true");
+                    }
+                    else{
+                        System.out.println("false");
+                    }
                     b.setEnabled(true);
                 }
             }

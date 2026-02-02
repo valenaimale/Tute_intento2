@@ -4,6 +4,7 @@ import Controlador.Controlador;
 import Model.Carta;
 import Model.Jugador;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 public class VistaPrincipal {
@@ -13,6 +14,7 @@ public class VistaPrincipal {
     private EsperandoJugadores esperando;
     private Cartas_en_mano mano;
     private Anuncios anuncios;
+    private Puntajes puntajes;
 
     public VistaPrincipal(Controlador controlador){
         this.controlador=controlador;
@@ -24,7 +26,7 @@ public class VistaPrincipal {
         esperando= new EsperandoJugadores();
         mano = new Cartas_en_mano(controlador, this);
         anuncios=new Anuncios(controlador,this);
-
+        puntajes=new Puntajes(this);
         mostrar_menu_principal();
     }
     public void mostrar_menu_principal(){
@@ -50,36 +52,66 @@ public class VistaPrincipal {
         mano.setVisible(true);
     }
     public void oferta_tute(){
+        System.out.println("VISTA PRINCIPAL. OFERTA_TUTE");
+        anuncios.toFront();
+        anuncios.requestFocus();
+        mano.setVisible(false);
         anuncios.ofrecer_tute();
     }
     public void oferta_las_40(){
+        System.out.println("VISTA PRINCIPAL. OFERTA_LAS_40");
+        mano.setVisible(false);
+        anuncios.toFront();
+        anuncios.requestFocus();
         anuncios.ofrecer_las_40();
     }
     public void oferta_las_20(){
+        System.out.println("VISTA PRINCIPAL. OFERTA_LAS_20");
+        mano.setVisible(false);
+        anuncios.toFront();
+        anuncios.requestFocus();
         anuncios.ofrecer_las_20();
     }
     public void canta_tute(String nombre){
+        System.out.println("VISTA PRINCIPAL. CANTA_TUTE");
+        mano.setVisible(false);
+        anuncios.toFront();
+        anuncios.requestFocus();
         anuncios.canto_tute(nombre);
     }
     public void canta_las_40(String nombre){
+        System.out.println("VISTA PRINCIPAL. CANTA_LAS_40");
+        mano.setVisible(false);
+        anuncios.toFront();
+        anuncios.requestFocus();
         anuncios.canto_las_40(nombre);
     }
     public void canta_las_20(String nombre){
+        System.out.println("VISTA PRINCIPAL. CANTA_LAS_20");
+        mano.setVisible(false);
+        anuncios.toFront();
+        anuncios.requestFocus();
         anuncios.canto_las_20(nombre);
     }
-    public void puntajes(ArrayList<Jugador> jugadores, Jugador ganador){
-        anuncios.mostrar_puntajes(jugadores,ganador);
+    public void actualizar_puntajes(ArrayList<Jugador> jugadores, Jugador ganador){
+        mano.setVisible(false);
+        puntajes.actualizar_puntaje(jugadores, ganador, " gano la baza. Puntajes:");
+        puntajes.setVisible(true);
+    }
+    public void mostrar_mano_visible(){
+        mano.setVisible(true);
     }
     public void gana_por_puntos(String nombre){
         anuncios.ganador_por_punts(nombre);
     }
     public void gana_ultimas_10(ArrayList<Jugador> jugadores, Jugador ganador){
-        anuncios.mostrar_puntajes_ultimas_10(jugadores,ganador);
+        puntajes.actualizar_puntaje(jugadores,ganador, " gano la ultima baza. Suma 10 puntos!. Puntajes: ");
+        puntajes.setVisible(true);
     }
-    public void set_cartas_clicleables(ArrayList<Integer> id_cartas_posibles){
-        System.out.println("VistaPrincipal.set_cartas_clicleables de: "+ controlador.getId_jugador());
+    public void set_cartas_clicleables(ArrayList<Integer> id_cartas_posibles) throws RemoteException {
+        System.out.println("VistaPrincipal.set_cartas_clicleables de: "+ controlador.getJuego().getJugador_actual().getNombre());
         mano.cartas_clicleables(id_cartas_posibles);
-        mano.setVisible(true);
+
     }
     public void limpiar_cartas_mesa(){
         mano.reiniciar_cartas_mano();

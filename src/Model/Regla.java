@@ -8,7 +8,9 @@ public class Regla {
 
     public Regla() {
     }
-
+    public void setPalo_triunfo(String palo_triunfo){
+        this.palo_triunfo=palo_triunfo;
+    }
     public void setJugadores(ArrayList<Jugador> jugadores){
         this.jugadores = jugadores;
     }
@@ -60,7 +62,7 @@ public class Regla {
         if (palo_triunfo == paloDeLaMano) {
             for (Carta carta:cartasDelJugador) {
                 if (carta.getPalo().equals(palo_triunfo)) {
-                    if (carta.getOrden() < determinarCartaMasAltaDelPaloDelTriunfo(palo_triunfo, cartas)) {
+                    if (carta.getOrden() < determinarCartaMasAltaDelPaloDelTriunfo(palo_triunfo, cartas)) {//si tiene el palo del triunfo y es un orden menor que la carta mas alta del palo del triunfo, esta obligado a tirar esa. Si no es asi (si no tiene una carta de menor orden que la que va ganando del triunfo) puede tirar cualquiera
                         cartasQuePuedeTirarElJug.add(carta);
                     }
                 }
@@ -135,17 +137,15 @@ public class Regla {
     public Boolean determinar_ganador_parcial(Carta cartaTirada, ArrayList<Carta> cartas){
         Boolean rta = false;
         Carta cartaGanadora = cartas.get(0);
-        String paloDeLaMano = cartas.get(0).getPalo();
-
         for (Carta carta : cartas) {
-            if (!cartaGanadora.getPalo().equals(palo_triunfo)) {
-                if (carta.getOrden() < cartaGanadora.getOrden() && carta.getPalo().equals(cartaGanadora.getPalo())) {
+            if (!cartaGanadora.getPalo().equals(palo_triunfo)) {//si la carta que va ganando no es del palo del triunfo
+                if (carta.getOrden() < cartaGanadora.getOrden() && carta.getPalo().equals(cartaGanadora.getPalo())) {//si la carta actual tiene menor orden (es mejor) que la carta que va ganando y ademas son del mismo palo, se actualiza la carta actual por la carta que va ganando
                     cartaGanadora = carta;
-                } else if (!cartaGanadora.getPalo().equals(carta.getPalo()) && carta.getPalo().equals(palo_triunfo)) {
+                } else if (!cartaGanadora.getPalo().equals(carta.getPalo()) && carta.getPalo().equals(palo_triunfo)) {//si la carta actual es de distinto palo a la carta que va ganando y, la carta actual, ademas, es del palo del triunfo, se actualiza carta actual como carta que va ganando
                     cartaGanadora = carta;
                 }
-            } else {
-                if (carta.getOrden() < cartaGanadora.getOrden() && carta.getPalo().equals(cartaGanadora.getPalo())) {
+            } else {//si la carta que va ganando es del palo del triunfo
+                if (carta.getOrden() < cartaGanadora.getOrden() && carta.getPalo().equals(cartaGanadora.getPalo())) {//si la carta actual es del palo del triunfo y ademas tiene menor orden (es mejor) que la que va ganando, se actualiza la carta actual como la carta que va ganando
                     cartaGanadora = carta;
                 }
             }
@@ -153,6 +153,7 @@ public class Regla {
         if (cartaGanadora == cartaTirada) {
             rta = true;
         }
+        System.out.println("La carta ganadora es: "+ cartaGanadora.getNombre());
         return rta;
     }
     public Boolean determinar_si_puede_cantar_tute(ArrayList<Carta> cartas_en_mano) {
@@ -222,7 +223,4 @@ public class Regla {
         }
         return rta;
     }
-
-
-
 }
