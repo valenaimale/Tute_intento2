@@ -8,12 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Menu_principal extends JFrame {
-    JPanel panel;
-    JButton jugar;
-    JButton como_jugar;
-    JLabel opcion;
-    Controlador controlador;
-    VistaPrincipal vistaPrincipal;
+    private JPanel panel;
+    private JButton jugar;
+    private JButton como_jugar;
+    private JLabel opcion;
+    private Controlador controlador;
+    private VistaPrincipal vistaPrincipal;
 
     public Menu_principal(Controlador controlador, VistaPrincipal vistaPrincipal){
         inicializar_comp(controlador, vistaPrincipal);
@@ -28,6 +28,8 @@ public class Menu_principal extends JFrame {
         panel=new JPanel();
         setContentPane(panel);
         opcion=new JLabel("Elija una opcion");
+        opcion.setHorizontalAlignment(SwingConstants.CENTER);
+        opcion.setVerticalAlignment(SwingConstants.CENTER);
         jugar=new JButton("Jugar");
         como_jugar=new JButton("Como jugar");
         panel.setLayout(new BorderLayout());

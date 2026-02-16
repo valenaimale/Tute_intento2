@@ -6,6 +6,9 @@ import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.Util;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -45,9 +48,30 @@ public class Cliente {
                 8888
         );
         Controlador controlador=new Controlador();
-        VistaPrincipal vistaPrincipal=new VistaPrincipal(controlador);
+        JFrame elegir_vista= new JFrame("TUTE");
+        JPanel jPanel=new JPanel(new BorderLayout());
+        JPanel panel_botones=new JPanel(new FlowLayout());
+        JButton boton_grafica=new JButton("Grafica");
+        JButton boton_consola=new JButton("Consola");
+        JLabel eleccion=new JLabel("Elija una vista para jugar");
+        panel_botones.add(boton_consola, SwingConstants.CENTER);
+        panel_botones.add(boton_grafica, SwingConstants.CENTER);
+        jPanel.add(panel_botones, BorderLayout.SOUTH);
+        jPanel.add(eleccion,BorderLayout.CENTER);
+        eleccion.setHorizontalAlignment(SwingConstants.CENTER);
+        eleccion.setVerticalAlignment(SwingConstants.CENTER);
+        elegir_vista.setContentPane(jPanel);
+        elegir_vista.setBounds(100,100, 400, 100);
+        elegir_vista.setVisible(true);
+        boton_grafica.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                VistaPrincipal vistaPrincipal=new VistaPrincipal(controlador);
+                vistaPrincipal.iniciar();
+                elegir_vista.setVisible(false);
+            }
+        });
         ar.edu.unlu.rmimvc.cliente.Cliente c = new ar.edu.unlu.rmimvc.cliente.Cliente(ip, Integer.parseInt(port), ipServidor, Integer.parseInt(portServidor));
-        vistaPrincipal.iniciar();
         try {
             c.iniciar(controlador);
         } catch (RemoteException e) {
@@ -58,4 +82,5 @@ public class Cliente {
             e.printStackTrace();
         }
     }
+
 }

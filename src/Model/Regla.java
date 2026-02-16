@@ -14,9 +14,9 @@ public class Regla {
     public void setJugadores(ArrayList<Jugador> jugadores){
         this.jugadores = jugadores;
     }
-    public int determinar_tantos(ArrayList<Carta> bazasGanadasXJug){
+    public int determinar_tantos(ArrayList<Carta> bazaGanadaXJug){
         int suma=0;
-        for(Carta carta:bazasGanadasXJug){
+        for(Carta carta:bazaGanadaXJug){
             suma=carta.getValor_en_juego()+suma;
         }
         return suma;
@@ -191,7 +191,6 @@ public class Regla {
 
     public Boolean determinar_si_puede_cantar_las40(ArrayList<Carta> cartas_en_mano) {
         Boolean rta = false;
-
         for (Carta carta:cartas_en_mano) {
             for (Carta carta2:cartas_en_mano) {
                 if (methodAux40(carta, carta2) == true) {
@@ -206,7 +205,9 @@ public class Regla {
         Boolean rta = false;
         if (carta1.getPalo().equals(carta2.getPalo())) {
             if (carta1.getNumero() == 12 && carta2.getNumero() == 11 || carta1.getNumero() == 11 && carta2.getNumero() == 12) {
-                rta = true;
+                if(!carta1.getPalo().equals(palo_triunfo)){
+                    rta = true;
+                }
             }
         }
         return rta;

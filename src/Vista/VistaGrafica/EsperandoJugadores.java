@@ -7,10 +7,10 @@ import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 
 public class EsperandoJugadores extends JFrame{
-    DefaultTableModel modelo_tabla;
-    JTable tabla_jugadores;
+    private DefaultTableModel modelo_tabla;
+    private JTable tabla_jugadores;
     //JPanel panel;
-    JScrollPane panel;
+    private JScrollPane panel;
 
     public EsperandoJugadores(){
         inicializar_componentes();
@@ -21,7 +21,12 @@ public class EsperandoJugadores extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//que pasa al cerrar la ventana
         setBounds(100, 100, 500, 500);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
         setLocationRelativeTo(null);
-        modelo_tabla=new DefaultTableModel();
+        modelo_tabla=new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         modelo_tabla.addColumn("NOMBRE");
         modelo_tabla.addColumn("ID");
         tabla_jugadores=new JTable();
@@ -29,14 +34,11 @@ public class EsperandoJugadores extends JFrame{
         panel=new JScrollPane(tabla_jugadores);
         setContentPane(panel);
     }
-    public void agregar(ArrayList<Jugador> jugadores){
-        modelo_tabla.setRowCount(0);
-        for(Jugador jugador:jugadores){
-            modelo_tabla.addRow(new Object[]{
-                    jugador.getNombre(),
-                    jugador.getId()
-            });
-        }
-
+    public void aniadir_jugador(int id, int puntaje, String nombre){
+        modelo_tabla.addRow(new Object[]{
+                nombre,
+                id,
+                puntaje
+        });
     }
 }

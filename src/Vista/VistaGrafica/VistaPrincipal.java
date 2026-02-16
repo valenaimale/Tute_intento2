@@ -3,18 +3,19 @@ package Vista.VistaGrafica;
 import Controlador.Controlador;
 import Model.Carta;
 import Model.Jugador;
+import Vista.IVista;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-public class VistaPrincipal {
+public class VistaPrincipal implements IVista {
     private Controlador controlador;
     private Menu_principal menu_principal;
     private VentanaInicioJugador ventanaInicioJugador;
     private EsperandoJugadores esperando;
     private Cartas_en_mano mano;
-    private Anuncios anuncios;
-    private Puntajes puntajes;
+    //private Anuncios anuncios;
+    //private Puntajes puntajes;
 
     public VistaPrincipal(Controlador controlador){
         this.controlador=controlador;
@@ -25,8 +26,8 @@ public class VistaPrincipal {
         menu_principal=new Menu_principal(controlador, this);
         esperando= new EsperandoJugadores();
         mano = new Cartas_en_mano(controlador, this);
-        anuncios=new Anuncios(controlador,this);
-        puntajes=new Puntajes(this);
+        //anuncios=new Anuncios(controlador,this); //IMPLEMENTACION SIN JDIALOG
+        //puntajes=new Puntajes(this, controlador);//IMPLEMENTACION SIN JDIALOG
         mostrar_menu_principal();
     }
     public void mostrar_menu_principal(){
@@ -42,76 +43,14 @@ public class VistaPrincipal {
     public void no_mostrar_espera(){
         esperando.setVisible(false);
     }
-    public void agregar_jugador_a_la_espera(ArrayList<Jugador> jugadores){
-        esperando.agregar(jugadores);
-    }
+
     public void mostrar_mano(ArrayList<Integer> id_cartas_jugador, String palo_triunfo, int nombre_carta_de_triunfo){
         mano.iniciar_cartas_jugador(id_cartas_jugador);
         mano.iniciar_palo_triunfo(palo_triunfo, ventanaInicioJugador.getNombreUsuario());
-        mano.mostrar_carta_palo_triunfo(nombre_carta_de_triunfo);
-        mano.setVisible(true);
     }
-    public void oferta_tute(){
-        System.out.println("VISTA PRINCIPAL. OFERTA_TUTE");
-        anuncios.toFront();
-        anuncios.requestFocus();
-        mano.setVisible(false);
-        anuncios.ofrecer_tute();
-    }
-    public void oferta_las_40(){
-        System.out.println("VISTA PRINCIPAL. OFERTA_LAS_40");
-        mano.setVisible(false);
-        anuncios.toFront();
-        anuncios.requestFocus();
-        anuncios.ofrecer_las_40();
-    }
-    public void oferta_las_20(){
-        System.out.println("VISTA PRINCIPAL. OFERTA_LAS_20");
-        mano.setVisible(false);
-        anuncios.toFront();
-        anuncios.requestFocus();
-        anuncios.ofrecer_las_20();
-    }
-    public void canta_tute(String nombre){
-        System.out.println("VISTA PRINCIPAL. CANTA_TUTE");
-        mano.setVisible(false);
-        anuncios.toFront();
-        anuncios.requestFocus();
-        anuncios.canto_tute(nombre);
-    }
-    public void canta_las_40(String nombre){
-        System.out.println("VISTA PRINCIPAL. CANTA_LAS_40");
-        mano.setVisible(false);
-        anuncios.toFront();
-        anuncios.requestFocus();
-        anuncios.canto_las_40(nombre);
-    }
-    public void canta_las_20(String nombre){
-        System.out.println("VISTA PRINCIPAL. CANTA_LAS_20");
-        mano.setVisible(false);
-        anuncios.toFront();
-        anuncios.requestFocus();
-        anuncios.canto_las_20(nombre);
-    }
-    public void actualizar_puntajes(ArrayList<Jugador> jugadores, Jugador ganador){
-        mano.setVisible(false);
-        puntajes.actualizar_puntaje(jugadores, ganador, " gano la baza. Puntajes:");
-        puntajes.setVisible(true);
-    }
-    public void mostrar_mano_visible(){
-        mano.setVisible(true);
-    }
-    public void gana_por_puntos(String nombre){
-        anuncios.ganador_por_punts(nombre);
-    }
-    public void gana_ultimas_10(ArrayList<Jugador> jugadores, Jugador ganador){
-        puntajes.actualizar_puntaje(jugadores,ganador, " gano la ultima baza. Suma 10 puntos!. Puntajes: ");
-        puntajes.setVisible(true);
-    }
-    public void set_cartas_clicleables(ArrayList<Integer> id_cartas_posibles) throws RemoteException {
-        System.out.println("VistaPrincipal.set_cartas_clicleables de: "+ controlador.getJuego().getJugador_actual().getNombre());
-        mano.cartas_clicleables(id_cartas_posibles);
 
+    public void set_cartas_clicleables(ArrayList<Integer> id_cartas_posibles) throws RemoteException {
+        mano.cartas_clicleables(id_cartas_posibles);
     }
     public void limpiar_cartas_mesa(){
         mano.reiniciar_cartas_mano();
@@ -120,23 +59,56 @@ public class VistaPrincipal {
         System.out.println("Vista Principal. agregar_carta_mano");
         mano.iniciar_cartas_mano(id_carta,id_actual);
     }
-    public void hacer_todas_clicleables(){
-        mano.todas_cartas_clicleables();
-    }
+
     public void iniciar_posiciones_mano(int cantidad, int id_jugador){
         mano.iniciar_posiciones(cantidad, id_jugador);
     }
-    public void no_mostrar_mano(){
-        mano.setVisible(false);
+
+    public void mostrar_mano_visible(){
+        mano.setVisible(true);
     }
 
-    /*
-    cartas_clicleables()
-    iniciar_cartas_mano(int id_carta,int id_jugador)
-    iniciar_cartas_jugador(ArrayList<Integer> id_cartas)
-    */
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    //IMPLEMENTACION JDIALOG ANUNCIOS
 
+    public void oferta_tute(){
+        mano.ofrecer_tute();
+    }
+    public void oferta_las_40(){
+        mano.ofrecer_las_40();
+    }
+    public void oferta_las_20(){
+        mano.ofrecer_las_20();
+    }
 
+    public void canta_tute(String nombre){
+        mano.canta_tute(nombre);
+    }
+    public void canta_las_40(String nombre){
+        mano.canta_las_40(nombre);
+    }
+    public void canta_las_20(String nombre){
+        mano.canta_las_20(nombre);
+    }
+
+    public void gana_por_puntos(String nombre){
+        mano.ganador_por_punts(nombre);
+    }
+    public void gana_ultimas_10(String nombre){
+        mano.gana_ultimas_10(nombre);
+    }
+    public void deshabilitar_botones_cartas(){
+        mano.deshabilitar_botones();
+    }
+    //IMPLEMENTACION JDIALOG PUNTAJES
+    public void aniadir_jugador_a_tablas(int id, int puntaje, String nombre){
+        mano.aniadir_jugador(id,  puntaje, nombre);
+        esperando.aniadir_jugador(id,  puntaje, nombre);
+    }
+    public void actualizar_puntaje(int id, int puntaje, String nombre){
+        System.out.println("actualizar_puntaje. Vista principal");
+        mano.actualizar_puntaje_ganador(id, puntaje, nombre);
+    }
 
 
 }

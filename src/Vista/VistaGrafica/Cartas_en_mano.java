@@ -19,7 +19,6 @@ public class Cartas_en_mano extends JFrame{
     private VistaPrincipal vistaPrincipal;
     private JLabel fondo;
     private ArrayList<JLabel> cartas_mano;
-    private JLabel palo_triunfo_carta;
     private MapeoCartas mapeoCartas;
     private JPanel panel_cartas_jug;
     private int centro;
@@ -27,10 +26,10 @@ public class Cartas_en_mano extends JFrame{
     private int norte;
     private int oeste;
 
-    private JButton boton_presionado; //esto puede ir si se rquiere la confirmacion del modelo para ver si la carta tirada es valida o no!
-
+    private Anuncios anuncios;
+    private Puntajes puntajes;
     //desde el modelo lo unico que tengo es la carta no el boton presionado. Si no tengo el ultimo boton presionado
-                              // no se a que boton corresponde la carta
+    // no se a que boton corresponde la carta
 
 
     public Cartas_en_mano (Controlador controlador, VistaPrincipal vistaPrincipal){
@@ -41,8 +40,10 @@ public class Cartas_en_mano extends JFrame{
         this.mapeo_botones=new HashMap<>();
         this.controlador=controlador;
         this.vistaPrincipal=vistaPrincipal;
+        anuncios=new Anuncios(this,controlador,vistaPrincipal);
+        puntajes=new Puntajes(this,vistaPrincipal, controlador);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//que pasa al cerrar la ventana
-        setBounds(100, 100, 500, 500);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
+        setBounds(50, 50, 1400, 1200);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
         setLocationRelativeTo(null);
         ImageIcon fondo_i = new ImageIcon("src/Imagenes_cartas/MESA.png");
         this.fondo= new JLabel(fondo_i);
@@ -56,9 +57,7 @@ public class Cartas_en_mano extends JFrame{
     public void iniciar_palo_triunfo(String palo_triunfo, String nombre_user){
         setTitle("El palo del triunfo es: " + palo_triunfo+ ". Vista de: "+ nombre_user);
     }
-    public void mostrar_carta_palo_triunfo(int id_carta_triunfo){
 
-    }
     public void iniciar_cartas_jugador(ArrayList<Integer> id_cartas){//cambiar de id carta (del controlador)
         for(Integer i:id_cartas){
             ImageIcon original=mapeoCartas.obtener_carta(i);
@@ -114,7 +113,6 @@ public class Cartas_en_mano extends JFrame{
             carta_mano.setVisible(true);
             fondo.add(carta_mano,BorderLayout.WEST);
             fondo.revalidate();
-
         }
     }
     public void iniciar_posiciones(int cantidad_jug, int id){
@@ -138,39 +136,48 @@ public class Cartas_en_mano extends JFrame{
             int id=mapeo_botones.get(b);
             for(int j:cartas_posibles){
                 if(j==id){
-                    System.out.println("Carta con id: "+id+" clicleable para: "+ controlador.getJuego().getJugador_actual().getNombre()+". Id asociado al boton: "+mapeo_botones.get(b));
-                    boolean rta=SwingUtilities.isEventDispatchThread();
-                    if(rta==true){
-                        System.out.println("true");
-                    }
-                    else{
-                        System.out.println("false");
-                    }
                     b.setEnabled(true);
                 }
             }
         }
-
-
     }
-    public void todas_cartas_clicleables(){//en caso de que el jugador sea el primero en tirar, puede tirar cualquier carta
-        for(JButton b:mapeo_botones.keySet()){
-            b.setEnabled(true);
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // implementacion JDialog anuncios
+    public void ofrecer_tute(){
+        anuncios.ofrecer_tute();
+    }
+    public void ofrecer_las_40(){
+        anuncios.ofrecer_las_40();
+    }
+    public void ofrecer_las_20(){
+        anuncios.ofrecer_las_20();
+    }
+    public void canta_tute(String nombre){
+        anuncios.canto_tute(nombre);
+    }
+    public void canta_las_40(String nombre){
+        anuncios.canto_las_40(nombre);
+    }
+    public void canta_las_20(String nombre){
+        anuncios.canto_las_20(nombre);
+    }
+    public void ganador_por_punts(String nombre){
+        anuncios.ganador_por_punts(nombre);
+    }
+    public void gana_ultimas_10(String nombre){
+        anuncios.ultimas_10(nombre);
+    }
+    public void deshabilitar_botones(){
+        for(JButton b: cartas_jugador){
+            b.setEnabled(false);
         }
     }
-
-
-    /*
-    Cuando es el turno de un jugador, primero el controlador le pregunta al modelo que cartas puede tirar
-    y cuales no. A partir de eso, el controlador habilita solo los botones de las cartas que puede tirar.
-    Luego, de que el jugador tira, el juego valida internamente si la carta es valida para tirarse o no y
-    actualiza el turno. Es decir, los botones de las cartas de cada jugador estan SIEMPRE deshabilitados
-    salvo cuando el jugador esta por tirar, habilitando solo los botones de las cartas permitidos.
-    */
-    //un boton se puede hacer visible o no
-
-
-
-
-
+    //implementacion JDialog puntajes
+    public void aniadir_jugador(int id,  int puntaje,String nombre){
+        puntajes.aniadir_jugador(id, puntaje, nombre);
+    }
+    public void actualizar_puntaje_ganador(int id, int puntaje, String nombre){
+        puntajes.actualizar_puntaje_ganador(id, puntaje, nombre);
+    }
 }

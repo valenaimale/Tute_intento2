@@ -12,12 +12,13 @@ public interface IJuego extends IObservableRemoto {
     public Carta getPalo_triunfo() throws RemoteException;
     public void repartir() throws RemoteException;
     public void tirada_de_carta(int indice) throws RemoteException;
-    public void canto_tute() throws RemoteException;
-    public void canto_las_40() throws RemoteException;
-    public void canto_las_20() throws RemoteException;
     public Jugador getGanador_parcial() throws RemoteException;
     public Jugador getJugador_actual() throws RemoteException;
-    public Regla getReglas() throws RemoteException;
     public ArrayList<Carta> getCartas_jugadas_en_la_mano() throws RemoteException;
     public ArrayList<Integer> cartas_posibles() throws RemoteException;
+    public void comprobar_cantos() throws RemoteException;
+    public Jugador getGanador() throws RemoteException;
+    public void canto_positivo() throws RemoteException;
+    public void canto_negativo() throws RemoteException;
+
 }

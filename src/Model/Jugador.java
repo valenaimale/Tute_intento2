@@ -7,7 +7,7 @@ public class Jugador implements Serializable {
     private String nombre;
     private int puntaje;
     private ArrayList<Carta> mazo_jugador;
-    private ArrayList<Carta> bazasGanadas;
+    //private ArrayList<Carta> bazasGanadas;
     private int id;
 
     public Jugador(String nombre) {
@@ -18,7 +18,7 @@ public class Jugador implements Serializable {
         this.nombre=nombre;
         this.puntaje=0;
         this.mazo_jugador=new ArrayList<>();
-        this.bazasGanadas=new ArrayList<>();
+        //this.bazasGanadas=new ArrayList<>();
     }
     public void setId(int id){
         this.id=id;
@@ -52,7 +52,7 @@ public class Jugador implements Serializable {
         this.puntaje+=puntaje;
     }
 
-    public ArrayList<Carta> getBazasGanadas() {
+   /* public ArrayList<Carta> getBazasGanadas() {
         return bazasGanadas;
     }
 
@@ -61,7 +61,7 @@ public class Jugador implements Serializable {
         for(Carta carta:bazaGanadas){
             bazasGanadas.add(carta);
         }
-    }
+    }*/
     public void setPuntaje(int incremento){
         puntaje=puntaje+incremento;
     }
