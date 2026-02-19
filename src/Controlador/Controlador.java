@@ -1,6 +1,7 @@
 package Controlador;
 
 import Model.*;
+import Vista.IVista;
 import Vista.VistaGrafica.VistaPrincipal;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
@@ -10,7 +11,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 public class Controlador implements IControladorRemoto {
-    VistaPrincipal vistaPrincipal;
+    IVista vista;
     IJuego juego;
     int id_jugador;
     Queue<Eventos> eventos_pendientes;
@@ -21,8 +22,8 @@ public class Controlador implements IControladorRemoto {
         eventos_pendientes=new ArrayDeque<>();
     }
 
-    public void setVistaPrincipal(VistaPrincipal vistaPrincipal) {
-        this.vistaPrincipal = vistaPrincipal;
+    public void setVista(IVista vista) {
+        this.vista = vista;
     }
 
     public void iniciar_player(String nombre) throws RemoteException {
@@ -46,16 +47,24 @@ public class Controlador implements IControladorRemoto {
 
     public void procesar_eventos_pendientes() throws RemoteException {
         estado_ui=Estado_UI.NORMAL;
+        for(Eventos e: eventos_pendientes){
+            System.out.println(e);
+        }
         while(estado_ui==Estado_UI.NORMAL && !eventos_pendientes.isEmpty()){//ver ppor que entra al while si la cola de eventos pendientes esta vacia
             Eventos evento_a_procesar=eventos_pendientes.poll();
             System.out.println(evento_a_procesar);
             procesar_evento(evento_a_procesar);
         }
     }
+    //se me ocurre que para las cartas en la vista de consola puede haber un hashMap con
     private ArrayList<Integer> cartas_repartidas_a_mi_jugador() throws RemoteException {
         ArrayList<Integer> id_cartas = new ArrayList<>();
-        for (Carta c : juego.getJugadores().get(id_jugador).getMazo_jugador()) {
-            id_cartas.add(c.getId());
+        for(Jugador j: juego.getJugadores()){
+            if(j.getId()==id_jugador){
+                for (Carta c : j.getMazo_jugador()) {
+                    id_cartas.add(c.getId());
+                }
+            }
         }
         return id_cartas;
     }
@@ -64,32 +73,38 @@ public class Controlador implements IControladorRemoto {
         switch (evento){
             case ULTIMAS_10:
                 estado_ui=Estado_UI.ESPERANDO_OK_ULTIMAS_10;
-                vistaPrincipal.gana_ultimas_10(juego.getGanador_parcial().getNombre());
+                vista.gana_ultimas_10(juego.getGanador_parcial().getNombre());
                 break;
             case GANADOR_POR_PUNTOS:
                 estado_ui=Estado_UI.ESPERANDO_OK_GANADOR;
-                vistaPrincipal.gana_por_puntos(juego.getGanador().getNombre());
+                vista.gana_por_puntos(juego.getGanador().getNombre());
                 break;
             case MANO_TERMINADA:
                 System.out.println(Eventos.MANO_TERMINADA);
                 estado_ui=Estado_UI.ESPERANDO_OK_PUNTAJES;
-                vistaPrincipal.actualizar_puntaje(juego.getGanador_parcial().getId(),juego.getGanador_parcial().getPuntaje(),juego.getGanador_parcial().getNombre() );
+                vista.mostrar_puntajes();
                 break;
             case TERMINO_JUEGO:
                 estado_ui=Estado_UI.ESPERANDO_RTA_TERMINO_JUEGO;
-                System.exit(0);
+                System.out.println("controlador termino_juego");
+                vista.cierre_juego(juego.getGanador().getNombre());
                 break;
             case GANADOR_POR_TUTE:
                 estado_ui=Estado_UI.ESPERANDO_OK_CANTO;
-                vistaPrincipal.canta_tute(juego.getGanador().getNombre());
+                vista.canta_tute(juego.getGanador().getNombre());
                 break;
             case CARTAS_REPARTIDAS:
-                vistaPrincipal.mostrar_mano_visible();
+                vista.iniciar_valores_partida(cartas_repartidas_a_mi_jugador(), juego.getPalo_triunfo().getPalo());
+                vista.mostrar_turno(juego.getJugador_actual().getId());
+                if (juego.getJugador_actual().getId() == id_jugador) {
+                    vista.setCartas_clicleables(juego.cartas_posibles());
+                }
                 break;
             case ACTUALIZACION_TURNO:
+                vista.mostrar_turno(juego.getJugador_actual().getId());
                 if (juego.getJugador_actual().getId() == id_jugador) {
                     System.out.println(Eventos.ACTUALIZACION_TURNO);
-                    vistaPrincipal.set_cartas_clicleables(juego.cartas_posibles());
+                    vista.setCartas_clicleables(juego.cartas_posibles());
                 }
                 break;
 
@@ -107,22 +122,24 @@ public class Controlador implements IControladorRemoto {
             Eventos evento = (Eventos) o;
             switch (evento) {
                 case COMENZAR_JUEGO:
-                    vistaPrincipal.iniciar_posiciones_mano(juego.getJugadores().size(), id_jugador);
-                    vistaPrincipal.no_mostrar_espera();
+                    vista.no_mostrar_espera(juego.getJugadores().size(), id_jugador);
                     break;
                 case JUGADOR_AGREGADO:
-                    vistaPrincipal.aniadir_jugador_a_tablas(juego.getJugadores().getLast().getId(),juego.getJugadores().getLast().getPuntaje(), juego.getJugadores().getLast().getNombre());
+                    vista.limpiar_tablas();
+                    for(Jugador j:juego.getJugadores()){
+                        vista.aniadir_jugador_a_tablas(j.getId(),j.getPuntaje(), j.getNombre());
+                    }
                     break;
                 case CARTAS_REPARTIDAS:
-                    vistaPrincipal.mostrar_mano(cartas_repartidas_a_mi_jugador(), juego.getPalo_triunfo().getPalo(), juego.getPalo_triunfo().getId());
-                    if (juego.getJugador_actual().getId() == id_jugador) {
-                        vistaPrincipal.set_cartas_clicleables(juego.cartas_posibles());
-                    }
                     if(estado_ui!=Estado_UI.NORMAL){
                         eventos_pendientes.add(Eventos.CARTAS_REPARTIDAS);
                     }
                     else{
-                        vistaPrincipal.mostrar_mano_visible();
+                        vista.iniciar_valores_partida(cartas_repartidas_a_mi_jugador(), juego.getPalo_triunfo().getPalo());
+                        vista.mostrar_turno(juego.getJugador_actual().getId());
+                        if (juego.getJugador_actual().getId() == id_jugador) {
+                            vista.setCartas_clicleables(juego.cartas_posibles());
+                        }
                     }
                     break;
                 case GANADOR_POR_TUTE:
@@ -132,7 +149,7 @@ public class Controlador implements IControladorRemoto {
                     else{
                         try {
                             estado_ui=Estado_UI.ESPERANDO_OK_CANTO;
-                            vistaPrincipal.canta_tute(juego.getGanador().getNombre());
+                            vista.canta_tute(juego.getGanador().getNombre());
                         } catch (RemoteException e) {
                             throw new RuntimeException(e);
                         }
@@ -140,15 +157,13 @@ public class Controlador implements IControladorRemoto {
                     break;
                 case OFRECER_LAS_40:
                     if(juego.getGanador_parcial().getId()==id_jugador) {
-                        vistaPrincipal.oferta_las_40();
-                        vistaPrincipal.deshabilitar_botones_cartas();
+                        vista.oferta_las_40();
                     }
                     break;
                 case CANTA_LAS_40:
                     try {
-                        System.out.println(Eventos.CANTA_LAS_40);
                         estado_ui=Estado_UI.ESPERANDO_OK_CANTO;
-                        vistaPrincipal.canta_las_40(juego.getGanador_parcial().getNombre());
+                        vista.canta_las_40(juego.getGanador_parcial().getNombre());
                     } catch (RemoteException e) {
                         throw new RuntimeException(e);
                     }
@@ -156,34 +171,32 @@ public class Controlador implements IControladorRemoto {
                     break;
                 case CANTA_LAS_20:
                     try {
-                        System.out.println(Eventos.CANTA_LAS_20);
                         estado_ui=Estado_UI.ESPERANDO_OK_CANTO;
-                        vistaPrincipal.canta_las_20(juego.getGanador_parcial().getNombre());
+                        vista.canta_las_20(juego.getGanador_parcial().getNombre());
                     } catch (RemoteException e) {
                         throw new RuntimeException(e);
                     }
                     break;
                 case MANO_TERMINADA:
-                    vistaPrincipal.limpiar_cartas_mesa();
+                    vista.limpiar_cartas_mesa();
+                    vista.actualizar_puntaje(juego.getGanador_parcial().getId(),juego.getGanador_parcial().getPuntaje(),juego.getGanador_parcial().getNombre() );
                     if(estado_ui!=Estado_UI.NORMAL){
                         eventos_pendientes.add(Eventos.MANO_TERMINADA);
                     }
                     else{
                         System.out.println(Eventos.MANO_TERMINADA);
                         estado_ui=Estado_UI.ESPERANDO_OK_PUNTAJES;
-                        vistaPrincipal.actualizar_puntaje(juego.getGanador_parcial().getId(),juego.getGanador_parcial().getPuntaje(),juego.getGanador_parcial().getNombre() );
+                        vista.mostrar_puntajes();
                     }
                     break;
                 case OFRECER_TUTE:
                     if(juego.getGanador_parcial().getId()==id_jugador){
-                        vistaPrincipal.oferta_tute();
-                        vistaPrincipal.deshabilitar_botones_cartas();
+                        vista.oferta_tute();
                     }
                     break;
                 case OFRECER_LAS_20:
                     if(juego.getGanador_parcial().getId()==id_jugador){
-                        vistaPrincipal.oferta_las_20();
-                        vistaPrincipal.deshabilitar_botones_cartas();
+                        vista.oferta_las_20();
                     }
                     break;
                 case GANADOR_POR_PUNTOS:
@@ -191,7 +204,7 @@ public class Controlador implements IControladorRemoto {
                         eventos_pendientes.add(Eventos.GANADOR_POR_PUNTOS);
                     }
                     else{
-                        vistaPrincipal.gana_por_puntos(juego.getGanador().getNombre());
+                        vista.gana_por_puntos(juego.getGanador().getNombre());
                     }
                     break;
                 case ACTUALIZACION_TURNO:
@@ -199,15 +212,15 @@ public class Controlador implements IControladorRemoto {
                         eventos_pendientes.add(Eventos.ACTUALIZACION_TURNO);
                     }
                     else{
+                        vista.mostrar_turno(juego.getJugador_actual().getId());
                         if (juego.getJugador_actual().getId() == id_jugador) {
-                            System.out.println(Eventos.ACTUALIZACION_TURNO);
-                            vistaPrincipal.set_cartas_clicleables(juego.cartas_posibles());
+                            System.out.println("actualizacion de turno desde el controlador");
+                            vista.setCartas_clicleables(juego.cartas_posibles());
                         }
                     }
-
                     break;
                 case CARTA_TIRADA:
-                    vistaPrincipal.agregar_carta_mano(juego.getCartas_jugadas_en_la_mano().getLast().getId(), juego.getJugador_actual().getId());
+                    vista.agregar_carta_mano(juego.getCartas_jugadas_en_la_mano().getLast().getId(), juego.getJugador_actual().getId());
                     break;
                 case ULTIMAS_10:
                     if(estado_ui!=Estado_UI.NORMAL){
@@ -215,23 +228,28 @@ public class Controlador implements IControladorRemoto {
                     }
                     else{
                         estado_ui=Estado_UI.ESPERANDO_OK_ULTIMAS_10;
-                        vistaPrincipal.gana_ultimas_10(juego.getGanador_parcial().getNombre());
+                        vista.gana_ultimas_10(juego.getGanador_parcial().getNombre());
                     }
                     break;
                 case TERMINO_JUEGO:
                     if(estado_ui!=Estado_UI.NORMAL){
+                        System.out.println("controlador termino_juego con estado_ui==normal");
                         eventos_pendientes.add(Eventos.TERMINO_JUEGO);
                     }
                     else{
-                        System.exit(0);
+                        System.out.println("controlador termino_juego");
+                        vista.cierre_juego(juego.getGanador().getNombre());
                     }
 
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
+    public void terminar(){
+        System.exit(0);
+    }
+
     //vistaPrincipal.actualizar_puntajes(juego.getJugadores(), juego.getGanador_parcial());
     //CONCEPTO CLAVE-> O HACES TODO INVOKE LATER O TODO SIN INVOKE LATER, SINO HAY BUGS
     //LA VENTANA DE LA MANO SE TIENE QUE HACER VISIBLE UNICAMENTE DESPUES DE PRESIONAR "OK" EN LOS PUNTAJES.

@@ -41,4 +41,7 @@ public class EsperandoJugadores extends JFrame{
                 puntaje
         });
     }
+    public void borrar_jugadores(){
+        modelo_tabla.setRowCount(0);
+    }
 }

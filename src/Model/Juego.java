@@ -53,9 +53,7 @@ public class Juego extends ObservableRemoto implements IJuego {
 
     public void repartir() throws RemoteException {
         carta_palo_triunfo=crupier.repartida(jugadores);
-        System.out.println("palo del triunfo: "+ carta_palo_triunfo.getPalo());
         reglas.setPalo_triunfo(carta_palo_triunfo.getPalo());
-        System.out.println("A");
         notificarObservadores(CARTAS_REPARTIDAS);
     }
     public int siguienteId(){
@@ -150,7 +148,7 @@ public class Juego extends ObservableRemoto implements IJuego {
                 else{
                     notificarObservadores(Eventos.ULTIMAS_10);
                     notificarObservadores(Eventos.MANO_TERMINADA);
-                    notificarObservadores(Eventos.ACTUALIZACION_TURNO);
+                    //notificarObservadores(Eventos.ACTUALIZACION_TURNO);
 
                     repartir();
                 }
@@ -279,7 +277,7 @@ public class Juego extends ObservableRemoto implements IJuego {
                     notificarObservadores(Eventos.CANTA_LAS_20);//AGREGADOS MIYI
                     notificarObservadores(Eventos.ULTIMAS_10);//AGREGADOS MIYI
                     notificarObservadores(Eventos.MANO_TERMINADA);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.ACTUALIZACION_TURNO);
+                    //notificarObservadores(Eventos.ACTUALIZACION_TURNO);
 
                     //notificarObservadores(Eventos.CANTA_LAS_20_ULTIMAS_10);//controlador muestra que el ganador parcial canto las 20, que gano las ultimas diez y el puntaje
                     repartir();
@@ -300,7 +298,7 @@ public class Juego extends ObservableRemoto implements IJuego {
                     notificarObservadores(Eventos.CANTA_LAS_20);//AGREGADOS MIYI
                     notificarObservadores(Eventos.ULTIMAS_10);//AGREGADOS MIYI
                     notificarObservadores(Eventos.MANO_TERMINADA);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.ACTUALIZACION_TURNO);
+                    //notificarObservadores(Eventos.ACTUALIZACION_TURNO);
                     //notificarObservadores(Eventos.CANTA_LAS_40_ULTIMAS_10);
                     repartir();
                 }
@@ -332,7 +330,7 @@ public class Juego extends ObservableRemoto implements IJuego {
                 else{
                     notificarObservadores(Eventos.ULTIMAS_10);
                     notificarObservadores(Eventos.MANO_TERMINADA);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.ACTUALIZACION_TURNO);
+                    //notificarObservadores(Eventos.ACTUALIZACION_TURNO);
 
                     repartir();
                 }

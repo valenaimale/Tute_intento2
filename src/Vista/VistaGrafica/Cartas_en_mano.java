@@ -1,8 +1,7 @@
 package Vista.VistaGrafica;
 
 import Controlador.Controlador;
-import Model.Carta;
-import Vista.VistaGrafica.Utilidad.MapeoCartas;
+import Vista.VistaGrafica.Utilidad.MapeoCartasGrafica;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,8 +18,12 @@ public class Cartas_en_mano extends JFrame{
     private VistaPrincipal vistaPrincipal;
     private JLabel fondo;
     private ArrayList<JLabel> cartas_mano;
-    private MapeoCartas mapeoCartas;
+    private MapeoCartasGrafica mapeoCartas;
     private JPanel panel_cartas_jug;
+    private JPanel panel_cartas_jug_y_botones;
+    private JButton ver_puntaje;
+    private JButton palo_triunfo;
+    private JPanel panel_botones_puntaje_y_triunfo;
     private int centro;
     private int este;
     private int norte;
@@ -36,8 +39,10 @@ public class Cartas_en_mano extends JFrame{
         inicializar(controlador,vistaPrincipal);
     }
     private void inicializar (Controlador controlador, VistaPrincipal vistaPrincipal){
-        this.mapeoCartas=new MapeoCartas();
+        this.mapeoCartas=new MapeoCartasGrafica();
         this.mapeo_botones=new HashMap<>();
+        this.ver_puntaje=new JButton("Ver puntajes");
+        this.palo_triunfo=new JButton("Ver palo del triunfo");
         this.controlador=controlador;
         this.vistaPrincipal=vistaPrincipal;
         anuncios=new Anuncios(this,controlador,vistaPrincipal);
@@ -51,11 +56,36 @@ public class Cartas_en_mano extends JFrame{
         this.cartas_jugador= new ArrayList<>();
         this.cartas_mano= new ArrayList<>();
         this.panel_cartas_jug=new JPanel(new FlowLayout());
+        this.panel_cartas_jug_y_botones=new JPanel(new BorderLayout());
+        this.panel_botones_puntaje_y_triunfo=new JPanel();
+        panel_botones_puntaje_y_triunfo.setLayout(new BoxLayout(panel_botones_puntaje_y_triunfo,BoxLayout.Y_AXIS));
+        panel_botones_puntaje_y_triunfo.add(ver_puntaje);
+        panel_botones_puntaje_y_triunfo.add(Box.createVerticalStrut(5));
+        panel_botones_puntaje_y_triunfo.add(palo_triunfo);
+        panel_cartas_jug_y_botones.add(panel_cartas_jug,BorderLayout.CENTER);
+        panel_cartas_jug_y_botones.add(panel_botones_puntaje_y_triunfo,BorderLayout.EAST);
         setContentPane(fondo);
-        fondo.add(panel_cartas_jug,BorderLayout.SOUTH);
+        fondo.add(panel_cartas_jug_y_botones,BorderLayout.SOUTH);
+        //fondo.add(panel_cartas_jug,BorderLayout.SOUTH);
+        ver_puntaje.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                puntajes.mostrarme_partida_en_curso();//un metodo distinto que haga que se muestre un boton de OK distinto en puntajes
+                                                      //con el objetivo de que el boton de OK no haga un controlador.procesar_eventos_pendientes()
+            }
+        });
+        palo_triunfo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //anuncios.mostrar_palo_triunfo();
+            }
+        });
     }
     public void iniciar_palo_triunfo(String palo_triunfo, String nombre_user){
         setTitle("El palo del triunfo es: " + palo_triunfo+ ". Vista de: "+ nombre_user);
+    }
+    public void limpiar_tab(){
+        puntajes.limpiar_puntajes();
     }
 
     public void iniciar_cartas_jugador(ArrayList<Integer> id_cartas){//cambiar de id carta (del controlador)
@@ -179,5 +209,11 @@ public class Cartas_en_mano extends JFrame{
     }
     public void actualizar_puntaje_ganador(int id, int puntaje, String nombre){
         puntajes.actualizar_puntaje_ganador(id, puntaje, nombre);
+    }
+    public void mostrar_los_puntajes(){
+        puntajes.mostrarme();
+    }
+    public void anuncio_cerrar(String nombre_ganador){
+        anuncios.terminar(nombre_ganador);
     }
 }

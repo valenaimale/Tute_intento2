@@ -19,8 +19,9 @@ public class VistaPrincipal implements IVista {
 
     public VistaPrincipal(Controlador controlador){
         this.controlador=controlador;
-        controlador.setVistaPrincipal(this);
+
     }
+    @Override
     public void iniciar(){
         ventanaInicioJugador=new VentanaInicioJugador(this, controlador);
         menu_principal=new Menu_principal(controlador, this);
@@ -36,22 +37,36 @@ public class VistaPrincipal implements IVista {
     public void mostrar_inicio(){
         ventanaInicioJugador.setVisible(true);
     }
+
+
+
     public void mostrar_esperando(){
         esperando.setVisible(true);
         mano.setTitle(ventanaInicioJugador.getNombreUsuario());
     }
-    public void no_mostrar_espera(){
+    public void no_mostrar_espera(int cantidad, int id_jugador){
+        iniciar_posiciones_mano(cantidad, id_jugador);
         esperando.setVisible(false);
     }
-
-    public void mostrar_mano(ArrayList<Integer> id_cartas_jugador, String palo_triunfo, int nombre_carta_de_triunfo){
+    @Override
+    public void iniciar_valores_partida(ArrayList<Integer> id_cartas_jugador, String palo_triunfo){
         mano.iniciar_cartas_jugador(id_cartas_jugador);
         mano.iniciar_palo_triunfo(palo_triunfo, ventanaInicioJugador.getNombreUsuario());
+        mano.setVisible(true);
+
     }
 
-    public void set_cartas_clicleables(ArrayList<Integer> id_cartas_posibles) throws RemoteException {
-        mano.cartas_clicleables(id_cartas_posibles);
+    @Override
+    public void limpiar_tablas() {
+        mano.limpiar_tab();
+        esperando.borrar_jugadores();
     }
+
+    @Override
+    public void setCartas_clicleables(ArrayList<Integer> ids_posibles) throws RemoteException {
+        mano.cartas_clicleables(ids_posibles);
+    }
+
     public void limpiar_cartas_mesa(){
         mano.reiniciar_cartas_mano();
     }
@@ -60,25 +75,28 @@ public class VistaPrincipal implements IVista {
         mano.iniciar_cartas_mano(id_carta,id_actual);
     }
 
-    public void iniciar_posiciones_mano(int cantidad, int id_jugador){
+    private void iniciar_posiciones_mano(int cantidad, int id_jugador){
         mano.iniciar_posiciones(cantidad, id_jugador);
     }
-
     public void mostrar_mano_visible(){
         mano.setVisible(true);
     }
+
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //IMPLEMENTACION JDIALOG ANUNCIOS
 
     public void oferta_tute(){
         mano.ofrecer_tute();
+        mano.deshabilitar_botones();
     }
     public void oferta_las_40(){
         mano.ofrecer_las_40();
+        mano.deshabilitar_botones();
     }
     public void oferta_las_20(){
         mano.ofrecer_las_20();
+        mano.deshabilitar_botones();
     }
 
     public void canta_tute(String nombre){
@@ -97,10 +115,10 @@ public class VistaPrincipal implements IVista {
     public void gana_ultimas_10(String nombre){
         mano.gana_ultimas_10(nombre);
     }
-    public void deshabilitar_botones_cartas(){
-        mano.deshabilitar_botones();
-    }
+
     //IMPLEMENTACION JDIALOG PUNTAJES
+
+
     public void aniadir_jugador_a_tablas(int id, int puntaje, String nombre){
         mano.aniadir_jugador(id,  puntaje, nombre);
         esperando.aniadir_jugador(id,  puntaje, nombre);
@@ -108,6 +126,19 @@ public class VistaPrincipal implements IVista {
     public void actualizar_puntaje(int id, int puntaje, String nombre){
         System.out.println("actualizar_puntaje. Vista principal");
         mano.actualizar_puntaje_ganador(id, puntaje, nombre);
+    }
+
+    @Override
+    public void mostrar_puntajes() {
+        mano.mostrar_los_puntajes();
+    }
+
+    @Override
+    public void cierre_juego(String nombre_ganador) {
+        mano.anuncio_cerrar(nombre_ganador);
+    }
+    @Override
+    public void mostrar_turno(int id){
     }
 
 

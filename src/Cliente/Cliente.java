@@ -1,6 +1,8 @@
 package Cliente;
 
 import Controlador.Controlador;
+import Vista.IVista;
+import Vista.VistaConsola.VistaConsola;
 import Vista.VistaGrafica.VistaPrincipal;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.Util;
@@ -63,24 +65,46 @@ public class Cliente {
         elegir_vista.setContentPane(jPanel);
         elegir_vista.setBounds(100,100, 400, 100);
         elegir_vista.setVisible(true);
+
         boton_grafica.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                VistaPrincipal vistaPrincipal=new VistaPrincipal(controlador);
-                vistaPrincipal.iniciar();
+                IVista vista_grafica=new VistaPrincipal(controlador);
+                vista_grafica.iniciar();
                 elegir_vista.setVisible(false);
+                controlador.setVista(vista_grafica);
+                ar.edu.unlu.rmimvc.cliente.Cliente c = new ar.edu.unlu.rmimvc.cliente.Cliente(ip, Integer.parseInt(port), ipServidor, Integer.parseInt(portServidor));
+                try {
+                    c.iniciar(controlador);
+                } catch (RemoteException f) {
+                    // TODO Auto-generated catch block
+                    f.printStackTrace();
+                } catch (RMIMVCException f) {
+                    // TODO Auto-generated catch block
+                    f.printStackTrace();
+                }
             }
         });
-        ar.edu.unlu.rmimvc.cliente.Cliente c = new ar.edu.unlu.rmimvc.cliente.Cliente(ip, Integer.parseInt(port), ipServidor, Integer.parseInt(portServidor));
-        try {
-            c.iniciar(controlador);
-        } catch (RemoteException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (RMIMVCException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        boton_consola.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                IVista vista_consola=new VistaConsola(controlador);
+                vista_consola.iniciar();
+                elegir_vista.setVisible(false);
+                controlador.setVista(vista_consola);
+                ar.edu.unlu.rmimvc.cliente.Cliente c = new ar.edu.unlu.rmimvc.cliente.Cliente(ip, Integer.parseInt(port), ipServidor, Integer.parseInt(portServidor));
+                try {
+                    c.iniciar(controlador);
+                } catch (RemoteException f) {
+                    // TODO Auto-generated catch block
+                    f.printStackTrace();
+                } catch (RMIMVCException f) {
+                    // TODO Auto-generated catch block
+                    f.printStackTrace();
+                }
+            }
+        });
+
     }
 
 }

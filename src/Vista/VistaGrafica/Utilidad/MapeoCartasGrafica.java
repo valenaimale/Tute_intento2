@@ -3,10 +3,10 @@ package Vista.VistaGrafica.Utilidad;
 import javax.swing.*;
 import java.util.HashMap;
 
-public class MapeoCartas {
+public class MapeoCartasGrafica {
     private HashMap<Integer, String> mapeo;
 
-    public MapeoCartas() {
+    public MapeoCartasGrafica() {
         mapeo=new HashMap<>();
         mapear();
     }

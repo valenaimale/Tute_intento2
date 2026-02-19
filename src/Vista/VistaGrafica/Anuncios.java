@@ -274,6 +274,7 @@ public class Anuncios extends JDialog {
     private JButton finalizado_no;//boton unicamente para el cartel de volver a jugar (distintos action listeners)
     private Controlador controlador;
     private VistaPrincipal vistaPrincipal;
+    private Timer timer;
 
 
     public Anuncios(JFrame v_padre, Controlador controlador, VistaPrincipal vistaPrincipal) {
@@ -297,6 +298,9 @@ public class Anuncios extends JDialog {
         finalizado_si = new JButton("SI");
         finalizado_no = new JButton("NO");
         boton_ok = new JButton("OK");
+        timer=new Timer(15000, e -> {
+            controlador.terminar();
+        });
 
         panel_botones.add(universal_no, SwingConstants.CENTER);
         panel_botones.add(universal_si, SwingConstants.CENTER);
@@ -515,6 +519,12 @@ public class Anuncios extends JDialog {
         panel_principal.setVisible(true);
         boton_ok.setVisible(true);
         boton_ok.setEnabled(true);
+        setVisible(true);
+    }
+    public void terminar(String nombre_ganador) {
+        texto.setText("El juego termino! El ganador es "+nombre_ganador);
+        texto.setVisible(true);
+        timer.start();
         setVisible(true);
     }
 }
