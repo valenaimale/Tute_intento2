@@ -2,7 +2,6 @@ package Model;
 
 import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 
-import java.lang.reflect.Array;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -18,7 +17,7 @@ public class Juego extends ObservableRemoto implements IJuego {
     private ArrayList<Carta> cartas_jugadas_en_la_mano;
     private Regla reglas;
     private Jugador ganador_parcial;
-    private Estado_cantos estado_cantos;
+    private Estado_ganador_baza estado_cantos;
     private Jugador ganador_final;
 
     public Juego(){
@@ -30,7 +29,7 @@ public class Juego extends ObservableRemoto implements IJuego {
         crupier=new Crupier(mazo);
         cartas_jugadas_en_la_mano=new ArrayList<>();
         reglas=new Regla();
-        estado_cantos=Estado_cantos.NADA;
+        estado_cantos= Estado_ganador_baza.NADA;
     }
     public void iniciar_jugador(Jugador jugador) throws RemoteException {
         jugadores.add(jugador);
@@ -78,7 +77,7 @@ public class Juego extends ObservableRemoto implements IJuego {
     public Carta getPalo_triunfo(){
         return carta_palo_triunfo;
     }
-    public Estado_cantos getEstado_cantos(){
+    public Estado_ganador_baza getEstado_cantos(){
         return estado_cantos;
     }
     public Jugador getGanador(){
@@ -111,34 +110,23 @@ public class Juego extends ObservableRemoto implements IJuego {
     }
     private void auxiliar() throws RemoteException {
         switch (estado_cantos){
-            case Estado_cantos.NADA :
+            case Estado_ganador_baza.NADA :
                 notificarObservadores(Eventos.MANO_TERMINADA);
                 notificarObservadores(Eventos.ACTUALIZACION_TURNO);
                 break;
-            case Estado_cantos.TUTE:
+            case Estado_ganador_baza.TUTE:
                 System.out.println("OFRECER_TUTE");
                 notificarObservadores(Eventos.OFRECER_TUTE);
                 break;
-            case Estado_cantos.ULTIMAS_10_TUTE:
-                notificarObservadores(Eventos.OFRECER_TUTE);
-                break;
-            case Estado_cantos.LAS_20:
+            case Estado_ganador_baza.LAS_20:
                 System.out.println("OFRECER_LAS_20");
                 notificarObservadores(Eventos.OFRECER_LAS_20);
                 break;
-            case Estado_cantos.ULTIMAS_10_LAS_20:
-                System.out.println("OFRECER_LAS_20");
-                notificarObservadores(Eventos.OFRECER_LAS_20);
-                break;
-            case Estado_cantos.LAS_40:
+            case Estado_ganador_baza.LAS_40:
                 System.out.println("OFRECER_LAS_40");
                 notificarObservadores(Eventos.OFRECER_LAS_40);
                 break;
-            case Estado_cantos.ULTIMAS_10_LAS_40:
-                System.out.println("OFRECER_LAS_40");
-                notificarObservadores(Eventos.OFRECER_LAS_40);
-                break;
-            case Estado_cantos.ULTIMAS_10:
+            case Estado_ganador_baza.ULTIMAS_10:
                 if(chequear_ganador()){
                     notificarObservadores(Eventos.ULTIMAS_10);
                     notificarObservadores(Eventos.GANADOR_POR_PUNTOS);
@@ -180,7 +168,7 @@ public class Juego extends ObservableRemoto implements IJuego {
         //ganador_parcial.setBazasGanadas(cartas_jugadas_en_la_mano);
         actualizar_puntaje();
         cartas_jugadas_en_la_mano.clear();
-        estado_cantos=Estado_cantos.NADA;
+        estado_cantos= Estado_ganador_baza.NADA;
         comprobar_cantos();
     }
     private void actualizar_puntaje(){
@@ -189,13 +177,13 @@ public class Juego extends ObservableRemoto implements IJuego {
     }
     public void comprobar_cantos() throws RemoteException {
         if(reglas.determinar_si_puede_cantar_las20(ganador_parcial.getMazo_jugador())){
-            estado_cantos=Estado_cantos.LAS_20;
+            estado_cantos= Estado_ganador_baza.LAS_20;
         }
         else if(reglas.determinar_si_puede_cantar_las40(ganador_parcial.getMazo_jugador())){
-            estado_cantos=Estado_cantos.LAS_40;
+            estado_cantos= Estado_ganador_baza.LAS_40;
         }
         else if(reglas.determinar_si_puede_cantar_tute(ganador_parcial.getMazo_jugador())){
-            estado_cantos=Estado_cantos.TUTE;
+            estado_cantos= Estado_ganador_baza.TUTE;
         }
     }
     private Boolean comprobar_termino_partida() throws RemoteException {
@@ -206,23 +194,8 @@ public class Juego extends ObservableRemoto implements IJuego {
         return rta;
     }
     private void cerrar_partida() throws RemoteException {
-        switch(estado_cantos){
-            case Estado_cantos.LAS_20 :
-                estado_cantos=Estado_cantos.ULTIMAS_10_LAS_20;//CON ESTO EL CONTROLADOR SABE QUE PRIMERO TIENE QUE OFRECER LAS 20 Y LUEGO MOSTRAR LAS 10
-                ganador_parcial.setPuntaje(10);
-                break;
-            case Estado_cantos.LAS_40 :
-                estado_cantos=Estado_cantos.ULTIMAS_10_LAS_40;
-                ganador_parcial.setPuntaje(10);
-                break;
-            case Estado_cantos.TUTE:
-                estado_cantos=Estado_cantos.ULTIMAS_10_TUTE;
-                ganador_parcial.setPuntaje(10);
-            case Estado_cantos.NADA:
-                estado_cantos=Estado_cantos.ULTIMAS_10;
-                ganador_parcial.setPuntaje(10);
-                break;
-        }
+        estado_cantos= Estado_ganador_baza.ULTIMAS_10;
+        ganador_parcial.setPuntaje(10);
     }
 
 
@@ -242,101 +215,32 @@ public class Juego extends ObservableRemoto implements IJuego {
 
     public void canto_positivo() throws RemoteException{
         switch (estado_cantos){
-            case Estado_cantos.LAS_20:
+            case Estado_ganador_baza.LAS_20:
                 ganador_parcial.setPuntaje(20);
                 System.out.println("CANTA_LAS_20");
                 notificarObservadores(Eventos.CANTA_LAS_20);//controlador muestra que un jugador canto las 20 y muestra puntajes
                 notificarObservadores(Eventos.MANO_TERMINADA);//AGREGADOS MIYI
                 notificarObservadores(Eventos.ACTUALIZACION_TURNO);
-
                 break;
-            case Estado_cantos.LAS_40://controlador muestra que un jugador canto las 40 y muestra puntajes
+            case Estado_ganador_baza.LAS_40://controlador muestra que un jugador canto las 40 y muestra puntajes
                 ganador_parcial.setPuntaje(40);
                 System.out.println("CANTA_LAS_40");
                 notificarObservadores(Eventos.CANTA_LAS_40);
                 notificarObservadores(Eventos.MANO_TERMINADA);//AGREGADOS MIYI
                 notificarObservadores(Eventos.ACTUALIZACION_TURNO);
                 break;
-            case Estado_cantos.TUTE://controlador muestra que el jugador actual gano por tute
+            case Estado_ganador_baza.TUTE://controlador muestra que el jugador actual gano por tute
                 ganador_final=ganador_parcial;
                 notificarObservadores(Eventos.GANADOR_POR_TUTE);
                 notificarObservadores(Eventos.TERMINO_JUEGO);
                 break;
-            case Estado_cantos.ULTIMAS_10_LAS_20:
-                ganador_parcial.setPuntaje(20);
-                System.out.println("CANTA_LAS_20");
-                if(chequear_ganador()){
-                    notificarObservadores(Eventos.CANTA_LAS_20);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.ULTIMAS_10);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.GANADOR_POR_PUNTOS);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.MANO_TERMINADA);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.TERMINO_JUEGO);
-                    //notificarObservadores(Eventos.CANTA_LAS_20_ULTIMAS_10_GANADOR);//controlador muestra que el ganador parcial canto las 20, que gano las ultimas diez, que hay un ganador final y el puntaje
-                }
-                else{
-                    notificarObservadores(Eventos.CANTA_LAS_20);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.ULTIMAS_10);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.MANO_TERMINADA);//AGREGADOS MIYI
-                    //notificarObservadores(Eventos.ACTUALIZACION_TURNO);
-
-                    //notificarObservadores(Eventos.CANTA_LAS_20_ULTIMAS_10);//controlador muestra que el ganador parcial canto las 20, que gano las ultimas diez y el puntaje
-                    repartir();
-                }
-                break;
-            case Estado_cantos.ULTIMAS_10_LAS_40:
-                ganador_parcial.setPuntaje(40);
-                System.out.println("CANTA_LAS_40");
-                if(chequear_ganador()){
-                    notificarObservadores(Eventos.CANTA_LAS_40);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.ULTIMAS_10 );//AGREGADOS MIYI
-                    notificarObservadores(Eventos.GANADOR_POR_PUNTOS);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.MANO_TERMINADA);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.TERMINO_JUEGO);
-                    //notificarObservadores(Eventos.CANTA_LAS_40_ULTIMAS_10_GANADOR);
-                }
-                else{
-                    notificarObservadores(Eventos.CANTA_LAS_20);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.ULTIMAS_10);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.MANO_TERMINADA);//AGREGADOS MIYI
-                    //notificarObservadores(Eventos.ACTUALIZACION_TURNO);
-                    //notificarObservadores(Eventos.CANTA_LAS_40_ULTIMAS_10);
-                    repartir();
-                }
-                break;
-            case Estado_cantos.ULTIMAS_10_TUTE:
-                ganador_final=ganador_parcial;
-                notificarObservadores(Eventos.ULTIMAS_10);//AGREGADOS MIYI
-                notificarObservadores(Eventos.GANADOR_POR_TUTE);//AGREGADOS MIYI
-                notificarObservadores(Eventos.TERMINO_JUEGO);
-                //notificarObservadores(Eventos.GANADOR_POR_TUTE_ULTIMAS_10);
-                break;
         }
-        estado_cantos=Estado_cantos.NADA;
+        estado_cantos= Estado_ganador_baza.NADA;
     }
     public void canto_negativo() throws RemoteException {//el usuario no quiere cantar tute ni las 40 ni las 20
-        switch (estado_cantos){
-            case Estado_cantos.LAS_20, Estado_cantos.LAS_40, Estado_cantos.TUTE :
-                notificarObservadores(Eventos.MANO_TERMINADA);
-                notificarObservadores(Eventos.ACTUALIZACION_TURNO);
-                break;
-            case Estado_cantos.ULTIMAS_10_LAS_20, Estado_cantos.ULTIMAS_10_LAS_40, Estado_cantos.ULTIMAS_10_TUTE:
-                if(chequear_ganador()){
-                    notificarObservadores(Eventos.ULTIMAS_10);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.GANADOR_POR_PUNTOS);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.MANO_TERMINADA);//AGREGADOS MIYI
-                    notificarObservadores(Eventos.TERMINO_JUEGO);//TERMINO JUEGO LE PREGUNTA AL USUARIO SI QUIERE VOLVER A JUGAR, SINO SE TERMINA EL JUEGO
-                    //notificarObservadores(Eventos.ULTIMAS_10_GANADOR);
-                }
-                else{
-                    notificarObservadores(Eventos.ULTIMAS_10);
-                    notificarObservadores(Eventos.MANO_TERMINADA);//AGREGADOS MIYI
-                    //notificarObservadores(Eventos.ACTUALIZACION_TURNO);
-
-                    repartir();
-                }
-                break;
-        }
-        estado_cantos=Estado_cantos.NADA;
+        notificarObservadores(Eventos.MANO_TERMINADA);
+        notificarObservadores(Eventos.ACTUALIZACION_TURNO);
+        estado_cantos= Estado_ganador_baza.NADA;
     }
     public Boolean chequear_ganador() throws RemoteException {
         Boolean rta=false;

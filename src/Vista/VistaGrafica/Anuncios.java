@@ -270,11 +270,13 @@ public class Anuncios extends JDialog {
     private JButton universal_si;
     private JButton universal_no;
     private JButton boton_ok;
+    private JButton boton_ok_palo_triunfo;
     private JButton finalizado_si;//boton unicamente para el cartel de volver a jugar (distintos action listeners)
     private JButton finalizado_no;//boton unicamente para el cartel de volver a jugar (distintos action listeners)
     private Controlador controlador;
     private VistaPrincipal vistaPrincipal;
     private Timer timer;
+    private String palo_triunfo;
 
 
     public Anuncios(JFrame v_padre, Controlador controlador, VistaPrincipal vistaPrincipal) {
@@ -298,10 +300,11 @@ public class Anuncios extends JDialog {
         finalizado_si = new JButton("SI");
         finalizado_no = new JButton("NO");
         boton_ok = new JButton("OK");
+        boton_ok_palo_triunfo=new JButton("Volver");
         timer=new Timer(15000, e -> {
             controlador.terminar();
         });
-
+        panel_botones.add(boton_ok_palo_triunfo, SwingConstants.CENTER);
         panel_botones.add(universal_no, SwingConstants.CENTER);
         panel_botones.add(universal_si, SwingConstants.CENTER);
         panel_botones.add(finalizado_no, SwingConstants.CENTER);
@@ -318,6 +321,7 @@ public class Anuncios extends JDialog {
         finalizado_si.setEnabled(false);
         finalizado_no.setVisible(false);
         finalizado_si.setVisible(false);
+        boton_ok.setVisible(false);
         boton_ok.setEnabled(false);
         setContentPane(panel_principal);
         setVisible(false);
@@ -412,11 +416,24 @@ public class Anuncios extends JDialog {
                 }
             }
         });
+        boton_ok_palo_triunfo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+                boton_ok_palo_triunfo.setEnabled(false);
+                boton_ok_palo_triunfo.setVisible(false);
+                texto.setVisible(false);
+                panel_principal.setVisible(false);
+            }
+        });
     }
 
 
     public void ofrecer_tute() {
+        setVisible(false);
         texto.setText("TUTE");
+        boton_ok_palo_triunfo.setVisible(false);
+        boton_ok_palo_triunfo.setEnabled(false);
         setVisible(true);
         texto.setVisible(true);
         panel_principal.setVisible(true);
@@ -431,7 +448,10 @@ public class Anuncios extends JDialog {
     }
 
     public void ofrecer_las_40() {
+        setVisible(false);
         texto.setText("LAS 40");
+        boton_ok_palo_triunfo.setVisible(false);
+        boton_ok_palo_triunfo.setEnabled(false);
         setVisible(true);
         texto.setVisible(true);
         panel_principal.setVisible(true);
@@ -446,7 +466,10 @@ public class Anuncios extends JDialog {
     }
 
     public void ofrecer_las_20() {
+        setVisible(false);
         texto.setText("LAS 20");
+        boton_ok_palo_triunfo.setVisible(false);
+        boton_ok_palo_triunfo.setEnabled(false);
         setVisible(true);
         texto.setVisible(true);
         panel_principal.setVisible(true);
@@ -460,7 +483,10 @@ public class Anuncios extends JDialog {
     }
 
     public void ofrecer_termino_juego(String nombre) {
+        setVisible(false);
         texto.setText(nombre + " es el ganador. ¿Volver a jugar?");
+        boton_ok_palo_triunfo.setVisible(false);
+        boton_ok_palo_triunfo.setEnabled(false);
         setVisible(true);
         texto.setVisible(true);
         panel_principal.setVisible(true);
@@ -473,7 +499,10 @@ public class Anuncios extends JDialog {
     }
 
     public void canto_tute(String nombre) {
+        setVisible(false);
         texto.setText(nombre + " canto tute. Gano el juego!");
+        boton_ok_palo_triunfo.setVisible(false);
+        boton_ok_palo_triunfo.setEnabled(false);
         texto.setVisible(true);
         panel_botones.setVisible(true);
         panel_principal.setVisible(true);
@@ -483,7 +512,10 @@ public class Anuncios extends JDialog {
     }
 
     public void canto_las_40(String nombre) {
+        setVisible(false);
         texto.setText(nombre + " canto las 40. Suma 40 puntos!");
+        boton_ok_palo_triunfo.setVisible(false);
+        boton_ok_palo_triunfo.setEnabled(false);
         texto.setVisible(true);
         panel_botones.setVisible(true);
         panel_principal.setVisible(true);
@@ -493,7 +525,10 @@ public class Anuncios extends JDialog {
     }
 
     public void canto_las_20(String nombre) {
+        setVisible(false);
         texto.setText(nombre + " canto las 20. Suma 20 puntos!");
+        boton_ok_palo_triunfo.setVisible(false);
+        boton_ok_palo_triunfo.setEnabled(false);
         texto.setVisible(true);
         panel_botones.setVisible(true);
         panel_principal.setVisible(true);
@@ -503,7 +538,10 @@ public class Anuncios extends JDialog {
     }
 
     public void ganador_por_punts(String nombre) {
+        setVisible(false);
         texto.setText(nombre + " sumo 101 puntos o mas. Es el ganador del juego!");
+        boton_ok_palo_triunfo.setVisible(false);
+        boton_ok_palo_triunfo.setEnabled(false);
         texto.setVisible(true);
         panel_botones.setVisible(true);
         panel_principal.setVisible(true);
@@ -513,7 +551,10 @@ public class Anuncios extends JDialog {
     }
 
     public void ultimas_10(String nombre) {
+        setVisible(false);
         texto.setText(nombre + " gano la ultima baza. Suma 10 puntos!");
+        boton_ok_palo_triunfo.setVisible(false);
+        boton_ok_palo_triunfo.setEnabled(false);
         texto.setVisible(true);
         panel_botones.setVisible(true);
         panel_principal.setVisible(true);
@@ -522,9 +563,28 @@ public class Anuncios extends JDialog {
         setVisible(true);
     }
     public void terminar(String nombre_ganador) {
+        setVisible(false);
         texto.setText("El juego termino! El ganador es "+nombre_ganador);
+        boton_ok_palo_triunfo.setVisible(false);
+        boton_ok_palo_triunfo.setEnabled(false);
+
         texto.setVisible(true);
         timer.start();
         setVisible(true);
     }
+    public void set_palo_triunfo(String palo_triunfo1){
+        palo_triunfo=palo_triunfo1;
+    }
+    public void mostrar_palo_triunfo(){
+        texto.setText("El palo del triunfo es: "+palo_triunfo);
+        texto.setVisible(true);
+        boton_ok_palo_triunfo.setEnabled(true);
+        boton_ok_palo_triunfo.setVisible(true);
+        boton_ok.setVisible(false);
+        boton_ok.setEnabled(false);
+        panel_botones.setVisible(true);
+        panel_principal.setVisible(true);
+        setVisible(true);
+    }
+
 }

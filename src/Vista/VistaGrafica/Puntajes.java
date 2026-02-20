@@ -109,7 +109,7 @@ public class Puntajes extends JDialog {
         setLocationRelativeTo(null);
         panel_principal=new JPanel(new BorderLayout());
         boton_ok=new JButton("OK");
-        boton_ok_partida_en_curso=new JButton("OK");
+        boton_ok_partida_en_curso=new JButton("VOLVER");
         boton_ok.setEnabled(false);
         boton_ok.setVisible(false);
         boton_ok_partida_en_curso.setEnabled(false);
@@ -162,20 +162,22 @@ public class Puntajes extends JDialog {
                 id,
                 puntaje
         });
-        boton_ok.setVisible(true);
-        boton_ok.setEnabled(true);
+
     }
     public void actualizar_puntaje_ganador(int id, int puntaje, String nombre){
         System.out.println("actualizar_puntaje_ganador. Puntajes");
-        setVisible(false);
         setTitle(nombre + " gano la baza. Puntajes:");
         modelo_de_tabla.setValueAt(puntaje, id, 2);
-        setVisible(true);
+        if(isVisible()){
+            setVisible(false);
+            setVisible(true);
+        }
     }
     public void limpiar_puntajes(){
         modelo_de_tabla.setRowCount(0);
     }
     public void mostrarme(){
+        setVisible(false);
         boton_ok_partida_en_curso.setVisible(false);
         boton_ok_partida_en_curso.setEnabled(false);
         boton_ok.setEnabled(true);
@@ -183,8 +185,11 @@ public class Puntajes extends JDialog {
         setVisible(true);
     }
     public void mostrarme_partida_en_curso(){
-        boton_ok_partida_en_curso.setVisible(true);
-        boton_ok_partida_en_curso.setEnabled(true);
-        setVisible(true);
+        if(!boton_ok.isVisible()){
+            boton_ok_partida_en_curso.setVisible(true);
+            boton_ok_partida_en_curso.setEnabled(true);
+            setVisible(true);
+        }
+
     }
 }

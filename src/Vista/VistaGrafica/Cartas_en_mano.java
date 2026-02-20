@@ -22,7 +22,7 @@ public class Cartas_en_mano extends JFrame{
     private JPanel panel_cartas_jug;
     private JPanel panel_cartas_jug_y_botones;
     private JButton ver_puntaje;
-    private JButton palo_triunfo;
+    private JLabel palo_triunfo;
     private JPanel panel_botones_puntaje_y_triunfo;
     private int centro;
     private int este;
@@ -42,7 +42,7 @@ public class Cartas_en_mano extends JFrame{
         this.mapeoCartas=new MapeoCartasGrafica();
         this.mapeo_botones=new HashMap<>();
         this.ver_puntaje=new JButton("Ver puntajes");
-        this.palo_triunfo=new JButton("Ver palo del triunfo");
+        this.palo_triunfo=new JLabel();
         this.controlador=controlador;
         this.vistaPrincipal=vistaPrincipal;
         anuncios=new Anuncios(this,controlador,vistaPrincipal);
@@ -70,19 +70,16 @@ public class Cartas_en_mano extends JFrame{
         ver_puntaje.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                puntajes.mostrarme_partida_en_curso();//un metodo distinto que haga que se muestre un boton de OK distinto en puntajes
-                                                      //con el objetivo de que el boton de OK no haga un controlador.procesar_eventos_pendientes()
-            }
-        });
-        palo_triunfo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //anuncios.mostrar_palo_triunfo();
+                if(!puntajes.isVisible()){
+                    puntajes.mostrarme_partida_en_curso();//un metodo distinto que haga que se muestre un boton de OK distinto en puntajes
+                                                          //con el objetivo de que el boton de OK no haga un controlador.procesar_eventos_pendientes()
+                }
             }
         });
     }
-    public void iniciar_palo_triunfo(String palo_triunfo, String nombre_user){
-        setTitle("El palo del triunfo es: " + palo_triunfo+ ". Vista de: "+ nombre_user);
+    public void iniciar_palo_triunfo(String palo_triunfo1, String nombre_user){
+        setTitle("Vista de: "+ nombre_user);
+        palo_triunfo.setText("El palo del triunfo es: "+palo_triunfo1);
     }
     public void limpiar_tab(){
         puntajes.limpiar_puntajes();
