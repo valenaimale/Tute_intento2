@@ -1,18 +1,15 @@
 package Vista.VistaGrafica;
 
-import Model.Jugador;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.util.ArrayList;
 
-public class EsperandoJugadores extends JFrame{
+public class VEsperandoJugadores extends JFrame{
     private DefaultTableModel modelo_tabla;
     private JTable tabla_jugadores;
     //JPanel panel;
     private JScrollPane panel;
 
-    public EsperandoJugadores(){
+    public VEsperandoJugadores(){
         inicializar_componentes();
     }
     private void inicializar_componentes(){

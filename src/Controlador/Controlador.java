@@ -2,11 +2,9 @@ package Controlador;
 
 import Model.*;
 import Vista.IVista;
-import Vista.VistaGrafica.VistaPrincipal;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
-import javax.swing.*;
 import java.rmi.RemoteException;
 import java.util.*;
 
@@ -27,6 +25,9 @@ public class Controlador implements IControladorRemoto {
     }
 
     public void iniciar_player(String nombre) throws RemoteException {
+        if(estado_ui == Estado_UI.ESPERANDO_RESPUESTA_TERMINO_JUEGO){
+            estado_ui = Estado_UI.NORMAL;
+        }
         Jugador jugador = new Jugador(nombre);
         jugador.setId(juego.siguienteId());
         id_jugador = jugador.getId();
@@ -47,6 +48,7 @@ public class Controlador implements IControladorRemoto {
 
     public void procesar_eventos_pendientes() throws RemoteException {
         estado_ui=Estado_UI.NORMAL;
+        System.out.println("Eventos pendientes a procesar:");
         for(Eventos e: eventos_pendientes){
             System.out.println(e);
         }
@@ -71,35 +73,30 @@ public class Controlador implements IControladorRemoto {
 
     private void procesar_evento(Eventos evento) throws RemoteException {
         switch (evento){
-            case ULTIMAS_10:
+            /*case ULTIMAS_10:
                 estado_ui=Estado_UI.ESPERANDO_OK_ULTIMAS_10;
                 vista.gana_ultimas_10(juego.getGanador_parcial().getNombre());
-                break;
+                break;*/
             case GANADOR_POR_PUNTOS:
-                estado_ui=Estado_UI.ESPERANDO_OK_GANADOR;
-                vista.gana_por_puntos(juego.getGanador().getNombre());
+                estado_ui=Estado_UI.ESPERANDO_RESPUESTA_TERMINO_JUEGO;
+                vista.gana_por_puntos();
                 break;
             case MANO_TERMINADA:
                 System.out.println(Eventos.MANO_TERMINADA);
                 estado_ui=Estado_UI.ESPERANDO_OK_PUNTAJES;
                 vista.mostrar_puntajes();
                 break;
-            case TERMINO_JUEGO:
-                estado_ui=Estado_UI.ESPERANDO_RTA_TERMINO_JUEGO;
-                System.out.println("controlador termino_juego");
-                vista.cierre_juego(juego.getGanador().getNombre());
-                break;
-            case GANADOR_POR_TUTE:
+            /*case GANADOR_POR_TUTE:
                 estado_ui=Estado_UI.ESPERANDO_OK_CANTO;
-                vista.canta_tute(juego.getGanador().getNombre());
-                break;
-            case CARTAS_REPARTIDAS:
-                vista.iniciar_valores_partida(cartas_repartidas_a_mi_jugador(), juego.getPalo_triunfo().getPalo());
+                vista.canta_tute();
+                break;*/
+            /*case CARTAS_REPARTIDAS:
+                vista.iniciar_valores_partida(cartas_repartidas_a_mi_jugador(), juego.getPalo_triunfo());
                 vista.mostrar_turno(juego.getJugador_actual().getId());
                 if (juego.getJugador_actual().getId() == id_jugador) {
                     vista.setCartas_clicleables(juego.cartas_posibles());
                 }
-                break;
+                break;*/
             case ACTUALIZACION_TURNO:
                 vista.mostrar_turno(juego.getJugador_actual().getId());
                 if (juego.getJugador_actual().getId() == id_jugador) {
@@ -107,7 +104,6 @@ public class Controlador implements IControladorRemoto {
                     vista.setCartas_clicleables(juego.cartas_posibles());
                 }
                 break;
-
         }
 
     }
@@ -115,7 +111,24 @@ public class Controlador implements IControladorRemoto {
     public <T extends IObservableRemoto> void setModeloRemoto(T t) throws RemoteException {
         this.juego = (IJuego) t;
     }
+/*
+notificarObservadores(Eventos.ULTIMAS_10);
+notificarObservadores(Eventos.GANADOR_POR_PUNTOS);
+notificarObservadores(Eventos.MANO_TERMINADA);
+notificarObservadores(Eventos.TERMINO_JUEGO);
 
+
+1) JUGADOR AGREGADO -> ESTADO_UI = NORMAL
+2) COMENZAR_JUEGO -> ESTADO_UI = NORMAL
+3) CARTAS_REPARTIDAS -> ESTADO_UI = NORMAL , SE HACE CONTROLADOR.TIRA_CARTA(INT ID)
+4) CARTA_TIRADA -> ESTADO_UI = NORMAL, SE ANIADE LA CARTA TIRADA A LA MESA
+5.A) SI NO TERMINO LA JUGADA SE HACE ACTUALIZACION_TURNO -> ESTADO_UI = NORMAL, SE HACEN LAS CARTAS CLICLEABLES PARA EL JUGADOR DEL TURNO
+6.A) CARTA_TIRADA DE VUELTA -> ESTADO_UI = NORMAL
+5.B) SI TERMINO LA JUGADA Y HAY ALGO PARA CANTAR SE HACE OFRECER_CANTO -> ESTADO_UI = NORMAL, SE LE OFRECE AL JUGADOR
+6.B.1) SI DICE QUE SI EL JUGADOR SE HACE CANTA_CANTO -> ESTADO_UI = ESPERANDO_OK_CANTO, UNA VEZ APRETADO OK-> 7.B.1
+7.B.1) SE HACE PROCESAR_EVENTOS_PENDIENTES DESDE LA VISTA, EN ESTE CASO SE PROCESA MANO_TERMINADA -> ESTADO_UI = ESPERANDO_OK_PUNTAJES
+
+*/
     @Override
     public void actualizar(IObservableRemoto iObservableRemoto, Object o) throws RemoteException {
         try {
@@ -123,36 +136,38 @@ public class Controlador implements IControladorRemoto {
             switch (evento) {
                 case COMENZAR_JUEGO:
                     vista.no_mostrar_espera(juego.getJugadores().size(), id_jugador);
+                    System.out.println("Comenzar_juego. Controlador");
                     break;
                 case JUGADOR_AGREGADO:
-                    vista.limpiar_tablas();
-                    for(Jugador j:juego.getJugadores()){
-                        vista.aniadir_jugador_a_tablas(j.getId(),j.getPuntaje(), j.getNombre());
-                    }
-                    break;
-                case CARTAS_REPARTIDAS:
-                    if(estado_ui!=Estado_UI.NORMAL){
-                        eventos_pendientes.add(Eventos.CARTAS_REPARTIDAS);
-                    }
-                    else{
-                        vista.iniciar_valores_partida(cartas_repartidas_a_mi_jugador(), juego.getPalo_triunfo().getPalo());
-                        vista.mostrar_turno(juego.getJugador_actual().getId());
-                        if (juego.getJugador_actual().getId() == id_jugador) {
-                            vista.setCartas_clicleables(juego.cartas_posibles());
+                    if(estado_ui==Estado_UI.NORMAL){
+                        vista.limpiar_tablas();
+                        for(Jugador j:juego.getJugadores()){
+                            vista.aniadir_jugador_a_tablas(j.getId(),j.getPuntaje(), j.getNombre());
                         }
                     }
                     break;
+                case CARTAS_REPARTIDAS:
+                    /*if(estado_ui!=Estado_UI.NORMAL){
+                        eventos_pendientes.add(Eventos.CARTAS_REPARTIDAS);
+                    }*/
+                    //else{
+                    System.out.println("Cartas_repartidas. Controlador");
+                    vista.iniciar_valores_partida(cartas_repartidas_a_mi_jugador(), juego.getPalo_triunfo());
+                    vista.mostrar_turno(juego.getJugador_actual().getId());
+                    if (juego.getJugador_actual().getId() == id_jugador) {
+                        System.out.println("Cartas_repartidas en el controlador. Soy el jugador actual! Mi ID:"+id_jugador);
+                        vista.setCartas_clicleables(juego.cartas_posibles());
+                    }
+                    //}
+                    break;
                 case GANADOR_POR_TUTE:
+                    vista.setear_ganador(juego.getGanador().getNombre());
                     if(estado_ui!=Estado_UI.NORMAL){
                         eventos_pendientes.add(Eventos.GANADOR_POR_TUTE);
                     }
                     else{
-                        try {
-                            estado_ui=Estado_UI.ESPERANDO_OK_CANTO;
-                            vista.canta_tute(juego.getGanador().getNombre());
-                        } catch (RemoteException e) {
-                            throw new RuntimeException(e);
-                        }
+                        estado_ui=Estado_UI.ESPERANDO_RESPUESTA_TERMINO_JUEGO;
+                        vista.canta_tute();
                     }
                     break;
                 case OFRECER_LAS_40:
@@ -161,21 +176,12 @@ public class Controlador implements IControladorRemoto {
                     }
                     break;
                 case CANTA_LAS_40:
-                    try {
-                        estado_ui=Estado_UI.ESPERANDO_OK_CANTO;
-                        vista.canta_las_40(juego.getGanador_parcial().getNombre());
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
-                    }
-
+                    estado_ui=Estado_UI.ESPERANDO_OK_CANTO;
+                    vista.canta_las_40(juego.getGanador_parcial().getNombre());
                     break;
                 case CANTA_LAS_20:
-                    try {
-                        estado_ui=Estado_UI.ESPERANDO_OK_CANTO;
-                        vista.canta_las_20(juego.getGanador_parcial().getNombre());
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
-                    }
+                    estado_ui=Estado_UI.ESPERANDO_OK_CANTO;
+                    vista.canta_las_20(juego.getGanador_parcial().getNombre());
                     break;
                 case MANO_TERMINADA:
                     vista.limpiar_cartas_mesa();
@@ -200,11 +206,13 @@ public class Controlador implements IControladorRemoto {
                     }
                     break;
                 case GANADOR_POR_PUNTOS:
+                    vista.setear_ganador(juego.getGanador().getNombre());
                     if(estado_ui!=Estado_UI.NORMAL){
                         eventos_pendientes.add(Eventos.GANADOR_POR_PUNTOS);
                     }
                     else{
-                        vista.gana_por_puntos(juego.getGanador().getNombre());
+                        estado_ui = Estado_UI.ESPERANDO_RESPUESTA_TERMINO_JUEGO;
+                        vista.gana_por_puntos();
                     }
                     break;
                 case ACTUALIZACION_TURNO:
@@ -221,32 +229,26 @@ public class Controlador implements IControladorRemoto {
                     break;
                 case CARTA_TIRADA:
                     vista.agregar_carta_mano(juego.getCartas_jugadas_en_la_mano().getLast().getId(), juego.getJugador_actual().getId());
+                    System.out.println("Jugador actual: "+juego.getJugador_actual().getNombre()+". Tiro la carta con id="+juego.getCartas_jugadas_en_la_mano().getLast().getId());
                     break;
                 case ULTIMAS_10:
-                    if(estado_ui!=Estado_UI.NORMAL){
-                        eventos_pendientes.add(Eventos.ULTIMAS_10);
-                    }
-                    else{
-                        estado_ui=Estado_UI.ESPERANDO_OK_ULTIMAS_10;
-                        vista.gana_ultimas_10(juego.getGanador_parcial().getNombre());
-                    }
+                    /*if(estado_ui!=Estado_UI.NORMAL){
+                        eventos_pendientes.add(Eventos.ULTIMAS_10); -> no hay chance que haya un evento pendiente antes de cantar las ultimas_10
+                    }*/
+                    //else{
+                    estado_ui=Estado_UI.ESPERANDO_OK_ULTIMAS_10;
+                    vista.gana_ultimas_10(juego.getGanador_parcial().getNombre());
                     break;
-                case TERMINO_JUEGO:
-                    if(estado_ui!=Estado_UI.NORMAL){
-                        System.out.println("controlador termino_juego con estado_ui==normal");
-                        eventos_pendientes.add(Eventos.TERMINO_JUEGO);
-                    }
-                    else{
-                        System.out.println("controlador termino_juego");
-                        vista.cierre_juego(juego.getGanador().getNombre());
-                    }
-
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void terminar(){
+    public Object[][] getTablaRanking() throws RemoteException {
+        return juego.getTablaRanking();
+    }
+    public void terminar() throws RemoteException {
+        juego.removerObservador(this);
         System.exit(0);
     }
 
@@ -274,17 +276,13 @@ public class Controlador implements IControladorRemoto {
     OFRECER_TUTE,//CAMBIA EL ESTADO DE ESTADO_CANTO
     GANADOR_POR_TUTE,//SE ESTABLECE UN GANADOR_FINAL POR TUTE
     GANADOR_POR_TUTE_ULTIMAS_10,//SE SUMAN 10 POR GANAR LA ULTIMA BAZA Y SE ESTABLECE UN GANADOR_FINAL POR TUTE
-     */
+    */
 
     /*
     LA IDEA ES QUE CON LA COLA DE EVENTOS PENDIENTES, SE PUEDA LOGRAR QUE EL CONTROLADOR MUESTRE UN EVENTO UNO ATRAS DEL OTRO CUANDO
     CORRESPONDA SEGUN EL ESTADO EN EL QUE ESTA LA INTERFAZ GRAFICA!
     ESTO TE PERMITE QUE UNA VEZ QUE SE PRESIONA "OK" EN "Valen canto las 20. Suma 20 puntos!" EL ACTION LISTENER SEA:
     "controlador.procesar_eventos_pendientes()"
-    VAMOS VAMOS VAMOS A CORONAR!
-    SOMOS DE BOCA MUCHACHOS BUENOS EL QUE NO ES CHORRO ES CRIMINAL
-    EL MAS COBARDE MATO A SU MADRE Y EL MAS VALIENTE PARA QUE VAMOS A HABLAR
-
-     */
+    */
 
 }

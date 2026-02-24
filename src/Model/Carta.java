@@ -15,7 +15,6 @@ public class Carta implements Serializable {
         this.valor_en_juego = valor_en_juego;
         this.orden = orden;
         this.id=id;
-
     }
     public String getNombre(){
         return numero + " " + palo;

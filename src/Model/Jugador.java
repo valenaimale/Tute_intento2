@@ -1,6 +1,8 @@
 package Model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Jugador implements Serializable {
@@ -9,6 +11,7 @@ public class Jugador implements Serializable {
     private ArrayList<Carta> mazo_jugador;
     //private ArrayList<Carta> bazasGanadas;
     private int id;
+    private String fecha_ranking;
 
     public Jugador(String nombre) {
         inicializar(nombre);
@@ -18,7 +21,9 @@ public class Jugador implements Serializable {
         this.nombre=nombre;
         this.puntaje=0;
         this.mazo_jugador=new ArrayList<>();
-        //this.bazasGanadas=new ArrayList<>();
+        LocalDate fecha_actual = LocalDate.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        this.fecha_ranking = fecha_actual.format(formato);
     }
     public void setId(int id){
         this.id=id;
@@ -65,5 +70,10 @@ public class Jugador implements Serializable {
     public void setPuntaje(int incremento){
         puntaje=puntaje+incremento;
     }
+    public String getFecha_ranking(){
+        return fecha_ranking;
+    }
+
+
 
 }

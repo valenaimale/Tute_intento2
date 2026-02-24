@@ -3,7 +3,7 @@ package Cliente;
 import Controlador.Controlador;
 import Vista.IVista;
 import Vista.VistaConsola.VistaConsola;
-import Vista.VistaGrafica.VistaPrincipal;
+import Vista.VistaGrafica.VistaGrafica;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.Util;
 
@@ -69,7 +69,7 @@ public class Cliente {
         boton_grafica.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                IVista vista_grafica=new VistaPrincipal(controlador);
+                IVista vista_grafica=new VistaGrafica(controlador);
                 vista_grafica.iniciar();
                 elegir_vista.setVisible(false);
                 controlador.setVista(vista_grafica);

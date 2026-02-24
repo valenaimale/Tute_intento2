@@ -1,18 +1,13 @@
 package Vista.VistaGrafica;
 
 import Controlador.Controlador;
-import Model.Jugador;
 
 import javax.swing.*;
-import javax.swing.Timer;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 
 /*public class Puntajes extends JFrame {
@@ -84,23 +79,23 @@ import java.util.HashMap;
         modelo_de_tabla.setValueAt(puntaje, id, 2);
     }
 }*/
-public class Puntajes extends JDialog {
+public class DPuntajes extends JDialog {
     private JTable tabla_puntajes;
     private JScrollPane panel;
     private JPanel panel_principal;
     private DefaultTableModel modelo_de_tabla;
 
-    private VistaPrincipal vistaPrincipal;
+    private VistaGrafica vistaPrincipal;
     private JButton boton_ok;
     private JButton boton_ok_partida_en_curso;
     private JPanel panel_botones_ok;
     private Controlador controlador;
 
-    public Puntajes(JFrame cartas_en_mano, VistaPrincipal vistaPrincipal, Controlador controlador){
+    public DPuntajes(JFrame cartas_en_mano, VistaGrafica vistaPrincipal, Controlador controlador){
         super(cartas_en_mano, false);
         inicializar_componentes(vistaPrincipal, controlador);
     }
-    private void inicializar_componentes(VistaPrincipal vistaPrincipal, Controlador controlador) {
+    private void inicializar_componentes(VistaGrafica vistaPrincipal, Controlador controlador) {
         this.vistaPrincipal=vistaPrincipal;
         this.controlador=controlador;
         setResizable(false);//No permitir cambio de tamanio en la ventana

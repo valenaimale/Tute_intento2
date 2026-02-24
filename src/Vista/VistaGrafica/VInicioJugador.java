@@ -9,20 +9,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 
-public class VentanaInicioJugador extends JFrame {
+public class VInicioJugador extends JFrame {
     private JPanel contenedor;//lo que permite organizar los componentes (boton y nombre del usuario en la ventana)
     private JTextField nombre_usuario;//donde se va a escribir el nombre del usuaerio
     private JButton boton_confirmar;//boton de confirmacion de nombre
     private JButton volver;
     private Controlador controlador;
-    private VistaPrincipal vistaPrincipal;
+    private VistaGrafica vistaPrincipal;
 
 
 
-    public VentanaInicioJugador(VistaPrincipal vistaPrincipal, Controlador controlador){
+    public VInicioJugador(VistaGrafica vistaPrincipal, Controlador controlador){
         inicializar_comp(vistaPrincipal, controlador);
     }
-    private void inicializar_comp(VistaPrincipal vistaPrincipal, Controlador controlador){
+    private void inicializar_comp(VistaGrafica vistaPrincipal, Controlador controlador){
         this.vistaPrincipal=vistaPrincipal;
         this.controlador=controlador;
         setResizable(false);//No permitir cambio de tamanio en la ventana

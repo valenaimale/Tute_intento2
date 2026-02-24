@@ -3,7 +3,6 @@ package Vista.VistaConsola;
 import Controlador.Controlador;
 import Vista.IVista;
 import Vista.VistaConsola.Utilidad.MapeoCartasConsola;
-import Vista.VistaGrafica.VistaPrincipal;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,6 +32,7 @@ public class VistaConsola extends JFrame implements IVista {
     private JTextArea palo_triunfo;
     private JScrollPane scroll;
     private String nombre_ganador_baza;
+    private String nombre_ganador_final;
     private Timer timer;
 
     private void println_cartas(String carta){
@@ -87,7 +87,7 @@ public class VistaConsola extends JFrame implements IVista {
         puntajes.setEditable(false);
         scroll=new JScrollPane(texto_salida);
         timer=new Timer(15000, e -> {
-            controlador.terminar();
+
         });
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         panel_principal=new JPanel(new BorderLayout());
@@ -351,12 +351,12 @@ public class VistaConsola extends JFrame implements IVista {
 
     }
     @Override
-    public void canta_tute(String nombre) throws RemoteException {
+    public void canta_tute() throws RemoteException {
         //texto_salida.setText("");
         println("");
-        println(nombre+ " canto tute. Es el ganador del juego!");
-        controlador.procesar_eventos_pendientes();
-
+        println(nombre_ganador_final+ " canto tute. Es el ganador del juego!");
+        //HAY QUE MOSTRAR OPCIONES DE "VOLVER A JUGAR" Y "SALIR"
+        //controlador.procesar_eventos_pendientes();
         //texto_entrada.setVisible(true);
         //panel_escritura.setVisible(true);
 
@@ -373,9 +373,10 @@ public class VistaConsola extends JFrame implements IVista {
 
     }
     @Override
-    public void gana_por_puntos(String nombre) throws RemoteException {
-        println(nombre + " sumo 101 puntos o mas. Es el ganador del juego!");
-        controlador.procesar_eventos_pendientes();
+    public void gana_por_puntos() throws RemoteException {
+        println(nombre_ganador_final + " sumo 101 puntos o mas. Es el ganador del juego!");
+        //HAY QUE MOSTRAR OPCIONES DE "VOLVER A JUGAR" Y "SALIR"
+        //controlador.procesar_eventos_pendientes();
         //texto_entrada.setVisible(true);
         //panel_escritura.setVisible(true);
 
@@ -422,6 +423,11 @@ public class VistaConsola extends JFrame implements IVista {
         println("Turno de "+id_nombre.get(id));
     }
 
+    @Override
+    public void setear_ganador(String nombre) {
+        nombre_ganador_final=nombre;
+    }
+
 
     public void print(String cadena){
         texto_salida.append(cadena);
@@ -429,6 +435,7 @@ public class VistaConsola extends JFrame implements IVista {
     public void println(String cadena){
         print(cadena + "\n");
     }
+
 
     private void mostrar_como_jugar(){
 

@@ -18,11 +18,11 @@ public interface IVista {
 
     public void canta_las_40(String nombre) throws RemoteException;
     public void canta_las_20(String nombre) throws RemoteException;
-    public void canta_tute(String nombre) throws RemoteException;
+    public void canta_tute() throws RemoteException;
 
     public void gana_ultimas_10(String nombre) throws RemoteException;
 
-    public void gana_por_puntos(String nombre) throws RemoteException;
+    public void gana_por_puntos() throws RemoteException;
 
     public void limpiar_cartas_mesa();
 
@@ -31,4 +31,5 @@ public interface IVista {
     public void mostrar_puntajes() throws RemoteException;
     public void cierre_juego(String nombre_ganador);
     public void mostrar_turno(int id);
+    public void setear_ganador(String nombre);
 }

@@ -57,5 +57,7 @@ public class Crupier {
         }
         return carta_palo_triunfo;
     }
-
+    public void setMazo1(Mazo mazo1){
+        this.mazo1=mazo1;
+    }
 }
