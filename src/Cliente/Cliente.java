@@ -51,6 +51,8 @@ public class Cliente {
         );
         Controlador controlador=new Controlador();
         JFrame elegir_vista= new JFrame("TUTE");
+        elegir_vista.setSize(250, 150);
+        elegir_vista.setLocationRelativeTo(null);
         JPanel jPanel=new JPanel(new BorderLayout());
         JPanel panel_botones=new JPanel(new FlowLayout());
         JButton boton_grafica=new JButton("Grafica");
@@ -63,7 +65,6 @@ public class Cliente {
         eleccion.setHorizontalAlignment(SwingConstants.CENTER);
         eleccion.setVerticalAlignment(SwingConstants.CENTER);
         elegir_vista.setContentPane(jPanel);
-        elegir_vista.setBounds(100,100, 400, 100);
         elegir_vista.setVisible(true);
 
         boton_grafica.addActionListener(new ActionListener() {

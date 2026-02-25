@@ -33,44 +33,9 @@ public class VistaConsola extends JFrame implements IVista {
     private JScrollPane scroll;
     private String nombre_ganador_baza;
     private String nombre_ganador_final;
-    private Timer timer;
-
-    private void println_cartas(String carta){
-        cartas.append(carta +"\n");
-    }
-    private void mostrar_cartas(){
-        cartas.setText("");
-        println_cartas("Tus cartas:");
-        for (Integer i:indicecarta_idcarta.keySet()){
-            println_cartas(i+"- "+mapeoCartasConsola.obtener_carta(indicecarta_idcarta.get(i)));
-        }
-    }
-    private void println_puntajes(String puntaje){
-        puntajes.append(puntaje+"\n");
+    private String nombre_jugador;//jugador de esta vista
 
 
-    }
-    private void mostrar_puntajes_permanentes(){
-        puntajes.setText("");
-        println_puntajes("Puntajes:");
-        for(Integer i: id_puntaje.keySet()){
-            println_puntajes("-NOMBRE:"+ id_nombre.get(i)+ "  -ID:"+i+"  -PUNTAJE:"+id_puntaje.get(i));
-        }
-    }
-    private void mostrar_palo_triunfo(String palo_triunf){
-        palo_triunfo.setText("");
-        palo_triunfo.append("Palo del triunfo:\n");
-        palo_triunfo.append(palo_triunf);
-    }
-    private void actualizar_indices(){
-        HashMap<Integer,Integer> indices_ids=new HashMap<>(indicecarta_idcarta);
-        indicecarta_idcarta.clear();
-        int contador=1;
-        for(Integer i:indices_ids.keySet()){
-            indicecarta_idcarta.put(contador,indices_ids.get(i));
-            contador++;
-        }
-    }
     public VistaConsola (Controlador controlador){
         inicializar(controlador);
     }
@@ -86,9 +51,6 @@ public class VistaConsola extends JFrame implements IVista {
         palo_triunfo.setEditable(false);
         puntajes.setEditable(false);
         scroll=new JScrollPane(texto_salida);
-        timer=new Timer(15000, e -> {
-
-        });
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         panel_principal=new JPanel(new BorderLayout());
         panel_escritura=new JPanel(new BorderLayout());
@@ -109,7 +71,8 @@ public class VistaConsola extends JFrame implements IVista {
         panel_principal.add(panel_escritura,BorderLayout.SOUTH);
         panel_principal.add(panel_este,BorderLayout.EAST);
         setContentPane(panel_principal);
-        setBounds(100,100,900, 500);
+        setSize(900, 500);
+        setLocationRelativeTo(null);
         texto_entrada.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -126,11 +89,13 @@ public class VistaConsola extends JFrame implements IVista {
         switch (estado){
             case EstadoConsola.MENU_PRINCIPAL:
                 texto_salida.setText("");
-                procesar_inicio(cadena);
+                procesar_menu_principal(cadena);
                 break;
             case EstadoConsola.MOSTRAR_INICIO:
                 panel_escritura.setVisible(false);
                 estado=EstadoConsola.ESPERANDO_JUGADORES;
+                nombre_jugador = cadena;
+                setTitle("Vista de:"+ nombre_jugador);
                 controlador.iniciar_player(cadena);
                 break;
             case EstadoConsola.TURNO_ACTUAL:
@@ -139,12 +104,12 @@ public class VistaConsola extends JFrame implements IVista {
             case EstadoConsola.OFRECER_CANTO:
                 procesar_respuesta_a_canto(cadena);
                 break;
-            /*case EstadoConsola.RESPUESTA_ANUNCIO:
-                //texto_entrada.setVisible(false);
-                panel_escritura.setVisible(false);
-                texto_salida.setText("");
-                controlador.procesar_eventos_pendientes();
-                break;*/
+            case EstadoConsola.RESPUESTA_TERMINO:
+                procesar_respuesta_termino(cadena);
+                break;
+            case EstadoConsola.MOSTRANDO_RANKING_COMO_JUGAR:
+                procesar_respuesta_ranking_como_jugar(cadena);
+                break;
         }
     }
     @Override
@@ -155,11 +120,14 @@ public class VistaConsola extends JFrame implements IVista {
 
     }
     private void mostrar_menu_principal(){
+        setTitle("MENU PRINCIPAL");
+        texto_salida.setText("");
         println("Seleccione una de estas opciones ingresando el numero junto a las mismas y luego presionando enter:");
         println("1 - Jugar");
         println("2 - Como jugar");
+        println("3 - Ver ranking");
     }
-    private void procesar_inicio(String cadena){
+    private void procesar_menu_principal(String cadena) throws RemoteException {
         switch (cadena){
             case "1":
                 mostrar_inicio();
@@ -167,16 +135,44 @@ public class VistaConsola extends JFrame implements IVista {
             case "2":
                 mostrar_como_jugar();
                 break;
+            case "3":
+                mostrar_ranking();
+                break;
             default:
                 println("Opcion no valida!");
                 mostrar_menu_principal();
                 break;
         }
     }
-    public void mostrar_inicio(){
+    private void mostrar_ranking() throws RemoteException {
+        estado=EstadoConsola.MOSTRANDO_RANKING_COMO_JUGAR;
+        Object[][] tabla= controlador.getTablaRanking();
+        setTitle("RANKING");
+        println("Ranking historico de ganadores:");
+        for(Object[] fila: tabla){
+            print("-Nombre:"+fila[0]+"  ");
+            print("-Puntaje ganador:"+fila[1]+"  ");
+            println("-Fecha:"+fila[2]);
+        }
+        println("Ingrese 1 para volver al menu principal y luego presione enter!");
+
+    }
+    private void procesar_respuesta_ranking_como_jugar(String cadena){
+        switch (cadena){
+            case "1":
+                estado=EstadoConsola.MENU_PRINCIPAL;
+                mostrar_menu_principal();
+                break;
+            default:
+                println("Caracter incorrecto, por favor ingrese 1 para volver al menu principal");
+                break;
+        }
+    }
+    private void mostrar_inicio(){
         estado=EstadoConsola.MOSTRAR_INICIO;
         print("Ingrese su nombre para comenzar a jugar: ");
     }
+
     @Override
     public void limpiar_tablas() {
         id_puntaje.clear();
@@ -218,7 +214,6 @@ public class VistaConsola extends JFrame implements IVista {
         mostrar_cartas();
         mostrar_puntajes_permanentes();
         mostrar_palo_triunfo(palo_triunfo);
-
     }
     @Override
     public void setCartas_clicleables(ArrayList<Integer> ids_posibles) {
@@ -271,12 +266,12 @@ public class VistaConsola extends JFrame implements IVista {
                 mostrar_cartas();
             }
             else{
-                println("Indice no disponible. Seleccione uno disponible:");
+                println("Indice no disponible. Seleccione uno disponible y luego presione enter:");
                 mostrar_clicleables();
             }
 
         } catch (NumberFormatException e) {
-            println("Entrada inválida. Ingrese un número:");
+            println("Entrada inválida. Ingrese un número disponible y luego presione enter:");
             mostrar_clicleables();
         }
     }
@@ -327,7 +322,8 @@ public class VistaConsola extends JFrame implements IVista {
                 controlador.eleccion_no();
                 break;
             default:
-                println("Caracter incorrecto, por favor ingrese 1 para cantar o 2 para no cantar!");
+                println("Caracter incorrecto, por favor ingrese 1 para cantar o 2 para no cantar y luego presione enter!");
+                break;
         }
     }
     @Override
@@ -353,8 +349,11 @@ public class VistaConsola extends JFrame implements IVista {
     @Override
     public void canta_tute() throws RemoteException {
         //texto_salida.setText("");
+        estado = EstadoConsola.RESPUESTA_TERMINO;
         println("");
-        println(nombre_ganador_final+ " canto tute. Es el ganador del juego!");
+        println(nombre_ganador_final+ " canto tute. Gano el juego!");
+        println("Ingrese 1 para volver a jugar o 2 para salir!");
+        panel_escritura.setVisible(true);
         //HAY QUE MOSTRAR OPCIONES DE "VOLVER A JUGAR" Y "SALIR"
         //controlador.procesar_eventos_pendientes();
         //texto_entrada.setVisible(true);
@@ -374,7 +373,11 @@ public class VistaConsola extends JFrame implements IVista {
     }
     @Override
     public void gana_por_puntos() throws RemoteException {
-        println(nombre_ganador_final + " sumo 101 puntos o mas. Es el ganador del juego!");
+        estado = EstadoConsola.RESPUESTA_TERMINO;
+        println("");
+        println(nombre_ganador_final + " sumo 101 puntos o mas. Gano el juego!");
+        println("Ingrese 1 para volver a jugar o 2 para salir y luego presione enter!");
+        panel_escritura.setVisible(true);
         //HAY QUE MOSTRAR OPCIONES DE "VOLVER A JUGAR" Y "SALIR"
         //controlador.procesar_eventos_pendientes();
         //texto_entrada.setVisible(true);
@@ -405,7 +408,6 @@ public class VistaConsola extends JFrame implements IVista {
             println("-NOMBRE:"+ id_nombre.get(i)+ "  -ID:"+i+"  -PUNTAJE:"+id_puntaje.get(i));
         }
         controlador.procesar_eventos_pendientes();
-        println("Comienza la baza");//probar a ver si cuando termina la partida, no se ejecuta
         mostrar_cartas();
         //texto_entrada.setVisible(true);
         //panel_escritura.setVisible(true);
@@ -413,47 +415,168 @@ public class VistaConsola extends JFrame implements IVista {
     }
 
     @Override
-    public void cierre_juego(String nombre_ganador) {
-        println("El juego termino! El ganador es "+nombre_ganador);
-        timer.start();
-    }
-
-    @Override
     public void mostrar_turno(int id) {
         println("Turno de "+id_nombre.get(id));
     }
-
     @Override
     public void setear_ganador(String nombre) {
         nombre_ganador_final=nombre;
     }
+    private void procesar_respuesta_termino(String cadena) throws RemoteException {
+        switch (cadena){
+            case "1":
+                estado=EstadoConsola.ESPERANDO_JUGADORES;
+                reiniciar_palo_triunfo();
+                reiniciar_puntajes_permanenetes();
+                panel_escritura.setVisible(false);
+                controlador.iniciar_player(nombre_jugador);
+                break;
+            case "2":
+                controlador.terminar();
+                break;
+            default:
+                println("Caracter incorrecto, por favor ingrese 1 para volver a jugar o 2 para salir!");
+                break;
+        }
+    }
+    private void mostrar_como_jugar(){
+        estado=EstadoConsola.MOSTRANDO_RANKING_COMO_JUGAR;
+        setTitle("GUIA COMO JUGAR AL TUTE");
+        println("Bienvenido al Tute, esta es una guia sobre como jugar al Tute de a 4 jugadores!");
+        println("---------------------");
+        println("El objetivo del juego es sumar la mayor cantidad de puntos mediante bazas ganadas y los cantos.");
+        println("---------------------");
+        println("¿Que es una baza?");
+        println("");
+        println("Se denomina baza a cada ronda en la cual cada jugador tira obligatoriamente una sola carta. Cuando todos tiran, el ganador de la misma se lleva esas cartas para contar y sumar los puntos.");
+        println("---------------------");
+        println("Preparacion y reparto:");
+        println("");
+        println("-Se usa la baraja española de 40 cartas (sin ochos ni nueves).");
+        println("-Se reparten todas las cartas, es decir, cada jugador recibe 10 cartas.");
+        println("-El palo de la ultima carta repartida, es el que va a ser el 'palo del triunfo' hasta que se vuelva a repartir una proxima vez.");
+        println("---------------------");
+        println("Valor de las cartas:");
+        println("");
+        println("Para saber quien es el ganador, se deben sumar los puntos de las cartas de las bazas que haya ganado cada jugador.");
+        println("Las cartas tienen un valor en puntos, una vez obtenida una baza. Tambien, tienen un orden al momento de tirar (que carta mata a la otra).");
+        println("Valor de las cartas en puntos donde la que esta mas arriba 'mata' la que esta mas abajo:");
+        println("1 -> 11 puntos");
+        println("3 -> 10 puntos");
+        println("12 -> 4 puntos");
+        println("11 -> 3 puntos");
+        println("10 -> 2 puntos");
+        println("7 -> 0 puntos");
+        println("6 -> 0 puntos");
+        println("5 -> 0 puntos");
+        println("4 -> 0 puntos");
+        println("2 -> 0 puntos");
+        println("");
+        println("---------------------");
+        println("Ultima baza:");
+        println("");
+        println("El ganador de la ultima baza, es decir, antes que los jugadores se queden sin cartas por tirar, se lleva 10 puntos adicionales solo por ganarla.");
+        println("---------------------");
+        println("Reglas al tirar:");
+        println("");
+        println("Existen ciertas reglas estrictas que respetar al tirar una carta:");
+        println("Caso en el cual la primer carta tirada en la baza NO es del palo del triunfo:");
+        println("-Si el primer jugador tira oro, tenes que tirar oro.");
+        println("-Si no tenes oro, estas obligado a tirar una carta del palo del triunfo. Si tampoco tenes del palo del triunfo, podes tirar cualquiera (perdes automaticamente la baza).");
+        println("-Si un jugador anterior a vos ya tiro una carta del palo del triunfo porque no tenia oro, y vos tampoco tenes oro, estas obligado a tirar una carta del palo del triunfo mas alta que la carta del palo del triunfo que tiro el jugador anterior. Si no tenes una mas alta, podes tirar cualquier carta (perdes automaticamente la baza).");
+        println("---------------------");
+        println("Ejemplo de este caso, donde el palo del triunfo es copa:");
+        println("JUGADOR 1-> 5 DE ORO");
+        println("JUGADOR 2-> 4 DE ORO");
+        println("JUGADOR 3-> 5 DE COPA (no tiene de oro)");
+        println("JUGADOR 4-> 6 DE COPA (no tiene de oro y esta obligado a superar al 5 de copa)");
+        println("---------------------");
+        println("Caso en el cual la primer carta tirada en la baza es del palo del triunfo:");
+        println("-Si el primer jugador tira una carta del palo del triunfo, los demas jugadores estan obligados a superar la mas alta que se haya tirado.");
+        println("-Si no podes superar a la mas alta que se haya tirado, podes tirar cualquier carta (perdes automaticamente la baza).");
+        println("Ejemplo de este caso, donde el palo del triunfo es copa:");
+        println("JUGADOR 1-> 5 DE COPA");
+        println("JUGADOR 2-> 7 DE COPA (esta obligado a superarla)");
+        println("JUGADOR 3-> 12 DE COPA (esta obligado a superarla)");
+        println("JUGADOR 4-> 6 DE BASTO (al no tener una mayor al 12 y que, ademas, sea de copa, tira cualquiera)");
+        println("---------------------");
+        println("El jugador que comienza la baza puede tirar cualquier carta.");
+        println("---------------------");
+        println("¿Quien gana la baza?");
+        println("");
+        println("-Si no se jugo ninguna carta del palo del triunfo, el ganador es aquel que haya tirado la carta mas alta del palo de la primer carta tirada en la misma.");
+        println("-Si se jugo una carta del palo del triunfo, el ganador es aquel que haya tirado la carta mas alta del palo del triunfo.");
+        println("---------------------");
+        println("Orden de tirada:");
+        println("");
+        println("La baza la comienza el jugador que gano la anterior baza, siguiendo el que se encuentra a su derecha hasta que todos tiren una carta.");
+        println("---------------------");
+        println("Cantos:");
+        println("");
+        println("Unicamente el ganador de la baza puede realizar un canto, los mismos son los siguientes:");
+        println("-LAS 20-> el ganador de la baza debe tener en su mazo un 11 y un 12 del mismo palo, que no sea del palo del triunfo. Al cantarla suma 20 puntos.");
+        println("-LAS 40-> el ganador de la baza debe tener en su mazo un 11 y un 12 del mismo palo que el del triunfo. Al cantarla suma 40 puntos.");
+        println("-TUTE-> el ganador de la baza debe tener en su mazo los cuatro 11 o los cuatro 12. Al cantarlo gana el juego.");
+        println("---------------------");
+        println("¿Quien gana el juego?");
+        println("");
+        println("-Aquel jugador que cante tute.");
+        println("-Aquel jugador que, una vez que todos los jugadores tiraron sus cartas, tiene 101 puntos o mas superando a cualquiera de sus contrincantes. Es decir, si el jugador A tiene 114 y el jugador B tiene 105, el ganador es el jugador A. Si dos jugadores tienen 105 puntos, por ejemplo, se vuelve a repartir. Si ningun jugador tiene 101 puntos o mas, se vuelve a repartir.");
+        println("---------------------");
+        println("---------------------");
+        println("Ingrese 1 para volver al menu principal y luego presione enter!");
+    }
+    //METODOS AUXILIARES
+    private void println_cartas(String carta){
+        cartas.append(carta +"\n");
+    }
+    private void mostrar_cartas(){
+        cartas.setText("");
+        println_cartas("Tus cartas:");
+        for (Integer i:indicecarta_idcarta.keySet()){
+            println_cartas(i+"- "+mapeoCartasConsola.obtener_carta(indicecarta_idcarta.get(i)));
+        }
+        panel_principal.revalidate();
+    }
+    private void println_puntajes(String puntaje){
+        puntajes.append(puntaje+"\n");
+    }
+    private void mostrar_puntajes_permanentes(){
+        puntajes.setText("");
+        println_puntajes("Puntajes:");
+        for(Integer i: id_puntaje.keySet()){
+            println_puntajes("-NOMBRE:"+ id_nombre.get(i)+ "  -ID:"+i+"  -PUNTAJE:"+id_puntaje.get(i));
+        }
+        panel_principal.revalidate();
+    }
+    private void reiniciar_puntajes_permanenetes(){
+        puntajes.setText("Puntajes:\n");
+        panel_principal.revalidate();
 
-
+    }
+    private void mostrar_palo_triunfo(String palo_triunf){
+        palo_triunfo.setText("");
+        palo_triunfo.append("Palo del triunfo:\n");
+        palo_triunfo.append(palo_triunf);
+        panel_principal.revalidate();
+    }
+    private void reiniciar_palo_triunfo(){
+        palo_triunfo.setText("Palo del triunfo:\n");
+        panel_principal.revalidate();
+    }
+    private void actualizar_indices(){
+        HashMap<Integer,Integer> indices_ids=new HashMap<>(indicecarta_idcarta);
+        indicecarta_idcarta.clear();
+        int contador=1;
+        for(Integer i:indices_ids.keySet()){
+            indicecarta_idcarta.put(contador,indices_ids.get(i));
+            contador++;
+        }
+    }
     public void print(String cadena){
         texto_salida.append(cadena);
     }
     public void println(String cadena){
         print(cadena + "\n");
     }
-
-
-    private void mostrar_como_jugar(){
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

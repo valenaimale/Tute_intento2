@@ -17,7 +17,6 @@ public class Jugada {//tendria la responsabilidad de la jugada literalmente, act
         palo_triunfo=null;
         mi_actual=null;
         mi_ganador=null;
-        //mis_jugadores.clear();//aunque ya hizo .clear el juego, tambien se deberia borrar aca
     }
     private void inicializar(ArrayList<Jugador> mis_jugadores){
         this.mis_jugadores=mis_jugadores;

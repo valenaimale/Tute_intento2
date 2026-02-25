@@ -21,6 +21,7 @@ public class VRanking extends JFrame{
     }
     private void inicializar(VistaGrafica vista_padre){
         setTitle("Ranking historico de ganadores");
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//que pasa al cerrar la ventana
         this.vista_padre = vista_padre;
         panel = new JPanel(new BorderLayout());
         volver = new JButton("Volver");
@@ -45,6 +46,8 @@ public class VRanking extends JFrame{
         panel.add(scroll, BorderLayout.CENTER);
         panel.add(volver, BorderLayout.SOUTH);
         setContentPane(panel);
+        setSize(900, 500);
+        setLocationRelativeTo(null);
     }
     public void cargarDatos(Object[][] datosRanking){
         String[] columnas = {"Nombre", "Puntaje ganador","Fecha"};

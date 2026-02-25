@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class AdministradorRanking {
-    private final String archivo = "Datos.dat"; //archivo donde guardamos el ranking
+    private final String archivo = "Ranking.dat"; //archivo donde guardamos el ranking
 
     public void guardarRanking(ArrayList<Jugador> jugadores) {
         try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(this.archivo))) { //abre el archivo en modo append. crea un objectputputstream. serializo el objeto y lo  guardo en el archivo

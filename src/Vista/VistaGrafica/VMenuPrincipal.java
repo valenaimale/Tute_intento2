@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 
-public class VMenu_principal extends JFrame {
+public class VMenuPrincipal extends JFrame {
     private JPanel panel;
     private JButton jugar;
     private JButton como_jugar;
@@ -18,14 +18,14 @@ public class VMenu_principal extends JFrame {
     private Controlador controlador;
     private VistaGrafica vistaPrincipal;
 
-    public VMenu_principal(Controlador controlador, VistaGrafica vistaPrincipal){
+    public VMenuPrincipal(Controlador controlador, VistaGrafica vistaPrincipal){
         inicializar_comp(controlador, vistaPrincipal);
     }
     private void inicializar_comp(Controlador controlador, VistaGrafica vistaPrincipal){
         this.controlador=controlador;
         this.vistaPrincipal=vistaPrincipal;
         setResizable(false);//No permitir cambio de tamanio en la ventana
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//que pasa al cerrar la ventana
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//que pasa al cerrar la ventana
         setBounds(100, 100, 450, 109);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
         setLocationRelativeTo(null);
         panel=new JPanel();
@@ -60,6 +60,13 @@ public class VMenu_principal extends JFrame {
                 } catch (RemoteException ex) {
                     throw new RuntimeException(ex);
                 }
+            }
+        });
+        como_jugar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+                vistaPrincipal.mostrar_como_jugar();
             }
         });
     }

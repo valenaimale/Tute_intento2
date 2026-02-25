@@ -100,7 +100,7 @@ public class DPuntajes extends JDialog {
         this.controlador=controlador;
         setResizable(false);//No permitir cambio de tamanio en la ventana
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//que pasa al cerrar la ventana
-        setBounds(100, 100, 500, 500);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
+        setSize(500, 500);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
         setLocationRelativeTo(null);
         panel_principal=new JPanel(new BorderLayout());
         boton_ok=new JButton("OK");

@@ -8,13 +8,13 @@ import java.util.ArrayList;
 
 public class VistaGrafica implements IVista {
     private Controlador controlador;
-    private VMenu_principal ventana_menu_principal;
+    private VMenuPrincipal ventana_menu_principal;
     private VInicioJugador ventana_inicio_jugador;
     private VEsperandoJugadores ventana_esperando;
     private VPartida ventana_partida;
     private VRanking ventana_ranking;
-    //private Anuncios anuncios;
-    //private Puntajes puntajes;
+    private VComoJugar vComoJugar;
+
 
     public VistaGrafica(Controlador controlador){
         this.controlador=controlador;
@@ -23,12 +23,11 @@ public class VistaGrafica implements IVista {
     @Override
     public void iniciar(){
         ventana_inicio_jugador =new VInicioJugador(this, controlador);
-        ventana_menu_principal =new VMenu_principal(controlador, this);
+        ventana_menu_principal =new VMenuPrincipal(controlador, this);
         ventana_esperando = new VEsperandoJugadores();
         ventana_partida = new VPartida(controlador, this);
         ventana_ranking = new VRanking(this);
-        //anuncios=new Anuncios(controlador,this); //IMPLEMENTACION SIN JDIALOG
-        //puntajes=new Puntajes(this, controlador);//IMPLEMENTACION SIN JDIALOG
+        vComoJugar = new VComoJugar(this);
         mostrar_menu_principal();
     }
     public void mostrar_menu_principal(){
@@ -37,7 +36,9 @@ public class VistaGrafica implements IVista {
     public void mostrar_inicio(){
         ventana_inicio_jugador.setVisible(true);
     }
-
+    public void mostrar_como_jugar(){
+        vComoJugar.setVisible(true);
+    }
     public void no_mostrar_mano(){
         ventana_partida.setVisible(false);
     }
@@ -133,11 +134,6 @@ public class VistaGrafica implements IVista {
     @Override
     public void mostrar_puntajes() {
         ventana_partida.mostrar_los_puntajes();
-    }
-
-    @Override
-    public void cierre_juego(String nombre_ganador) {
-        ventana_partida.anuncio_cerrar(nombre_ganador);
     }
     @Override
     public void mostrar_turno(int id){

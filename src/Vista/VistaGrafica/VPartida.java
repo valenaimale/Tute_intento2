@@ -28,11 +28,9 @@ public class VPartida extends JFrame{
     private int este;
     private int norte;
     private int oeste;
-
     private DAnuncios anuncios;
     private DPuntajes puntajes;
-    //desde el modelo lo unico que tengo es la carta no el boton presionado. Si no tengo el ultimo boton presionado
-    // no se a que boton corresponde la carta
+
 
 
     public VPartida(Controlador controlador, VistaGrafica vistaPrincipal){
@@ -47,7 +45,7 @@ public class VPartida extends JFrame{
         this.vistaPrincipal=vistaPrincipal;
         anuncios=new DAnuncios(this,controlador,vistaPrincipal);
         puntajes=new DPuntajes(this,vistaPrincipal, controlador);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//que pasa al cerrar la ventana
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//que pasa al cerrar la ventana
         setBounds(50, 50, 1400, 1200);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
         setLocationRelativeTo(null);
         ImageIcon fondo_i = new ImageIcon("src/Imagenes_cartas/MESA.png");
@@ -139,7 +137,6 @@ public class VPartida extends JFrame{
             carta_mano.setVisible(true);
             fondo.add(carta_mano,BorderLayout.NORTH);
             fondo.revalidate();
-
         }
         else if(id_jugador==oeste){
             carta_mano.setVisible(true);
@@ -174,7 +171,6 @@ public class VPartida extends JFrame{
                 }
             }
         }
-
     }
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

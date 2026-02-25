@@ -9,7 +9,7 @@ public class Jugador implements Serializable {
     private String nombre;
     private int puntaje;
     private ArrayList<Carta> mazo_jugador;
-    //private ArrayList<Carta> bazasGanadas;
+
     private int id;
     private String fecha_ranking;
 
@@ -57,19 +57,7 @@ public class Jugador implements Serializable {
         this.puntaje+=puntaje;
     }
 
-   /* public ArrayList<Carta> getBazasGanadas() {
-        return bazasGanadas;
-    }
 
-
-    public void setBazasGanadas(ArrayList<Carta> bazaGanadas) {
-        for(Carta carta:bazaGanadas){
-            bazasGanadas.add(carta);
-        }
-    }*/
-    public void setPuntaje(int incremento){
-        puntaje=puntaje+incremento;
-    }
     public String getFecha_ranking(){
         return fecha_ranking;
     }

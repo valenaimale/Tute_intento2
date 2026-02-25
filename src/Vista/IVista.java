@@ -4,7 +4,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 public interface IVista {
-    public void mostrar_inicio();
     public void aniadir_jugador_a_tablas(int id, int puntaje, String nombre);
     public void iniciar();
     public void no_mostrar_espera(int cantidad_jugadores, int id_jugador);
@@ -29,7 +28,6 @@ public interface IVista {
     public void actualizar_puntaje(int id, int puntaje, String nombre);
 
     public void mostrar_puntajes() throws RemoteException;
-    public void cierre_juego(String nombre_ganador);
     public void mostrar_turno(int id);
     public void setear_ganador(String nombre);
 }

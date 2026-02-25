@@ -73,14 +73,6 @@ public class ResolutorJugada { //tiene la responsabilidad de encargarse de todo 
             }
         }
     }
-    //el juego tendria que hacer switch(resolutor.getEstado_ganador_baza){
-    // case: LAS_20
-    // ETC
-    // ETC
-    //
-    //
-    // }
-    //RESOLUTOR SE TIENE QUE ENCARGAR DE RENOVAR EL MAZO CUANDO ESTA VACIO!
     public void actualizar_puntaje(ArrayList<Carta> baza_ganada){
         int puntos_sumados=determinar_tantos(baza_ganada);
         ganador_baza.incrementar_puntaje(puntos_sumados);
@@ -120,13 +112,13 @@ public class ResolutorJugada { //tiene la responsabilidad de encargarse de todo 
     }
     private Boolean tute(ArrayList<Integer> ids){
         Boolean tute=false;
-        if(ids.contains(10) && ids.contains(20) && ids.contains(30) && ids.contains(40)){
+        if((ids.contains(10) && ids.contains(20) && ids.contains(30) && ids.contains(40)) || (ids.contains(9) && ids.contains(19) && ids.contains(29) && ids.contains(39))){
             tute=true;
         }
         return tute;
     }
     public void agregar_carta_mazo(Carta carta){
-        mazo.getMazo().add(carta);
+        mazo.setMazo(carta);
     }
 
     public Boolean chequear_si_hay_ganador(ArrayList<Jugador> jugadors){
@@ -134,6 +126,7 @@ public class ResolutorJugada { //tiene la responsabilidad de encargarse de todo 
         int puntajeGanador=0;
         for(Jugador jugador:jugadors){
             if(jugador.getPuntaje()>puntajeGanador && jugador.getPuntaje()>101){
+                puntajeGanador=jugador.getPuntaje();
                 rta=true;
             }
             else if(jugador.getPuntaje()==puntajeGanador){
@@ -152,7 +145,6 @@ public class ResolutorJugada { //tiene la responsabilidad de encargarse de todo 
             }
         }
         System.out.println("Ganador final: "+ganador_final.getNombre());
-
     }
 
     public Estado_ganador_baza getEstado_ganador_baza() {

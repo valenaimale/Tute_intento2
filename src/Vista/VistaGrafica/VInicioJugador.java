@@ -10,9 +10,9 @@ import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 
 public class VInicioJugador extends JFrame {
-    private JPanel contenedor;//lo que permite organizar los componentes (boton y nombre del usuario en la ventana)
-    private JTextField nombre_usuario;//donde se va a escribir el nombre del usuaerio
-    private JButton boton_confirmar;//boton de confirmacion de nombre
+    private JPanel contenedor;
+    private JTextField nombre_usuario;
+    private JButton boton_confirmar;
     private JButton volver;
     private Controlador controlador;
     private VistaGrafica vistaPrincipal;
@@ -25,25 +25,25 @@ public class VInicioJugador extends JFrame {
     private void inicializar_comp(VistaGrafica vistaPrincipal, Controlador controlador){
         this.vistaPrincipal=vistaPrincipal;
         this.controlador=controlador;
-        setResizable(false);//No permitir cambio de tamanio en la ventana
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//que pasa al cerrar la ventana
-        setBounds(100, 100, 247, 109);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
+        setResizable(false);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        setBounds(100, 100, 247, 109);
         setLocationRelativeTo(null);
         contenedor=new JPanel();
-        contenedor.setBorder(new EmptyBorder(5, 5, 5, 5)); //tamanio de los bordes
-        setContentPane(contenedor);//define el panel principal
+        contenedor.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setContentPane(contenedor);
         BorderLayout layout = new BorderLayout();
-        contenedor.setLayout(layout);//define la distribucion
-        JLabel lblUsuario = new JLabel("Usuario");//es un cartel o etiqueta no editable, solo muestra
-        contenedor.add(lblUsuario, BorderLayout.WEST);//aniade el componente de JLabel con una restriccion
-        nombre_usuario = new JTextField();//campo de texto de una sola linea
-        contenedor.add(nombre_usuario,BorderLayout.CENTER);//aniade el componente JTextField con una restriccion
-        nombre_usuario.setColumns(10);//tamanio del JTextField
+        contenedor.setLayout(layout);
+        JLabel lblUsuario = new JLabel("Usuario");
+        contenedor.add(lblUsuario, BorderLayout.WEST);
+        nombre_usuario = new JTextField();
+        contenedor.add(nombre_usuario,BorderLayout.CENTER);
+        nombre_usuario.setColumns(10);
         boton_confirmar = new JButton("Confirmar");
-        contenedor.add(boton_confirmar, BorderLayout.EAST);//aniade el JBoton junto con la restriccion
+        contenedor.add(boton_confirmar, BorderLayout.EAST);
         volver=new JButton("Volver");
         contenedor.add(volver, BorderLayout.SOUTH);
-        SwingUtilities.getRootPane(boton_confirmar).setDefaultButton(boton_confirmar);//lo que quiere decir es que si el usuario presiona "enter" el boton por defecto que se va a presionar es el btnIniciar
+        SwingUtilities.getRootPane(boton_confirmar).setDefaultButton(boton_confirmar);
         volver.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

@@ -85,7 +85,7 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
         for(Carta c:jugada.getMi_actual().getMazo_jugador()) {
             if (c.getId() == id) {
                 jugada.recibo_carta(c);
-                resolutorJugada.getMazo().getMazo().add(c);
+                resolutorJugada.agregar_carta_mazo(c);
                 notificarObservadores(CARTA_TIRADA);
                 break;
             }
@@ -102,9 +102,7 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
             notificarObservadores(ACTUALIZACION_TURNO);
         }
     }
-//DESPUES DE MOSTRAR CANTA_LAS_../ULTIMAS_10 -> SE MUESTRAN PUNTAJES SI O SI
-//DESPUES DE MOSTRAR PUNTAJES-> PUEDE SER ACTUALIZACION DE TURNO OOOO QUE TERMINO EL JUEGO POR PUNTOS
-//LO QUE SE PUEDE HACER ES DESPUES DEL OK DE ANUNCIOS-> ACTUALIZAR TURNO
+
 
     private void termino_jugada() throws RemoteException {
         switch (resolutorJugada.getEstado_ganador_baza()){
@@ -125,9 +123,9 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
                 if(resolutorJugada.chequear_si_hay_ganador(jugadores)){
                     resolutorJugada.actualizar_ganador(jugadores);
                     actualizar_ranking();
-                    notificarObservadores(Eventos.ULTIMAS_10);//setText_ultimas_10(juego.getGanador_baza()) y despues mostrar ->JLabel ganador_baza
+                    notificarObservadores(Eventos.ULTIMAS_10);
                     notificarObservadores(Eventos.MANO_TERMINADA);
-                    notificarObservadores(Eventos.GANADOR_POR_PUNTOS);//setText_ganador_por_puntos(juego.getGanador_final()) y despues mostrar -> JLabel ganador_final
+                    notificarObservadores(Eventos.GANADOR_POR_PUNTOS);
                     reiniciar_juego();
                 }
                 else{
@@ -148,25 +146,24 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
             case Estado_ganador_baza.LAS_20:
                 resolutorJugada.aceptacion_canto();
                 System.out.println("CANTA_LAS_20");
-                notificarObservadores(Eventos.CANTA_LAS_20);//controlador muestra que un jugador canto las 20 y muestra puntajes
-                notificarObservadores(Eventos.MANO_TERMINADA);//AGREGADOS MIYI
+                notificarObservadores(Eventos.CANTA_LAS_20);
+                notificarObservadores(Eventos.MANO_TERMINADA);
                 notificarObservadores(Eventos.ACTUALIZACION_TURNO);
                 break;
-            case Estado_ganador_baza.LAS_40://controlador muestra que un jugador canto las 40 y muestra puntajes
+            case Estado_ganador_baza.LAS_40:
                 resolutorJugada.aceptacion_canto();
                 System.out.println("CANTA_LAS_40");
                 notificarObservadores(Eventos.CANTA_LAS_40);
-                notificarObservadores(Eventos.MANO_TERMINADA);//AGREGADOS MIYI
+                notificarObservadores(Eventos.MANO_TERMINADA);
                 notificarObservadores(Eventos.ACTUALIZACION_TURNO);
                 break;
-            case Estado_ganador_baza.TUTE://controlador muestra que el jugador actual gano por tute
+            case Estado_ganador_baza.TUTE:
                 notificarObservadores(Eventos.GANADOR_POR_TUTE);
                 reiniciar_juego();
-                //notificarObservadores(Eventos.TERMINO_JUEGO);
                 break;
         }
     }
-    public void canto_negativo() throws RemoteException {//el usuario no quiere cantar tute ni las 40 ni las 20
+    public void canto_negativo() throws RemoteException {
         notificarObservadores(Eventos.MANO_TERMINADA);
         notificarObservadores(Eventos.ACTUALIZACION_TURNO);
     }
@@ -206,8 +203,7 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
     public void reiniciar_juego(){
         jugadores.clear();
         siguiente_id=-1;
-
-        Mazo mazo=new Mazo();//en caso de que el ganador sea por tute y el mazo no este completo
+        Mazo mazo=new Mazo();
         crupier.setMazo1(mazo);
         jugada.reinicio();
         resolutorJugada.reiniciar(mazo);

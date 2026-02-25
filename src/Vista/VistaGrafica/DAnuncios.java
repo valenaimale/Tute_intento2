@@ -31,6 +31,7 @@ public class DAnuncios extends JDialog {
         this.vistaPrincipal = vistaPrincipal;
         setBounds(100, 100, 500, 109);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//que pasa al cerrar la ventana
         setResizable(false);
         panel_principal = new JPanel(new BorderLayout());
         panel_botones = new JPanel(new FlowLayout());
@@ -58,7 +59,7 @@ public class DAnuncios extends JDialog {
         volver_jugar.setVisible(false);
         volver_jugar.setEnabled(false);
         salir.setVisible(false);
-        salir.setVisible(false);
+        salir.setEnabled(false);
         boton_ok.setVisible(false);
         boton_ok.setEnabled(false);
         setContentPane(panel_principal);
@@ -111,8 +112,8 @@ public class DAnuncios extends JDialog {
                 texto.setVisible(false);
                 panel_botones.setVisible(false);
                 volver_jugar.setVisible(false);
-                volver_jugar.setVisible(false);
-                salir.setEnabled(false);
+                volver_jugar.setEnabled(false);
+                salir.setVisible(false);
                 salir.setEnabled(false);
                 try {
                     vistaPrincipal.no_mostrar_mano();
@@ -132,9 +133,9 @@ public class DAnuncios extends JDialog {
                 panel_botones.setVisible(false);
                 volver_jugar.setVisible(false);
                 volver_jugar.setVisible(false);
+                salir.setVisible(false);
                 salir.setEnabled(false);
-                salir.setEnabled(false);
-                try {
+                try{
                     controlador.terminar();
                 } catch (RemoteException ex) {
                     throw new RuntimeException(ex);
@@ -172,8 +173,6 @@ public class DAnuncios extends JDialog {
         universal_si.setVisible(true);
         universal_no.setEnabled(true);
         universal_si.setEnabled(true);
-
-
     }
 
     public void ofrecer_las_40() {
@@ -188,7 +187,6 @@ public class DAnuncios extends JDialog {
         universal_si.setVisible(true);
         universal_no.setEnabled(true);
         universal_si.setEnabled(true);
-
     }
 
     public void ofrecer_las_20() {
@@ -203,7 +201,6 @@ public class DAnuncios extends JDialog {
         universal_si.setVisible(true);
         universal_no.setEnabled(true);
         universal_si.setEnabled(true);
-
     }
 
 

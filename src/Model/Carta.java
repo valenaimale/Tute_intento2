@@ -20,20 +20,12 @@ public class Carta implements Serializable {
         return numero + " " + palo;
     }
 
-    public int getNumero() {
-        return numero;
-    }
-
-
     public String getPalo() {
         return palo;
     }
-
-
     public int getOrden() {
         return orden;
     }
-
 
     public int getValor_en_juego() {
         return valor_en_juego;
