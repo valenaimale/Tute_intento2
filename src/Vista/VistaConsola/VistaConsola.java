@@ -110,6 +110,12 @@ public class VistaConsola extends JFrame implements IVista {
             case EstadoConsola.MOSTRANDO_RANKING_COMO_JUGAR:
                 procesar_respuesta_ranking_como_jugar(cadena);
                 break;
+            case EstadoConsola.MOSTRANDO_RANKING_AL_FINALIZAR:
+                procesar_respuesta_ranking_al_finalizar(cadena);
+                break;
+            case EstadoConsola.RESPUESTA_MENSAJE_ERROR:
+                controlador.salir();
+                break;
         }
     }
     @Override
@@ -136,6 +142,7 @@ public class VistaConsola extends JFrame implements IVista {
                 mostrar_como_jugar();
                 break;
             case "3":
+                estado=EstadoConsola.MOSTRANDO_RANKING_COMO_JUGAR;
                 mostrar_ranking();
                 break;
             default:
@@ -145,8 +152,8 @@ public class VistaConsola extends JFrame implements IVista {
         }
     }
     private void mostrar_ranking() throws RemoteException {
-        estado=EstadoConsola.MOSTRANDO_RANKING_COMO_JUGAR;
         Object[][] tabla= controlador.getTablaRanking();
+        texto_salida.setText("");
         setTitle("RANKING");
         println("Ranking historico de ganadores:");
         for(Object[] fila: tabla){
@@ -154,7 +161,7 @@ public class VistaConsola extends JFrame implements IVista {
             print("-Puntaje ganador:"+fila[1]+"  ");
             println("-Fecha:"+fila[2]);
         }
-        println("Ingrese 1 para volver al menu principal y luego presione enter!");
+        println("Ingrese 1 para volver y luego presione enter!");
 
     }
     private void procesar_respuesta_ranking_como_jugar(String cadena){
@@ -186,10 +193,8 @@ public class VistaConsola extends JFrame implements IVista {
             nombre_ganador_baza=id_nombre.get(id);
         }
         id_puntaje.put(id,puntaje);
-        if(estado==EstadoConsola.ESPERANDO_JUGADORES){
-            texto_salida.setText("Esperando que haya 4 jugadores...\n");
-            mostrar_espera();
-        }
+        texto_salida.setText("Esperando que haya 4 jugadores...\n");
+        mostrar_espera();
     }
     private void mostrar_espera(){
         for(Integer i:id_nombre.keySet()){
@@ -198,7 +203,7 @@ public class VistaConsola extends JFrame implements IVista {
     }
     @Override
     public void no_mostrar_espera(int cantidad_jugadores, int id_jugador) {
-        setTitle("Vista de: "+id_nombre.get(id_jugador));
+        setTitle("Vista de: "+nombre_jugador);
         texto_salida.setText("");
         println("Ya hay "+ cantidad_jugadores + " jugadores. El juego va a comenzar!");
         println("Comienza la baza. Es turno de "+nombre_ganador_baza);
@@ -217,11 +222,6 @@ public class VistaConsola extends JFrame implements IVista {
     }
     @Override
     public void setCartas_clicleables(ArrayList<Integer> ids_posibles) {
-        System.out.println("setCartas_clicleables desde vista de consola");
-        System.out.println("cartas clicleables: (aca se ve si el problema es el modelo o la vista):\n");
-        for(Integer i:ids_posibles){
-            System.out.println(mapeoCartasConsola.obtener_carta(i));
-        }
         estado=EstadoConsola.TURNO_ACTUAL;
         println("");
         for(Integer i:indicecarta_idcarta.keySet()){
@@ -229,14 +229,6 @@ public class VistaConsola extends JFrame implements IVista {
             if(ids_posibles.contains(idCarta)){
                 indicecarta_idcartaclicleable.put(i, idCarta);
             }
-        }
-        System.out.println("Cartas clicleables (aca se ve si se agregaron o no):");
-        for(Integer i: indicecarta_idcartaclicleable.keySet()){
-            System.out.println(mapeoCartasConsola.obtener_carta(indicecarta_idcarta.get(i)));
-        }
-        System.out.println("Cartas del HashMap indicecarta_idcarta: \n");
-        for(Integer i:indicecarta_idcarta.keySet()){
-            System.out.println(mapeoCartasConsola.obtener_carta(indicecarta_idcarta.get(i)));
         }
         println("Es tu turno. Para tirar ingresa el indice de una carta disponible y presiona enter!");
         mostrar_clicleables();
@@ -282,11 +274,11 @@ public class VistaConsola extends JFrame implements IVista {
         texto_salida.setText("\n");
         println(id_nombre.get(id_jugador)+ " tiro el "+ mapeoCartasConsola.obtener_carta(id_carta));
         println("");
-        println("Cartas tiradas en la mano hasta ahora:");
+        println("Cartas tiradas en la baza hasta ahora:");
         for(String s:cartas_jugadas_en_la_mano){
             println(s);
         }
-        mostrar_cartas();
+        //mostrar_cartas();
     }
     @Override
     public void oferta_las_40() {
@@ -328,31 +320,27 @@ public class VistaConsola extends JFrame implements IVista {
     }
     @Override
     public void canta_las_40(String nombre) throws RemoteException {
-        //texto_salida.setText("");
         println("");
         println(nombre+ " canto las 40. Suma 40 puntos!");
         controlador.procesar_eventos_pendientes();
-        //texto_entrada.setVisible(true);
-        //panel_escritura.setVisible(true);
+
     }
     @Override
     public void canta_las_20(String nombre) throws RemoteException {
-        //texto_salida.setText("");
         println("");
         println(nombre+ " canto las 20. Suma 20 puntos!");
         controlador.procesar_eventos_pendientes();
 
-        //texto_entrada.setVisible(true);
-        //panel_escritura.setVisible(true);
 
     }
+
     @Override
     public void canta_tute() throws RemoteException {
         //texto_salida.setText("");
         estado = EstadoConsola.RESPUESTA_TERMINO;
         println("");
         println(nombre_ganador_final+ " canto tute. Gano el juego!");
-        println("Ingrese 1 para volver a jugar o 2 para salir!");
+        println("Ingrese 1 para volver a jugar, 2 para salir o 3 para ver el ranking. Luego presione enter!");
         panel_escritura.setVisible(true);
         //HAY QUE MOSTRAR OPCIONES DE "VOLVER A JUGAR" Y "SALIR"
         //controlador.procesar_eventos_pendientes();
@@ -363,10 +351,10 @@ public class VistaConsola extends JFrame implements IVista {
 
     @Override
     public void gana_ultimas_10(String nombre) throws RemoteException {
+
         println("");
         println(nombre+" gano la ultima baza. Suma 10 puntos!");
         controlador.procesar_eventos_pendientes();
-
         //texto_entrada.setVisible(true);
         //panel_escritura.setVisible(true);
 
@@ -376,7 +364,7 @@ public class VistaConsola extends JFrame implements IVista {
         estado = EstadoConsola.RESPUESTA_TERMINO;
         println("");
         println(nombre_ganador_final + " sumo 101 puntos o mas. Gano el juego!");
-        println("Ingrese 1 para volver a jugar o 2 para salir y luego presione enter!");
+        println("Ingrese 1 para volver a jugar, 2 para salir o 3 para ver el ranking. Luego presione enter!");
         panel_escritura.setVisible(true);
         //HAY QUE MOSTRAR OPCIONES DE "VOLVER A JUGAR" Y "SALIR"
         //controlador.procesar_eventos_pendientes();
@@ -403,16 +391,18 @@ public class VistaConsola extends JFrame implements IVista {
     public void mostrar_puntajes() throws RemoteException {
         mostrar_puntajes_permanentes();
         println("");
+        //estado =EstadoConsola.RESPUESTA_PUNTAJES;
         println(nombre_ganador_baza + " gano la baza. Puntajes:");
         for(Integer i:id_puntaje.keySet()){
             println("-NOMBRE:"+ id_nombre.get(i)+ "  -ID:"+i+"  -PUNTAJE:"+id_puntaje.get(i));
         }
-        controlador.procesar_eventos_pendientes();
-        mostrar_cartas();
-        //texto_entrada.setVisible(true);
+        //println("");
+        //println("Presione enter para continuar!");
         //panel_escritura.setVisible(true);
-
+        controlador.respuesta_puntajes();
+        //mostrar_cartas();
     }
+
 
     @Override
     public void mostrar_turno(int id) {
@@ -422,6 +412,16 @@ public class VistaConsola extends JFrame implements IVista {
     public void setear_ganador(String nombre) {
         nombre_ganador_final=nombre;
     }
+
+    @Override
+    public void mostrar_mensaje_error() {
+        estado = EstadoConsola.RESPUESTA_MENSAJE_ERROR;
+        texto_salida.setText("");
+        println("El juego ya comenzo, intentelo mas tarde. Presione enter para continuar!");
+        panel_escritura.setVisible(true);
+
+    }
+
     private void procesar_respuesta_termino(String cadena) throws RemoteException {
         switch (cadena){
             case "1":
@@ -434,11 +434,29 @@ public class VistaConsola extends JFrame implements IVista {
             case "2":
                 controlador.terminar();
                 break;
+            case "3":
+                estado=EstadoConsola.MOSTRANDO_RANKING_AL_FINALIZAR;
+                mostrar_ranking();
+                break;
             default:
-                println("Caracter incorrecto, por favor ingrese 1 para volver a jugar o 2 para salir!");
+                println("Caracter incorrecto, por favor ingrese 1 para volver a jugar, 2 para salir o 3 para ver el ranking!");
                 break;
         }
     }
+    private void procesar_respuesta_ranking_al_finalizar(String cadena){
+        switch (cadena){
+            case "1":
+                estado = EstadoConsola.RESPUESTA_TERMINO;
+                texto_salida.setText("");
+                setTitle("Vista de: "+nombre_jugador);
+                println("Ingrese 1 para volver a jugar, 2 para salir o 3 para ver el ranking. Luego presione enter!");
+                break;
+            default:
+                println("Caracter incorrecto, por favor ingrese 1 para volver a las opciones de termino!");
+                break;
+        }
+    }
+
     private void mostrar_como_jugar(){
         estado=EstadoConsola.MOSTRANDO_RANKING_COMO_JUGAR;
         setTitle("GUIA COMO JUGAR AL TUTE");

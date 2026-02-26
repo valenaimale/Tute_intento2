@@ -125,7 +125,7 @@ public class ResolutorJugada { //tiene la responsabilidad de encargarse de todo 
         Boolean rta=false;
         int puntajeGanador=0;
         for(Jugador jugador:jugadors){
-            if(jugador.getPuntaje()>puntajeGanador && jugador.getPuntaje()>101){
+            if(jugador.getPuntaje()>puntajeGanador && jugador.getPuntaje()>=101){
                 puntajeGanador=jugador.getPuntaje();
                 rta=true;
             }

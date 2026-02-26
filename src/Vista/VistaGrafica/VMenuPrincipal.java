@@ -56,7 +56,7 @@ public class VMenuPrincipal extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
                 try {
-                    vistaPrincipal.mostrar_ranking();
+                    vistaPrincipal.mostrar_ranking_al_comienzo();
                 } catch (RemoteException ex) {
                     throw new RuntimeException(ex);
                 }

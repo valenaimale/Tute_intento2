@@ -20,4 +20,5 @@ public interface IJuego extends IObservableRemoto {
     public void canto_positivo() throws RemoteException;
     public void canto_negativo() throws RemoteException;
     public Object[][] getTablaRanking() throws RemoteException;
+    public ArrayList<Integer> cartas_repartidas_al_jugador(int id) throws RemoteException;
 }

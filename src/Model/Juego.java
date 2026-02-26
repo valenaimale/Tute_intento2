@@ -78,6 +78,7 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
         System.out.println("Palo del triunfo real real: "+carta_palo_triunfo.getPalo());
         jugada.setPalo_triunfo(carta_palo_triunfo.getPalo());
         resolutorJugada.setPalo_del_triunfo(carta_palo_triunfo.getPalo());
+        System.out.println("repartir(). Se ejecuta CARTAS_REPARTIDAS");
         notificarObservadores(CARTAS_REPARTIDAS);
     }
 
@@ -107,30 +108,36 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
     private void termino_jugada() throws RemoteException {
         switch (resolutorJugada.getEstado_ganador_baza()){
             case NADA:
-                notificarObservadores(MANO_TERMINADA);
+                System.out.println("termino_jugada(). Se ejecutan BAZA_TERMINADA y ACTUALIZACION_TURNO");
+                notificarObservadores(BAZA_TERMINADA);
                 notificarObservadores(ACTUALIZACION_TURNO);
                 break;
             case TUTE:
+                System.out.println("termino_jugada(). Se ejecutan OFRECER_TUTE");
                 notificarObservadores(OFRECER_TUTE);
                 break;
             case LAS_40:
+                System.out.println("termino_jugada(). Se ejecutan OFRECER_LAS_40");
                 notificarObservadores(OFRECER_LAS_40);
                 break;
             case LAS_20:
+                System.out.println("termino_jugada(). Se ejecutan OFRECER_LAS_20");
                 notificarObservadores(OFRECER_LAS_20);
                 break;
             case ULTIMAS_10:
                 if(resolutorJugada.chequear_si_hay_ganador(jugadores)){
                     resolutorJugada.actualizar_ganador(jugadores);
                     actualizar_ranking();
+                    System.out.println("termino_jugada(). Se ejecutan ULTIMAS_10, BAZA_TERMINADA y GANADOR_POR_PUNTOS");
                     notificarObservadores(Eventos.ULTIMAS_10);
-                    notificarObservadores(Eventos.MANO_TERMINADA);
+                    notificarObservadores(Eventos.BAZA_TERMINADA);
                     notificarObservadores(Eventos.GANADOR_POR_PUNTOS);
                     reiniciar_juego();
                 }
                 else{
+                    System.out.println("termino_jugada(). Se ejecutan ULTIMAS_10 y BAZA_TERMINADA");
                     notificarObservadores(ULTIMAS_10);
-                    notificarObservadores(MANO_TERMINADA);
+                    notificarObservadores(BAZA_TERMINADA);
                     repartir();
                 }
                 break;
@@ -145,26 +152,28 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
         switch (resolutorJugada.getEstado_ganador_baza()){
             case Estado_ganador_baza.LAS_20:
                 resolutorJugada.aceptacion_canto();
-                System.out.println("CANTA_LAS_20");
+                System.out.println("canto_positivo(). Se ejecutan CANTA_LAS_20, BAZA_TERMINADA y ACTUALIZACION_TURNO");
                 notificarObservadores(Eventos.CANTA_LAS_20);
-                notificarObservadores(Eventos.MANO_TERMINADA);
+                notificarObservadores(Eventos.BAZA_TERMINADA);
                 notificarObservadores(Eventos.ACTUALIZACION_TURNO);
                 break;
             case Estado_ganador_baza.LAS_40:
                 resolutorJugada.aceptacion_canto();
-                System.out.println("CANTA_LAS_40");
+                System.out.println("canto_positivo(). Se ejecutan CANTA_LAS_40, BAZA_TERMINADA y ACTUALIZACION_TURNO");
                 notificarObservadores(Eventos.CANTA_LAS_40);
-                notificarObservadores(Eventos.MANO_TERMINADA);
+                notificarObservadores(Eventos.BAZA_TERMINADA);
                 notificarObservadores(Eventos.ACTUALIZACION_TURNO);
                 break;
             case Estado_ganador_baza.TUTE:
+                System.out.println("canto_positivo(). Se ejecuta GANADOR_POR_TUTE");
                 notificarObservadores(Eventos.GANADOR_POR_TUTE);
                 reiniciar_juego();
                 break;
         }
     }
     public void canto_negativo() throws RemoteException {
-        notificarObservadores(Eventos.MANO_TERMINADA);
+        System.out.println("canto_negativo(). Se ejecutan BAZA_TERMINADA y ACTUALIZACION_TURNO");
+        notificarObservadores(Eventos.BAZA_TERMINADA);
         notificarObservadores(Eventos.ACTUALIZACION_TURNO);
     }
 
@@ -207,6 +216,17 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
         crupier.setMazo1(mazo);
         jugada.reinicio();
         resolutorJugada.reiniciar(mazo);
+    }
+    public ArrayList<Integer> cartas_repartidas_al_jugador(int id_jugador) throws RemoteException {
+        ArrayList<Integer> id_cartas = new ArrayList<>();
+        for(Jugador j: jugadores){
+            if(j.getId()==id_jugador){
+                for (Carta c : j.getMazo_jugador()) {
+                    id_cartas.add(c.getId());
+                }
+            }
+        }
+        return id_cartas;
     }
 
 }

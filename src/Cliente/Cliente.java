@@ -74,16 +74,7 @@ public class Cliente {
                 vista_grafica.iniciar();
                 elegir_vista.setVisible(false);
                 controlador.setVista(vista_grafica);
-                ar.edu.unlu.rmimvc.cliente.Cliente c = new ar.edu.unlu.rmimvc.cliente.Cliente(ip, Integer.parseInt(port), ipServidor, Integer.parseInt(portServidor));
-                try {
-                    c.iniciar(controlador);
-                } catch (RemoteException f) {
-                    // TODO Auto-generated catch block
-                    f.printStackTrace();
-                } catch (RMIMVCException f) {
-                    // TODO Auto-generated catch block
-                    f.printStackTrace();
-                }
+
             }
         });
         boton_consola.addActionListener(new ActionListener() {
@@ -93,18 +84,18 @@ public class Cliente {
                 vista_consola.iniciar();
                 elegir_vista.setVisible(false);
                 controlador.setVista(vista_consola);
-                ar.edu.unlu.rmimvc.cliente.Cliente c = new ar.edu.unlu.rmimvc.cliente.Cliente(ip, Integer.parseInt(port), ipServidor, Integer.parseInt(portServidor));
-                try {
-                    c.iniciar(controlador);
-                } catch (RemoteException f) {
-                    // TODO Auto-generated catch block
-                    f.printStackTrace();
-                } catch (RMIMVCException f) {
-                    // TODO Auto-generated catch block
-                    f.printStackTrace();
-                }
             }
         });
+        ar.edu.unlu.rmimvc.cliente.Cliente c = new ar.edu.unlu.rmimvc.cliente.Cliente(ip, Integer.parseInt(port), ipServidor, Integer.parseInt(portServidor));
+        try {
+            c.iniciar(controlador);
+        } catch (RemoteException f) {
+            // TODO Auto-generated catch block
+            f.printStackTrace();
+        } catch (RMIMVCException f) {
+            // TODO Auto-generated catch block
+            f.printStackTrace();
+        }
 
     }
 

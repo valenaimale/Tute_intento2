@@ -104,7 +104,7 @@ public class DPuntajes extends JDialog {
         setLocationRelativeTo(null);
         panel_principal=new JPanel(new BorderLayout());
         boton_ok=new JButton("OK");
-        boton_ok_partida_en_curso=new JButton("VOLVER");
+        boton_ok_partida_en_curso=new JButton("OK");
         boton_ok.setEnabled(false);
         boton_ok.setVisible(false);
         boton_ok_partida_en_curso.setEnabled(false);

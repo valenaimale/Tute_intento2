@@ -138,8 +138,15 @@ public class VistaGrafica implements IVista {
     @Override
     public void mostrar_turno(int id){
     }
-    public void mostrar_ranking() throws RemoteException {
+    public void mostrar_ranking_al_comienzo() throws RemoteException {
         ventana_ranking.cargarDatos(controlador.getTablaRanking());
+        ventana_ranking.mostrar_boton_volver_comienzo();
+        ventana_ranking.setVisible(true);
+    }
+    public void mostrar_ranking_al_finalizar() throws RemoteException {
+        ventana_partida.setVisible(false);
+        ventana_ranking.cargarDatos(controlador.getTablaRanking());
+        ventana_ranking.mostrar_boton_volver_final();
         ventana_ranking.setVisible(true);
     }
     public String nombre_user(){
@@ -148,6 +155,11 @@ public class VistaGrafica implements IVista {
 
     public void setear_ganador(String nombre){
         ventana_partida.set_ganador(nombre);
+    }
+
+    @Override
+    public void mostrar_mensaje_error() {
+
     }
 
 }

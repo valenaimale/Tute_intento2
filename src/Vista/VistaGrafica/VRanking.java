@@ -11,8 +11,10 @@ import java.util.Arrays;
 public class VRanking extends JFrame{
     private JTable tabla;
     private DefaultTableModel modelo_tabla;
-    private JPanel panel;
-    private JButton volver;
+    private JPanel panel_principal;
+    private JPanel panel_botones;
+    private JButton volver_final;
+    private JButton volver_comienzo;
     private VistaGrafica vista_padre;
     private JScrollPane scroll;
 
@@ -23,8 +25,14 @@ public class VRanking extends JFrame{
         setTitle("Ranking historico de ganadores");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//que pasa al cerrar la ventana
         this.vista_padre = vista_padre;
-        panel = new JPanel(new BorderLayout());
-        volver = new JButton("Volver");
+        panel_principal = new JPanel(new BorderLayout());
+        volver_comienzo = new JButton("Volver");
+        volver_final = new JButton("Volver");
+        volver_final.setVisible(false);
+        volver_comienzo.setVisible(false);
+        panel_botones=new JPanel(new FlowLayout());
+        panel_botones.add(volver_comienzo, SwingConstants.CENTER);
+        panel_botones.add(volver_final, SwingConstants.CENTER);
         setBounds(100, 100, 500, 500);
         modelo_tabla=new DefaultTableModel();
         tabla=new JTable(){
@@ -35,17 +43,26 @@ public class VRanking extends JFrame{
         };
         scroll = new JScrollPane();
         tabla.setModel(modelo_tabla);
-        volver.addActionListener(new ActionListener() {
+        volver_comienzo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                volver_comienzo.setVisible(false);
                 vista_padre.mostrar_menu_principal();
                 setVisible(false);
             }
         });
+        volver_final.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                volver_final.setVisible(false);
+                vista_padre.mostrar_mano_visible();
+                setVisible(false);
+            }
+        });
         scroll.setViewportView(tabla);
-        panel.add(scroll, BorderLayout.CENTER);
-        panel.add(volver, BorderLayout.SOUTH);
-        setContentPane(panel);
+        panel_principal.add(scroll, BorderLayout.CENTER);
+        panel_principal.add(panel_botones, BorderLayout.SOUTH);
+        setContentPane(panel_principal);
         setSize(900, 500);
         setLocationRelativeTo(null);
     }
@@ -67,5 +84,11 @@ public class VRanking extends JFrame{
             }
             System.out.println();
         }
+    }
+    public void mostrar_boton_volver_comienzo(){
+        volver_comienzo.setVisible(true);
+    }
+    public void mostrar_boton_volver_final(){
+        volver_final.setVisible(true);
     }
 }

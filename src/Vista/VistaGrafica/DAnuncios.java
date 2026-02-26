@@ -15,6 +15,7 @@ public class DAnuncios extends JDialog {
     private JButton universal_si;
     private JButton universal_no;
     private JButton boton_ok;
+    private JButton ver_ranking;
     private JButton volver_jugar;
     private JButton salir;
     private Controlador controlador;
@@ -42,12 +43,14 @@ public class DAnuncios extends JDialog {
         universal_no = new JButton("NO");
         volver_jugar = new JButton("Volver a jugar");
         salir = new JButton("Salir");
+        ver_ranking = new JButton("Ver ranking");
         boton_ok = new JButton("OK");
 
         panel_botones.add(universal_no, SwingConstants.CENTER);
         panel_botones.add(universal_si, SwingConstants.CENTER);
         panel_botones.add(volver_jugar, SwingConstants.CENTER);
         panel_botones.add(salir, SwingConstants.CENTER);
+        panel_botones.add(ver_ranking, SwingConstants.CENTER);
 
         panel_botones.add(boton_ok, SwingConstants.CENTER);
         panel_principal.add(panel_botones, BorderLayout.SOUTH);
@@ -60,6 +63,8 @@ public class DAnuncios extends JDialog {
         volver_jugar.setEnabled(false);
         salir.setVisible(false);
         salir.setEnabled(false);
+        ver_ranking.setVisible(false);
+        ver_ranking.setEnabled(false);
         boton_ok.setVisible(false);
         boton_ok.setEnabled(false);
         setContentPane(panel_principal);
@@ -113,6 +118,8 @@ public class DAnuncios extends JDialog {
                 panel_botones.setVisible(false);
                 volver_jugar.setVisible(false);
                 volver_jugar.setEnabled(false);
+                ver_ranking.setVisible(false);
+                ver_ranking.setVisible(false);
                 salir.setVisible(false);
                 salir.setEnabled(false);
                 try {
@@ -135,8 +142,20 @@ public class DAnuncios extends JDialog {
                 volver_jugar.setVisible(false);
                 salir.setVisible(false);
                 salir.setEnabled(false);
+                ver_ranking.setVisible(false);
+                ver_ranking.setEnabled(false);
                 try{
                     controlador.terminar();
+                } catch (RemoteException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+        ver_ranking.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    vistaPrincipal.mostrar_ranking_al_finalizar();
                 } catch (RemoteException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -211,8 +230,12 @@ public class DAnuncios extends JDialog {
         texto.setVisible(true);
         panel_botones.setVisible(true);
         panel_principal.setVisible(true);
-        boton_ok.setVisible(true);
-        boton_ok.setEnabled(true);
+        volver_jugar.setEnabled(true);
+        volver_jugar.setVisible(true);
+        salir.setEnabled(true);
+        salir.setVisible(true);
+        ver_ranking.setEnabled(true);
+        ver_ranking.setVisible(true);
         setVisible(true);
     }
 
@@ -248,6 +271,8 @@ public class DAnuncios extends JDialog {
         volver_jugar.setVisible(true);
         salir.setEnabled(true);
         salir.setVisible(true);
+        ver_ranking.setEnabled(true);
+        ver_ranking.setVisible(true);
         setVisible(true);
     }
 

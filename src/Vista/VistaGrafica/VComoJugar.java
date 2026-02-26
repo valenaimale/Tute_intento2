@@ -23,6 +23,7 @@ public class VComoJugar extends JFrame{
         volver_menu_principal = new JButton("Volver");
         panel_principal.add(scroll,BorderLayout.CENTER);
         panel_principal.add(volver_menu_principal,BorderLayout.SOUTH);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setContentPane(panel_principal);
         setExplicacion_como_jugar();
         setVisible(false);
