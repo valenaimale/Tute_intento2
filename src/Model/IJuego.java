@@ -4,9 +4,10 @@ import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import Exception.*;
 
 public interface IJuego extends IObservableRemoto {
-    public void iniciar_jugador(Jugador jugador) throws RemoteException;
+    public int iniciarJugador(String nombre) throws RemoteException, NombreInvalido, PartidaIniciada;
     public int siguienteId() throws RemoteException;
     public ArrayList<Jugador> getJugadores() throws RemoteException;
     public String getPalo_triunfo() throws RemoteException;
@@ -21,4 +22,7 @@ public interface IJuego extends IObservableRemoto {
     public void canto_negativo() throws RemoteException;
     public Object[][] getTablaRanking() throws RemoteException;
     public ArrayList<Integer> cartas_repartidas_al_jugador(int id) throws RemoteException;
+    public void confirmacion_baza_terminada(int id_confirmado) throws RemoteException;
+    public void jugador_agregado() throws RemoteException;
+    public Boolean baza_comenzada() throws RemoteException;
 }

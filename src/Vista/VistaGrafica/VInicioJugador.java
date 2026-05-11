@@ -55,12 +55,8 @@ public class VInicioJugador extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                vistaPrincipal.mostrar_esperando();
-                try {
-                    controlador.iniciar_player(nombre_usuario.getText());
-                } catch (RemoteException ex) {
-                    throw new RuntimeException(ex);
-                }
+                //vistaPrincipal.mostrar_esperando();
+                controlador.iniciar_player(nombre_usuario.getText());
             }
         });
     }

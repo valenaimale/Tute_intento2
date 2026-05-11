@@ -85,7 +85,13 @@ public class ResolutorJugada { //tiene la responsabilidad de encargarse de todo 
             case LAS_20:
                 ganador_baza.incrementar_puntaje(20);
                 break;
+            case TUTE:
+                ganador_final = ganador_baza;
+                break;
         }
+    }
+    public void negacion_canto(){
+        estado_ganador_baza = Estado_ganador_baza.NADA;
     }
     private int determinar_tantos(ArrayList<Carta> baza_ganada){
         int suma=0;

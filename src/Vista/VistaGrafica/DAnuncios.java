@@ -10,7 +10,6 @@ import java.rmi.RemoteException;
 public class DAnuncios extends JDialog {
     private JPanel panel_principal;
     private JLabel texto;
-    private String nombre_ganador;
     private JPanel panel_botones;
     private JButton universal_si;
     private JButton universal_no;
@@ -18,6 +17,7 @@ public class DAnuncios extends JDialog {
     private JButton ver_ranking;
     private JButton volver_jugar;
     private JButton salir;
+    private Runnable accion_boton;
     private Controlador controlador;
     private VistaGrafica vistaPrincipal;
 
@@ -38,7 +38,7 @@ public class DAnuncios extends JDialog {
         panel_botones = new JPanel(new FlowLayout());
         texto = new JLabel();
         panel_principal.add(texto, BorderLayout.CENTER);
-        texto.setVisible(true);
+        //texto.setVisible(true);
         universal_si = new JButton("SI");
         universal_no = new JButton("NO");
         volver_jugar = new JButton("Volver a jugar");
@@ -54,8 +54,8 @@ public class DAnuncios extends JDialog {
 
         panel_botones.add(boton_ok, SwingConstants.CENTER);
         panel_principal.add(panel_botones, BorderLayout.SOUTH);
-        panel_botones.setVisible(false);
-        universal_no.setEnabled(false);
+        //panel_botones.setVisible(true);
+        universal_no.setEnabled(false);//HAGO TODOS LOS BOTONES INVISIBLES
         universal_si.setEnabled(false);
         universal_no.setVisible(false);
         universal_si.setVisible(false);
@@ -76,14 +76,10 @@ public class DAnuncios extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                panel_principal.setVisible(false);
-                texto.setVisible(false);
-                panel_botones.setVisible(false);
                 universal_no.setVisible(false);
                 universal_si.setVisible(false);
                 universal_no.setEnabled(false);
                 universal_si.setEnabled(false);
-                //este hay que ver porque tal vez no haya que mostrar la mano sino la ultimas_10, hay que ponerle estados a los anuncios
                 try {
                     controlador.eleccion_si();
                 } catch (RemoteException ex) {
@@ -95,9 +91,6 @@ public class DAnuncios extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                panel_principal.setVisible(false);
-                texto.setVisible(false);
-                panel_botones.setVisible(false);
                 universal_no.setVisible(false);
                 universal_si.setVisible(false);
                 universal_no.setEnabled(false);
@@ -113,31 +106,21 @@ public class DAnuncios extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                panel_principal.setVisible(false);
-                texto.setVisible(false);
-                panel_botones.setVisible(false);
                 volver_jugar.setVisible(false);
                 volver_jugar.setEnabled(false);
                 ver_ranking.setVisible(false);
                 ver_ranking.setVisible(false);
                 salir.setVisible(false);
                 salir.setEnabled(false);
-                try {
-                    vistaPrincipal.no_mostrar_mano();
-                    vistaPrincipal.mostrar_esperando();
-                    controlador.iniciar_player(vistaPrincipal.nombre_user());
-                } catch (RemoteException ex) {
-                    throw new RuntimeException(ex);
-                }
+                vistaPrincipal.no_mostrar_mano();
+                vistaPrincipal.mostrar_esperando();
+                controlador.iniciar_player(vistaPrincipal.nombre_user());
             }
         });
         salir.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                panel_principal.setVisible(false);
-                texto.setVisible(false);
-                panel_botones.setVisible(false);
                 volver_jugar.setVisible(false);
                 volver_jugar.setVisible(false);
                 salir.setVisible(false);
@@ -167,69 +150,56 @@ public class DAnuncios extends JDialog {
                 setVisible(false);
                 boton_ok.setEnabled(false);
                 boton_ok.setVisible(false);
-                texto.setVisible(false);
-                panel_principal.setVisible(false);
-                try {
-                    controlador.procesar_eventos_pendientes();
-                } catch (RemoteException ex) {
-                    throw new RuntimeException(ex);
-                }
+                accion_boton.run();
             }
         });
 
     }
+    public void oferta_canto(String cadena){
+        texto.setText(cadena);
+        System.out.println("Entro a oferta_canto. Texto: "+texto.getText());
+        System.out.println("Texto visible: "+texto.isVisible());
+        System.out.println("Panel principal visible: "+panel_principal.isVisible());
+        System.out.println("Panel botones visible: "+panel_botones.isVisible());
 
-
-    public void ofrecer_tute() {
-        setVisible(false);
-        texto.setText("TUTE");
-        setVisible(true);
-        texto.setVisible(true);
-        panel_principal.setVisible(true);
-        panel_botones.setVisible(true);
-        boton_ok.setVisible(false);
         universal_no.setVisible(true);
         universal_si.setVisible(true);
         universal_no.setEnabled(true);
         universal_si.setEnabled(true);
-    }
-
-    public void ofrecer_las_40() {
-        setVisible(false);
-        texto.setText("LAS 40");
         setVisible(true);
-        texto.setVisible(true);
-        panel_principal.setVisible(true);
-        panel_botones.setVisible(true);
-        boton_ok.setVisible(false);
-        universal_no.setVisible(true);
-        universal_si.setVisible(true);
-        universal_no.setEnabled(true);
-        universal_si.setEnabled(true);
     }
 
-    public void ofrecer_las_20() {
-        setVisible(false);
-        texto.setText("LAS 20");
+    public void canto(String cadena){
+        texto.setText(cadena);
+        System.out.println("Entro a oferta_canto. Texto: "+texto.getText());
+        System.out.println("Texto visible: "+texto.isVisible());
+        System.out.println("Panel principal visible: "+panel_principal.isVisible());
+        System.out.println("Panel botones visible: "+panel_botones.isVisible());
+        boton_ok.setVisible(true);
+        boton_ok.setEnabled(true);
+        accion_boton = () -> {
+            try {
+                controlador.respuesta_anuncio();
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        };
         setVisible(true);
-        texto.setVisible(true);
-        panel_principal.setVisible(true);
-        panel_botones.setVisible(true);
+    }
+    public void dejar_de_verme(){
         boton_ok.setVisible(false);
-        universal_no.setVisible(true);
-        universal_si.setVisible(true);
-        universal_no.setEnabled(true);
-        universal_si.setEnabled(true);
+        boton_ok.setEnabled(false);
+        setVisible(false);
     }
 
 
 
-    public void canto_tute() {
-        setVisible(false);
-        texto.setText(nombre_ganador + " canto tute. Gano el juego!");
-        texto.setVisible(true);
-        panel_botones.setVisible(true);
-        panel_principal.setVisible(true);
+    public void cartel_ganador(String cadena) {
+        texto.setText(cadena);
+        System.out.println("Entro a oferta_canto. Texto: "+texto.getText());
+        System.out.println("Texto visible: "+texto.isVisible());
+        System.out.println("Panel principal visible: "+panel_principal.isVisible());
+        System.out.println("Panel botones visible: "+panel_botones.isVisible());
         volver_jugar.setEnabled(true);
         volver_jugar.setVisible(true);
         salir.setEnabled(true);
@@ -239,65 +209,12 @@ public class DAnuncios extends JDialog {
         setVisible(true);
     }
 
-    public void canto_las_40(String nombre) {
-        setVisible(false);
-        texto.setText(nombre + " canto las 40. Suma 40 puntos!");
-        texto.setVisible(true);
-        panel_botones.setVisible(true);
-        panel_principal.setVisible(true);
+
+    public void cartel_error(String cadena){
+        texto.setText(cadena);
         boton_ok.setVisible(true);
         boton_ok.setEnabled(true);
+        accion_boton = () -> vistaPrincipal.mostrar_menu_principal();
         setVisible(true);
-    }
-
-    public void canto_las_20(String nombre) {
-        setVisible(false);
-        texto.setText(nombre + " canto las 20. Suma 20 puntos!");
-        texto.setVisible(true);
-        panel_botones.setVisible(true);
-        panel_principal.setVisible(true);
-        boton_ok.setVisible(true);
-        boton_ok.setEnabled(true);
-        setVisible(true);
-    }
-
-    public void ganador_por_punts() {
-        setVisible(false);
-        texto.setText(nombre_ganador + " sumo 101 puntos o mas. Es el ganador del juego!");
-        texto.setVisible(true);
-        panel_botones.setVisible(true);
-        panel_principal.setVisible(true);
-        volver_jugar.setEnabled(true);
-        volver_jugar.setVisible(true);
-        salir.setEnabled(true);
-        salir.setVisible(true);
-        ver_ranking.setEnabled(true);
-        ver_ranking.setVisible(true);
-        setVisible(true);
-    }
-
-    public void ultimas_10(String nombre) {
-        setVisible(false);
-        texto.setText(nombre + " gano la ultima baza. Suma 10 puntos!");
-        texto.setVisible(true);
-        panel_botones.setVisible(true);
-        panel_principal.setVisible(true);
-        boton_ok.setVisible(true);
-        boton_ok.setEnabled(true);
-        setVisible(true);
-    }
-    public void terminar(String nombre_ganador) {
-        setVisible(false);
-        texto.setText("El juego termino! El ganador es "+nombre_ganador);
-        volver_jugar.setVisible(true);
-        volver_jugar.setEnabled(true);
-        salir.setVisible(true);
-        salir.setEnabled(true);
-        panel_principal.setVisible(true);
-        texto.setVisible(true);
-        setVisible(true);
-    }
-    public void setGanador(String nombre_ganador){
-        this.nombre_ganador=nombre_ganador;
     }
 }

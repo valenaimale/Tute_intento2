@@ -114,7 +114,7 @@ public class VPartida extends JFrame{
                 }
             });
         }
-        System.out.println("Mis cartas:\n");
+
 
     }
     public void iniciar_cartas_mano(int id_carta,int id_jugador){//cambiar a id de carta
@@ -175,30 +175,16 @@ public class VPartida extends JFrame{
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // implementacion JDialog anuncios
-    public void ofrecer_tute(){
-        anuncios.ofrecer_tute();
+    public void canto(String cadena){
+        anuncios.canto(cadena);
     }
-    public void ofrecer_las_40(){
-        anuncios.ofrecer_las_40();
+    public void cartel_ganador(String cadena){
+        anuncios.cartel_ganador(cadena);
     }
-    public void ofrecer_las_20(){
-        anuncios.ofrecer_las_20();
+    public void oferta_canto(String cadena){
+        anuncios.oferta_canto(cadena);
     }
-    public void canta_tute(){
-        anuncios.canto_tute();
-    }
-    public void canta_las_40(String nombre){
-        anuncios.canto_las_40(nombre);
-    }
-    public void canta_las_20(String nombre){
-        anuncios.canto_las_20(nombre);
-    }
-    public void ganador_por_punts(){
-        anuncios.ganador_por_punts();
-    }
-    public void gana_ultimas_10(String nombre){
-        anuncios.ultimas_10(nombre);
-    }
+
     public void deshabilitar_botones(){
         for(JButton b: cartas_jugador){
             b.setEnabled(false);
@@ -214,10 +200,16 @@ public class VPartida extends JFrame{
     public void mostrar_los_puntajes(){
         puntajes.mostrarme();
     }
-    public void anuncio_cerrar(String nombre_ganador){
-        anuncios.terminar(nombre_ganador);
+    public void limpiar_partida(){
+        if(puntajes.isVisible()){
+            puntajes.modificar_accion();
+        }
+        if(anuncios.isVisible()){
+            anuncios.dejar_de_verme();
+        }
     }
-    public void set_ganador(String nombre){
-        anuncios.setGanador(nombre);
+    public void mostrar_mensaje_error(String cadena_error){
+        setVisible(false);
+        anuncios.cartel_error(cadena_error);
     }
 }

@@ -42,7 +42,7 @@ public class VistaGrafica implements IVista {
     public void no_mostrar_mano(){
         ventana_partida.setVisible(false);
     }
-
+    @Override
     public void mostrar_esperando(){
         ventana_esperando.setVisible(true);
         ventana_partida.setTitle(ventana_inicio_jugador.getNombreUsuario());
@@ -89,35 +89,18 @@ public class VistaGrafica implements IVista {
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //IMPLEMENTACION JDIALOG ANUNCIOS
 
-    public void oferta_tute(){
-        ventana_partida.ofrecer_tute();
-        ventana_partida.deshabilitar_botones();
+    public void oferta_canto(String cadena){
+        ventana_partida.oferta_canto(cadena);
     }
-    public void oferta_las_40(){
-        ventana_partida.ofrecer_las_40();
-        ventana_partida.deshabilitar_botones();
+    public void canto(String cadena){
+        ventana_partida.canto(cadena);
     }
-    public void oferta_las_20(){
-        ventana_partida.ofrecer_las_20();
-        ventana_partida.deshabilitar_botones();
+    public void cartel_ganador(String cadena){
+        ventana_partida.cartel_ganador(cadena);
     }
 
-    public void canta_tute(){
-        ventana_partida.canta_tute();
-    }
-    public void canta_las_40(String nombre){
-        ventana_partida.canta_las_40(nombre);
-    }
-    public void canta_las_20(String nombre){
-        ventana_partida.canta_las_20(nombre);
-    }
 
-    public void gana_por_puntos(){
-        ventana_partida.ganador_por_punts();
-    }
-    public void gana_ultimas_10(String nombre){
-        ventana_partida.gana_ultimas_10(nombre);
-    }
+
 
     //IMPLEMENTACION JDIALOG PUNTAJES
 
@@ -136,8 +119,18 @@ public class VistaGrafica implements IVista {
         ventana_partida.mostrar_los_puntajes();
     }
     @Override
+    public void limpiar_partida(){
+        ventana_partida.limpiar_partida();
+    }
+    @Override
     public void mostrar_turno(int id){
     }
+
+    @Override
+    public void mostrar_mensaje_error(String error) {
+        ventana_partida.mostrar_mensaje_error(error);
+    }
+
     public void mostrar_ranking_al_comienzo() throws RemoteException {
         ventana_ranking.cargarDatos(controlador.getTablaRanking());
         ventana_ranking.mostrar_boton_volver_comienzo();
@@ -153,13 +146,7 @@ public class VistaGrafica implements IVista {
         return ventana_inicio_jugador.getNombreUsuario();
     }
 
-    public void setear_ganador(String nombre){
-        ventana_partida.set_ganador(nombre);
-    }
 
-    @Override
-    public void mostrar_mensaje_error() {
 
-    }
 
 }

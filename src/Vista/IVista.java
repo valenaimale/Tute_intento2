@@ -11,25 +11,14 @@ public interface IVista {
     public void limpiar_tablas();
     public void setCartas_clicleables(ArrayList<Integer> ids_posibles) throws RemoteException;
     public void agregar_carta_mano(int id_carta, int id_jugador);
-    public void oferta_las_40();
-    public void oferta_las_20();
-    public void oferta_tute();
-
-    public void canta_las_40(String nombre) throws RemoteException;
-    public void canta_las_20(String nombre) throws RemoteException;
-    public void canta_tute() throws RemoteException;
-
-    public void gana_ultimas_10(String nombre) throws RemoteException;
-
-    public void gana_por_puntos() throws RemoteException;
-
     public void limpiar_cartas_mesa();
-
     public void actualizar_puntaje(int id, int puntaje, String nombre);
-
     public void mostrar_puntajes() throws RemoteException;
     public void mostrar_turno(int id);
-    public void setear_ganador(String nombre);
-
-    public void mostrar_mensaje_error();
+    public void mostrar_mensaje_error(String error);
+    public void canto(String s) throws RemoteException;
+    public void cartel_ganador(String s);
+    public void oferta_canto(String s);
+    public void mostrar_esperando();
+    public void limpiar_partida();
 }

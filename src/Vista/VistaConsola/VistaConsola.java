@@ -32,7 +32,6 @@ public class VistaConsola extends JFrame implements IVista {
     private JTextArea palo_triunfo;
     private JScrollPane scroll;
     private String nombre_ganador_baza;
-    private String nombre_ganador_final;
     private String nombre_jugador;//jugador de esta vista
 
 
@@ -114,18 +113,22 @@ public class VistaConsola extends JFrame implements IVista {
                 procesar_respuesta_ranking_al_finalizar(cadena);
                 break;
             case EstadoConsola.RESPUESTA_MENSAJE_ERROR:
-                controlador.salir();
+                procesar_respuesta_de_error(cadena);
+                break;
+            case EstadoConsola.RESPUESTA_PUNTAJE:
+                panel_escritura.setVisible(false);
+                controlador.respuesta_puntaje();
                 break;
         }
     }
     @Override
     public void iniciar(){
         setVisible(true);
-        estado=EstadoConsola.MENU_PRINCIPAL;
         mostrar_menu_principal();
 
     }
     private void mostrar_menu_principal(){
+        estado=EstadoConsola.MENU_PRINCIPAL;
         setTitle("MENU PRINCIPAL");
         texto_salida.setText("");
         println("Seleccione una de estas opciones ingresando el numero junto a las mismas y luego presionando enter:");
@@ -193,20 +196,16 @@ public class VistaConsola extends JFrame implements IVista {
             nombre_ganador_baza=id_nombre.get(id);
         }
         id_puntaje.put(id,puntaje);
-        texto_salida.setText("Esperando que haya 4 jugadores...\n");
-        mostrar_espera();
+        //texto_salida.setText("Esperando que haya 4 jugadores...\n");
+        //mostrar_espera();
     }
-    private void mostrar_espera(){
-        for(Integer i:id_nombre.keySet()){
-            println("ID:"+i+"  -NOMBRE:"+id_nombre.get(i));
-        }
-    }
+
     @Override
     public void no_mostrar_espera(int cantidad_jugadores, int id_jugador) {
         setTitle("Vista de: "+nombre_jugador);
         texto_salida.setText("");
         println("Ya hay "+ cantidad_jugadores + " jugadores. El juego va a comenzar!");
-        println("Comienza la baza. Es turno de "+nombre_ganador_baza);
+        println("Comienza el juego. Es turno de "+nombre_ganador_baza);
     }
     @Override
     public void iniciar_valores_partida(ArrayList<Integer> ids_cartas, String palo_triunfo) {
@@ -242,7 +241,6 @@ public class VistaConsola extends JFrame implements IVista {
                 println(i+"- "+mapeoCartasConsola.obtener_carta(indicecarta_idcarta.get(i)));
             }
         }
-        //texto_entrada.setVisible(true);
         panel_escritura.setVisible(true);
     }
     private void procesar_tirada_de_carta(String indice_ingresado) throws RemoteException {
@@ -280,31 +278,8 @@ public class VistaConsola extends JFrame implements IVista {
         }
         //mostrar_cartas();
     }
-    @Override
-    public void oferta_las_40() {
-        estado=EstadoConsola.OFRECER_CANTO;
-        println("");
-        println("Podes cantar las 40! Ingrese 1 para cantar o 2 para no cantar y luego presione enter!");
-        panel_escritura.setVisible(true);
-        //texto_entrada.setVisible(true);
 
-    }
-    @Override
-    public void oferta_las_20() {
-        estado=EstadoConsola.OFRECER_CANTO;
-        println("");
-        println("Podes cantar las 20! Ingrese 1 para cantar o 2 para no cantar y luego presione enter!");
-        //texto_entrada.setVisible(true);
-        panel_escritura.setVisible(true);
-    }
-    @Override
-    public void oferta_tute() {
-        estado=EstadoConsola.OFRECER_CANTO;
-        println("");
-        println("Podes cantar tute! Ingrese 1 para cantar o 2 para no cantar y luego presione enter!");
-        //texto_entrada.setVisible(true);
-        panel_escritura.setVisible(true);
-    }
+
     private void procesar_respuesta_a_canto(String respuesta) throws RemoteException {
         switch (respuesta){
             case "1":
@@ -318,60 +293,7 @@ public class VistaConsola extends JFrame implements IVista {
                 break;
         }
     }
-    @Override
-    public void canta_las_40(String nombre) throws RemoteException {
-        println("");
-        println(nombre+ " canto las 40. Suma 40 puntos!");
-        controlador.procesar_eventos_pendientes();
 
-    }
-    @Override
-    public void canta_las_20(String nombre) throws RemoteException {
-        println("");
-        println(nombre+ " canto las 20. Suma 20 puntos!");
-        controlador.procesar_eventos_pendientes();
-
-
-    }
-
-    @Override
-    public void canta_tute() throws RemoteException {
-        //texto_salida.setText("");
-        estado = EstadoConsola.RESPUESTA_TERMINO;
-        println("");
-        println(nombre_ganador_final+ " canto tute. Gano el juego!");
-        println("Ingrese 1 para volver a jugar, 2 para salir o 3 para ver el ranking. Luego presione enter!");
-        panel_escritura.setVisible(true);
-        //HAY QUE MOSTRAR OPCIONES DE "VOLVER A JUGAR" Y "SALIR"
-        //controlador.procesar_eventos_pendientes();
-        //texto_entrada.setVisible(true);
-        //panel_escritura.setVisible(true);
-
-    }
-
-    @Override
-    public void gana_ultimas_10(String nombre) throws RemoteException {
-
-        println("");
-        println(nombre+" gano la ultima baza. Suma 10 puntos!");
-        controlador.procesar_eventos_pendientes();
-        //texto_entrada.setVisible(true);
-        //panel_escritura.setVisible(true);
-
-    }
-    @Override
-    public void gana_por_puntos() throws RemoteException {
-        estado = EstadoConsola.RESPUESTA_TERMINO;
-        println("");
-        println(nombre_ganador_final + " sumo 101 puntos o mas. Gano el juego!");
-        println("Ingrese 1 para volver a jugar, 2 para salir o 3 para ver el ranking. Luego presione enter!");
-        panel_escritura.setVisible(true);
-        //HAY QUE MOSTRAR OPCIONES DE "VOLVER A JUGAR" Y "SALIR"
-        //controlador.procesar_eventos_pendientes();
-        //texto_entrada.setVisible(true);
-        //panel_escritura.setVisible(true);
-
-    }
 
     @Override
     public void limpiar_cartas_mesa() {
@@ -389,6 +311,7 @@ public class VistaConsola extends JFrame implements IVista {
     }
     @Override
     public void mostrar_puntajes() throws RemoteException {
+        estado = EstadoConsola.RESPUESTA_PUNTAJE;
         mostrar_puntajes_permanentes();
         println("");
         //estado =EstadoConsola.RESPUESTA_PUNTAJES;
@@ -396,31 +319,78 @@ public class VistaConsola extends JFrame implements IVista {
         for(Integer i:id_puntaje.keySet()){
             println("-NOMBRE:"+ id_nombre.get(i)+ "  -ID:"+i+"  -PUNTAJE:"+id_puntaje.get(i));
         }
-        //println("");
-        //println("Presione enter para continuar!");
-        //panel_escritura.setVisible(true);
-        controlador.respuesta_puntajes();
-        //mostrar_cartas();
+        //controlador.respuesta_puntaje();
+        println("");
+        println("Presione enter para continuar!");
+        panel_escritura.setVisible(true);
     }
+
 
 
     @Override
     public void mostrar_turno(int id) {
+        panel_escritura.setVisible(false);
         println("Turno de "+id_nombre.get(id));
     }
-    @Override
-    public void setear_ganador(String nombre) {
-        nombre_ganador_final=nombre;
-    }
+
 
     @Override
-    public void mostrar_mensaje_error() {
+    public void mostrar_mensaje_error(String error) {
         estado = EstadoConsola.RESPUESTA_MENSAJE_ERROR;
         texto_salida.setText("");
-        println("El juego ya comenzo, intentelo mas tarde. Presione enter para continuar!");
+        println(error);
+        println("Ingrese 1 para volver al menu principal");
         panel_escritura.setVisible(true);
 
     }
+
+    private void procesar_respuesta_de_error(String cadena){
+        switch (cadena){
+            case "1":
+                mostrar_menu_principal();
+                break;
+            default:
+                println("Ingrese 1 para volver al menu principal");
+                break;
+        }
+
+    }
+
+    @Override
+    public void canto(String s) throws RemoteException {
+        println("");
+        println(s);
+        println("");
+        controlador.respuesta_anuncio();
+
+    }
+
+    @Override
+    public void cartel_ganador(String s) {
+        estado = EstadoConsola.RESPUESTA_TERMINO;
+        println("");
+        println(s);
+        println("Ingrese 1 para volver a jugar, 2 para salir o 3 para ver el ranking. Luego presione enter!");
+        panel_escritura.setVisible(true);
+    }
+
+    @Override
+    public void oferta_canto(String s) {
+        estado=EstadoConsola.OFRECER_CANTO;
+        println("");
+        println(s+ "! Ingrese 1 para cantar o 2 para no cantar. Luego presione enter!");
+        panel_escritura.setVisible(true);
+
+    }
+
+    @Override
+    public void mostrar_esperando() {
+        texto_salida.setText("Esperando que haya 4 jugadores...\n");
+        for(Integer i:id_nombre.keySet()){
+            println("ID:"+i+"  -NOMBRE:"+id_nombre.get(i));
+        }
+    }
+
 
     private void procesar_respuesta_termino(String cadena) throws RemoteException {
         switch (cadena){
@@ -596,5 +566,9 @@ public class VistaConsola extends JFrame implements IVista {
     }
     public void println(String cadena){
         print(cadena + "\n");
+    }
+    @Override
+    public void limpiar_partida(){
+
     }
 }
