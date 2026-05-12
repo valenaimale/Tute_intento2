@@ -47,8 +47,7 @@ public class VistaGrafica implements IVista {
         ventana_esperando.setVisible(true);
         ventana_partida.setTitle(ventana_inicio_jugador.getNombreUsuario());
     }
-    public void no_mostrar_espera(int cantidad, int id_jugador){
-        iniciar_posiciones_mano(cantidad, id_jugador);
+    public void no_mostrar_espera(){
         ventana_esperando.setVisible(false);
     }
     @Override
@@ -78,7 +77,7 @@ public class VistaGrafica implements IVista {
         ventana_partida.iniciar_cartas_mano(id_carta,id_actual);
     }
 
-    private void iniciar_posiciones_mano(int cantidad, int id_jugador){
+    public void iniciar_posiciones_mano(int cantidad, int id_jugador){
         ventana_partida.iniciar_posiciones(cantidad, id_jugador);
     }
     public void mostrar_mano_visible(){
@@ -98,7 +97,9 @@ public class VistaGrafica implements IVista {
     public void cartel_ganador(String cadena){
         ventana_partida.cartel_ganador(cadena);
     }
-
+    public void esperar_confirmacion(String cadena){
+        ventana_partida.esperar_confirmacion(cadena);
+    }
 
 
 
@@ -124,6 +125,10 @@ public class VistaGrafica implements IVista {
     }
     @Override
     public void mostrar_turno(int id){
+    }
+    @Override
+    public void no_mostrar_espera_confirmaciones(){
+        ventana_partida.no_mostrar_espera_confirmaciones();
     }
 
     @Override

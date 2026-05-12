@@ -20,14 +20,15 @@ public class DAnuncios extends JDialog {
     private Runnable accion_boton;
     private Controlador controlador;
     private VistaGrafica vistaPrincipal;
+    private TimerUnico timer;
 
 
-    public DAnuncios(JFrame v_padre, Controlador controlador, VistaGrafica vistaPrincipal) {
+    public DAnuncios(JFrame v_padre, Controlador controlador, VistaGrafica vistaPrincipal, TimerUnico timer) {
         super(v_padre, false);
-        inicializar(controlador, vistaPrincipal);
+        inicializar(controlador, vistaPrincipal, timer);
     }
 
-    private void inicializar(Controlador controlador, VistaGrafica vistaPrincipal) {
+    private void inicializar(Controlador controlador, VistaGrafica vistaPrincipal, TimerUnico timer) {
         this.controlador = controlador;
         this.vistaPrincipal = vistaPrincipal;
         setBounds(100, 100, 500, 109);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
@@ -39,6 +40,7 @@ public class DAnuncios extends JDialog {
         texto = new JLabel();
         panel_principal.add(texto, BorderLayout.CENTER);
         //texto.setVisible(true);
+        this.timer = timer;
         universal_si = new JButton("SI");
         universal_no = new JButton("NO");
         volver_jugar = new JButton("Volver a jugar");
@@ -75,6 +77,7 @@ public class DAnuncios extends JDialog {
         universal_si.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                timer.interrumpir();
                 setVisible(false);
                 universal_no.setVisible(false);
                 universal_si.setVisible(false);
@@ -90,6 +93,7 @@ public class DAnuncios extends JDialog {
         universal_no.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                timer.interrumpir();
                 setVisible(false);
                 universal_no.setVisible(false);
                 universal_si.setVisible(false);
@@ -147,9 +151,6 @@ public class DAnuncios extends JDialog {
         boton_ok.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-                boton_ok.setEnabled(false);
-                boton_ok.setVisible(false);
                 accion_boton.run();
             }
         });
@@ -157,15 +158,26 @@ public class DAnuncios extends JDialog {
     }
     public void oferta_canto(String cadena){
         texto.setText(cadena);
-        System.out.println("Entro a oferta_canto. Texto: "+texto.getText());
-        System.out.println("Texto visible: "+texto.isVisible());
-        System.out.println("Panel principal visible: "+panel_principal.isVisible());
-        System.out.println("Panel botones visible: "+panel_botones.isVisible());
-
         universal_no.setVisible(true);
         universal_si.setVisible(true);
         universal_no.setEnabled(true);
         universal_si.setEnabled(true);
+        timer.iniciar(()->{
+            setVisible(false);
+            universal_no.setVisible(false);
+            universal_si.setVisible(false);
+            universal_no.setEnabled(false);
+            universal_si.setEnabled(false);
+            try {
+                controlador.eleccion_no();
+            } catch (RemoteException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        setVisible(true);
+    }
+    public void esperar_confirmaciones(String cadena){
+        texto.setText(cadena);
         setVisible(true);
     }
 
@@ -178,12 +190,17 @@ public class DAnuncios extends JDialog {
         boton_ok.setVisible(true);
         boton_ok.setEnabled(true);
         accion_boton = () -> {
+            timer.interrumpir();
+            setVisible(false);
+            boton_ok.setEnabled(false);
+            boton_ok.setVisible(false);
             try {
                 controlador.respuesta_anuncio();
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
         };
+        timer.iniciar(accion_boton);//comienza el timer (timer.start()) y ademas se le asigna un runnable para cuando termine
         setVisible(true);
     }
     public void dejar_de_verme(){
@@ -191,9 +208,6 @@ public class DAnuncios extends JDialog {
         boton_ok.setEnabled(false);
         setVisible(false);
     }
-
-
-
     public void cartel_ganador(String cadena) {
         texto.setText(cadena);
         System.out.println("Entro a oferta_canto. Texto: "+texto.getText());
@@ -214,7 +228,11 @@ public class DAnuncios extends JDialog {
         texto.setText(cadena);
         boton_ok.setVisible(true);
         boton_ok.setEnabled(true);
-        accion_boton = () -> vistaPrincipal.mostrar_menu_principal();
+        accion_boton = () -> {
+            vistaPrincipal.mostrar_menu_principal();
+            boton_ok.setVisible(false);//lo agregue el 12/5 (puede estar mal)
+            boton_ok.setEnabled(false);//lo agregue el 12/5 (puede estar mal)
+        };
         setVisible(true);
     }
 }

@@ -127,6 +127,12 @@ public class VistaConsola extends JFrame implements IVista {
         mostrar_menu_principal();
 
     }
+
+    @Override
+    public void no_mostrar_espera() {
+
+    }
+
     private void mostrar_menu_principal(){
         estado=EstadoConsola.MENU_PRINCIPAL;
         setTitle("MENU PRINCIPAL");
@@ -200,13 +206,13 @@ public class VistaConsola extends JFrame implements IVista {
         //mostrar_espera();
     }
 
-    @Override
+    /*@Override
     public void no_mostrar_espera(int cantidad_jugadores, int id_jugador) {
         setTitle("Vista de: "+nombre_jugador);
         texto_salida.setText("");
         println("Ya hay "+ cantidad_jugadores + " jugadores. El juego va a comenzar!");
         println("Comienza el juego. Es turno de "+nombre_ganador_baza);
-    }
+    }*/
     @Override
     public void iniciar_valores_partida(ArrayList<Integer> ids_cartas, String palo_triunfo) {
         println("El palo del triunfo es: "+ palo_triunfo);
@@ -569,6 +575,21 @@ public class VistaConsola extends JFrame implements IVista {
     }
     @Override
     public void limpiar_partida(){
+
+    }
+
+    @Override
+    public void iniciar_posiciones_mano(int cantidad, int id_jugador) {
+
+    }
+
+    @Override
+    public void no_mostrar_espera_confirmaciones() {
+
+    }
+
+    @Override
+    public void esperar_confirmacion(String s) {
 
     }
 }

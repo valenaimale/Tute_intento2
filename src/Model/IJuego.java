@@ -25,4 +25,5 @@ public interface IJuego extends IObservableRemoto {
     public void confirmacion_baza_terminada(int id_confirmado) throws RemoteException;
     public void jugador_agregado() throws RemoteException;
     public Boolean baza_comenzada() throws RemoteException;
+    public Boolean exists_in_jugadores_confirmados(int id_jugador) throws RemoteException;
 }

@@ -237,6 +237,41 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
     }
     @Override
     public void confirmacion_baza_terminada(int id_confirmado) throws RemoteException {
+        jugadores_confirmados.add(id_confirmado);
+        System.out.println("Jugadores confirmados:\n");
+        for(Integer i:jugadores_confirmados){
+            System.out.println(i);
+        }
+        if(jugadores_confirmados.size()==4) {
+            jugadores_confirmados.clear();
+            switch (resolutorJugada.getEstado_ganador_baza()) {
+                case LAS_20, LAS_40, NADA:
+                    notificarObservadores(ACTUALIZACION_TURNO);
+                    break;
+                case ULTIMAS_10:
+                    if (resolutorJugada.chequear_si_hay_ganador(jugadores)) {
+                        resolutorJugada.actualizar_ganador(jugadores);
+                        notificarObservadores(GANADOR_POR_PUNTOS);
+                        reiniciar_juego();
+                    } else {
+                        repartir();
+                    }
+                    break;
+            }
+        }
+    }
+    @Override
+    public Boolean exists_in_jugadores_confirmados(int id_jugador){
+        if(jugadores_confirmados.contains(id_jugador)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    /*
+    @Override
+    public void confirmacion_baza_terminada(int id_confirmado) throws RemoteException {
         //jugadores_confirmados.add(id_confirmado);
         if(id_confirmado==jugada.getMi_actual().getId() && jugada.getMis_cartas().isEmpty()){
             switch (resolutorJugada.getEstado_ganador_baza()){
@@ -262,9 +297,9 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
                 reiniciar_juego();
             }
         }
-        /*/if(jugadores.size()==jugadores_confirmados.size()){
+        /if(jugadores.size()==jugadores_confirmados.size()){
             jugadores_confirmados.clear();
-        }*/
+        }
     }
     /*public void confirmacion_baza_terminada(int id_confirmado) throws RemoteException {
         jugadores_confirmados.add(id_confirmado);

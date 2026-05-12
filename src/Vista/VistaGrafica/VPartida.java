@@ -30,7 +30,7 @@ public class VPartida extends JFrame{
     private int oeste;
     private DAnuncios anuncios;
     private DPuntajes puntajes;
-
+    private TimerUnico timerUnico;
 
 
     public VPartida(Controlador controlador, VistaGrafica vistaPrincipal){
@@ -43,8 +43,9 @@ public class VPartida extends JFrame{
         this.palo_triunfo=new JLabel();
         this.controlador=controlador;
         this.vistaPrincipal=vistaPrincipal;
-        anuncios=new DAnuncios(this,controlador,vistaPrincipal);
-        puntajes=new DPuntajes(this,vistaPrincipal, controlador);
+        this.timerUnico=new TimerUnico(10000);
+        anuncios=new DAnuncios(this,controlador,vistaPrincipal, timerUnico);
+        puntajes=new DPuntajes(this,vistaPrincipal, controlador,timerUnico);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//que pasa al cerrar la ventana
         setBounds(50, 50, 1400, 1200);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
         setLocationRelativeTo(null);
@@ -211,5 +212,11 @@ public class VPartida extends JFrame{
     public void mostrar_mensaje_error(String cadena_error){
         setVisible(false);
         anuncios.cartel_error(cadena_error);
+    }
+    public void esperar_confirmacion(String cadena){
+        anuncios.esperar_confirmaciones(cadena);
+    }
+    public void no_mostrar_espera_confirmaciones(){
+        anuncios.setVisible(false);
     }
 }

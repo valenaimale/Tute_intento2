@@ -54,7 +54,8 @@ public class Controlador implements IControladorRemoto {
                 Eventos evento = (Eventos) o;
                 switch (evento) {
                     case COMENZAR_JUEGO:
-                        vista.no_mostrar_espera(juego.getJugadores().size(), id_jugador);
+                        vista.iniciar_posiciones_mano(juego.getJugadores().size(), id_jugador);
+                        vista.no_mostrar_espera();
                         break;
                     case JUGADOR_AGREGADO:
                         vista.limpiar_tablas();
@@ -64,6 +65,7 @@ public class Controlador implements IControladorRemoto {
                         vista.mostrar_esperando();
                         break;
                     case CARTAS_REPARTIDAS:
+                        vista.no_mostrar_espera_confirmaciones();
                         vista.iniciar_valores_partida(juego.cartas_repartidas_al_jugador(id_jugador), juego.getPalo_triunfo());
                         vista.mostrar_turno(juego.getJugador_actual().getId());
                         if(juego.getJugador_actual().getId() == id_jugador) {
@@ -72,6 +74,7 @@ public class Controlador implements IControladorRemoto {
                         }
                         break;
                     case GANADOR_POR_TUTE:
+                        vista.no_mostrar_espera();
                         vista.limpiar_cartas_mesa();
                         jugando=false;
                         vista.cartel_ganador(juego.getGanador().getNombre()+ " canto Tute. Gano el juego!");
@@ -93,6 +96,7 @@ public class Controlador implements IControladorRemoto {
                         break;
                     case BAZA_TERMINADA:
                         System.out.println("Entro a baza_terminada");
+                        vista.limpiar_cartas_mesa();
                         vista.actualizar_puntaje(juego.getGanador_parcial().getId(),juego.getGanador_parcial().getPuntaje(),juego.getGanador_parcial().getNombre());
                         vista.mostrar_puntajes();
                         break;
@@ -107,6 +111,7 @@ public class Controlador implements IControladorRemoto {
                         }
                         break;
                     case GANADOR_POR_PUNTOS:
+                        vista.no_mostrar_espera_confirmaciones();
                         vista.limpiar_partida();
                         vista.limpiar_cartas_mesa();
                         jugando=false;
@@ -114,23 +119,18 @@ public class Controlador implements IControladorRemoto {
                         break;
                     case ACTUALIZACION_TURNO:
                         System.out.println("Entro a actualizacion de turno");
+                        vista.no_mostrar_espera_confirmaciones();
                         vista.mostrar_turno(juego.getJugador_actual().getId());
-                        if (juego.getJugador_actual().getId() == id_jugador && !juego.baza_comenzada()){//caso de que sea el primer jugador de la baza (se hace la notificacion en juego.confirmacion_baza(id))
-                            vista.limpiar_cartas_mesa();
+                        if(juego.getJugador_actual().getId() == id_jugador){//caso de que sea el jugador actual (se hace la notificacion en juego.tirada_de_carta(id))
                             vista.setCartas_clicleables(juego.cartas_posibles());
-                        }
-                        else if(juego.getJugador_actual().getId() == id_jugador){//caso de que sea el jugador actual (se hace la notificacion en juego.tirada_de_carta(id))
-                            vista.setCartas_clicleables(juego.cartas_posibles());
-                        }
-                        else{//no es el jugador actual, se podria poner "esperando que juego.GetJugador_actual().getNombre() tire" y se podria borrar vista.mostrar_turno()
-
                         }
                         break;
                     case CARTA_TIRADA:
-                        if(juego.getCartas_jugadas_en_la_mano().size()==1){
+                        /*if(juego.getCartas_jugadas_en_la_mano().size()==1){
                             vista.limpiar_partida();//este metodo hace que si los puntajes o los anuncios estan visibles, dejar de hacer visibles a los dos
                             vista.limpiar_cartas_mesa();
-                        }
+                        }*/
+                        //vista.limpiar_partida();
                         vista.agregar_carta_mano(juego.getCartas_jugadas_en_la_mano().getLast().getId(), juego.getJugador_actual().getId());
                         break;
                     case ULTIMAS_10:
@@ -151,9 +151,11 @@ public class Controlador implements IControladorRemoto {
         System.exit(0);
     }
     public void respuesta_anuncio() throws RemoteException {
-       vista.mostrar_puntajes();
+        vista.limpiar_cartas_mesa();
+        vista.mostrar_puntajes();
     }
     public void respuesta_puntaje() throws RemoteException {
+        vista.esperar_confirmacion("Esperando que todos los jugadores esten listos...");
         juego.confirmacion_baza_terminada(id_jugador);
     }
     private void manejar_error_de_conexion(RemoteException e) {

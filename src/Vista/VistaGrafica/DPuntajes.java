@@ -21,18 +21,20 @@ public class DPuntajes extends JDialog {
     private JButton boton_ok;
     private JLabel ganador_baza;
     private Controlador controlador;
+    private TimerUnico timer;
 
-    public DPuntajes(JFrame ventana_partida, VistaGrafica vistaPrincipal, Controlador controlador){
+    public DPuntajes(JFrame ventana_partida, VistaGrafica vistaPrincipal, Controlador controlador, TimerUnico timer){
         super(ventana_partida, false);
-        inicializar_componentes(vistaPrincipal, controlador);
+        inicializar_componentes(vistaPrincipal, controlador, timer);
     }
-    private void inicializar_componentes(VistaGrafica vistaPrincipal, Controlador controlador) {
+    private void inicializar_componentes(VistaGrafica vistaPrincipal, Controlador controlador, TimerUnico timer) {
         this.vistaPrincipal=vistaPrincipal;
         this.controlador=controlador;
         setResizable(false);//No permitir cambio de tamanio en la ventana
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//que pasa al cerrar la ventana
         setSize(500, 500);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
         setLocationRelativeTo(null);
+        this.timer=timer;
         panel_principal=new JPanel(new BorderLayout());
         boton_ok=new JButton("OK");
         ganador_baza = new JLabel();
@@ -94,10 +96,14 @@ public class DPuntajes extends JDialog {
             ganador_baza.setVisible(false);
             try {
                 controlador.respuesta_puntaje();
+                timer.interrumpir();
+                setVisible(false);
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
         };
+        timer.iniciar(accion_boton);
+        System.out.println("timer iniciado. Accion:"+accion_boton);
         setVisible(true);
     }
     public void mostrarme_partida_en_curso(){

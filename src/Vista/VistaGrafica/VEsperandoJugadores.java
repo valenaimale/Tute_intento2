@@ -26,6 +26,7 @@ public class VEsperandoJugadores extends JFrame{
         };
         modelo_tabla.addColumn("NOMBRE");
         modelo_tabla.addColumn("ID");
+        modelo_tabla.addColumn("PUNTAJE");
         tabla_jugadores=new JTable();
         tabla_jugadores.setModel(modelo_tabla);
         panel=new JScrollPane(tabla_jugadores);

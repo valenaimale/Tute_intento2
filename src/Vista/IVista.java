@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public interface IVista {
     public void aniadir_jugador_a_tablas(int id, int puntaje, String nombre);
     public void iniciar();
-    public void no_mostrar_espera(int cantidad_jugadores, int id_jugador);
+    public void no_mostrar_espera();
     public void iniciar_valores_partida(ArrayList<Integer> ids_cartas, String palo_triunfo);
     public void limpiar_tablas();
     public void setCartas_clicleables(ArrayList<Integer> ids_posibles) throws RemoteException;
@@ -21,4 +21,7 @@ public interface IVista {
     public void oferta_canto(String s);
     public void mostrar_esperando();
     public void limpiar_partida();
+    public void iniciar_posiciones_mano(int cantidad, int id_jugador);
+    public void no_mostrar_espera_confirmaciones();
+    public void esperar_confirmacion(String s);
 }
