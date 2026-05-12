@@ -124,7 +124,8 @@ public class VistaGrafica implements IVista {
         ventana_partida.limpiar_partida();
     }
     @Override
-    public void mostrar_turno(int id){
+    public void mostrar_turno(String nombre_jug_actual){
+        ventana_partida.mostrar_turno(nombre_jug_actual);
     }
     @Override
     public void no_mostrar_espera_confirmaciones(){

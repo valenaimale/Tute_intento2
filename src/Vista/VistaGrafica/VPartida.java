@@ -31,6 +31,7 @@ public class VPartida extends JFrame{
     private DAnuncios anuncios;
     private DPuntajes puntajes;
     private TimerUnico timerUnico;
+    private JLabel turno_actual;
 
 
     public VPartida(Controlador controlador, VistaGrafica vistaPrincipal){
@@ -41,6 +42,7 @@ public class VPartida extends JFrame{
         this.mapeo_botones=new HashMap<>();
         this.ver_puntaje=new JButton("Ver puntajes");
         this.palo_triunfo=new JLabel();
+        this.turno_actual = new JLabel("Turno de: ");
         this.controlador=controlador;
         this.vistaPrincipal=vistaPrincipal;
         this.timerUnico=new TimerUnico(10000);
@@ -61,6 +63,7 @@ public class VPartida extends JFrame{
         panel_botones_puntaje_y_triunfo.add(ver_puntaje);
         panel_botones_puntaje_y_triunfo.add(Box.createVerticalStrut(5));
         panel_botones_puntaje_y_triunfo.add(palo_triunfo);
+        panel_botones_puntaje_y_triunfo.add(turno_actual);
         panel_cartas_jug_y_botones.add(panel_cartas_jug,BorderLayout.CENTER);
         panel_cartas_jug_y_botones.add(panel_botones_puntaje_y_triunfo,BorderLayout.EAST);
         setContentPane(fondo);
@@ -172,6 +175,9 @@ public class VPartida extends JFrame{
                 }
             }
         }
+    }
+    public void mostrar_turno(String nombre_jug){
+        this.turno_actual.setText("Turno de: " + nombre_jug);
     }
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

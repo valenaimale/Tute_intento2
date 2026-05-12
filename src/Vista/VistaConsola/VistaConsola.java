@@ -334,9 +334,9 @@ public class VistaConsola extends JFrame implements IVista {
 
 
     @Override
-    public void mostrar_turno(int id) {
+    public void mostrar_turno(String nombre) {
         panel_escritura.setVisible(false);
-        println("Turno de "+id_nombre.get(id));
+        println("Turno de "+nombre);
     }
 
 

@@ -67,7 +67,7 @@ public class Controlador implements IControladorRemoto {
                     case CARTAS_REPARTIDAS:
                         vista.no_mostrar_espera_confirmaciones();
                         vista.iniciar_valores_partida(juego.cartas_repartidas_al_jugador(id_jugador), juego.getPalo_triunfo());
-                        vista.mostrar_turno(juego.getJugador_actual().getId());
+                        vista.mostrar_turno(juego.getJugador_actual().getNombre());
                         if(juego.getJugador_actual().getId() == id_jugador) {
                             vista.limpiar_cartas_mesa();
                             vista.setCartas_clicleables(juego.cartas_posibles());
@@ -120,17 +120,12 @@ public class Controlador implements IControladorRemoto {
                     case ACTUALIZACION_TURNO:
                         System.out.println("Entro a actualizacion de turno");
                         vista.no_mostrar_espera_confirmaciones();
-                        vista.mostrar_turno(juego.getJugador_actual().getId());
+                        vista.mostrar_turno(juego.getJugador_actual().getNombre());
                         if(juego.getJugador_actual().getId() == id_jugador){//caso de que sea el jugador actual (se hace la notificacion en juego.tirada_de_carta(id))
                             vista.setCartas_clicleables(juego.cartas_posibles());
                         }
                         break;
                     case CARTA_TIRADA:
-                        /*if(juego.getCartas_jugadas_en_la_mano().size()==1){
-                            vista.limpiar_partida();//este metodo hace que si los puntajes o los anuncios estan visibles, dejar de hacer visibles a los dos
-                            vista.limpiar_cartas_mesa();
-                        }*/
-                        //vista.limpiar_partida();
                         vista.agregar_carta_mano(juego.getCartas_jugadas_en_la_mano().getLast().getId(), juego.getJugador_actual().getId());
                         break;
                     case ULTIMAS_10:

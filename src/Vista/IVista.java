@@ -14,7 +14,7 @@ public interface IVista {
     public void limpiar_cartas_mesa();
     public void actualizar_puntaje(int id, int puntaje, String nombre);
     public void mostrar_puntajes() throws RemoteException;
-    public void mostrar_turno(int id);
+    public void mostrar_turno(String nombre_jug_actual);
     public void mostrar_mensaje_error(String error);
     public void canto(String s) throws RemoteException;
     public void cartel_ganador(String s);
