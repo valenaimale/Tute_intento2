@@ -113,12 +113,10 @@ public class Controlador implements IControladorRemoto {
                     case GANADOR_POR_PUNTOS:
                         vista.no_mostrar_espera_confirmaciones();
                         vista.limpiar_partida();
-                        vista.limpiar_cartas_mesa();
                         jugando=false;
                         vista.cartel_ganador(juego.getGanador().getNombre()+" sumo 101 puntos o mas. Gano el juego!");
                         break;
                     case ACTUALIZACION_TURNO:
-                        System.out.println("Entro a actualizacion de turno");
                         vista.no_mostrar_espera_confirmaciones();
                         vista.mostrar_turno(juego.getJugador_actual().getNombre());
                         if(juego.getJugador_actual().getId() == id_jugador){//caso de que sea el jugador actual (se hace la notificacion en juego.tirada_de_carta(id))
@@ -151,6 +149,9 @@ public class Controlador implements IControladorRemoto {
     }
     public void respuesta_puntaje() throws RemoteException {
         vista.esperar_confirmacion("Esperando que todos los jugadores esten listos...");
+        juego.confirmacion_baza_terminada(id_jugador);
+    }
+    public void respuesta_puntaje_por_inactividad() throws RemoteException{
         juego.confirmacion_baza_terminada(id_jugador);
     }
     private void manejar_error_de_conexion(RemoteException e) {

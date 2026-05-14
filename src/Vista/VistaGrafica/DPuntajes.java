@@ -1,6 +1,7 @@
 package Vista.VistaGrafica;
 
 import Controlador.Controlador;
+import Vista.TimerUnico;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -23,23 +24,23 @@ public class DPuntajes extends JDialog {
     private Controlador controlador;
     private TimerUnico timer;
 
-    public DPuntajes(JFrame ventana_partida, VistaGrafica vistaPrincipal, Controlador controlador, TimerUnico timer){
+    public DPuntajes(JFrame ventana_partida, VistaGrafica vistaPrincipal, Controlador controlador){
         super(ventana_partida, false);
-        inicializar_componentes(vistaPrincipal, controlador, timer);
+        inicializar_componentes(vistaPrincipal, controlador);
     }
-    private void inicializar_componentes(VistaGrafica vistaPrincipal, Controlador controlador, TimerUnico timer) {
+    private void inicializar_componentes(VistaGrafica vistaPrincipal, Controlador controlador) {
         this.vistaPrincipal=vistaPrincipal;
         this.controlador=controlador;
         setResizable(false);//No permitir cambio de tamanio en la ventana
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//que pasa al cerrar la ventana
         setSize(500, 500);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
         setLocationRelativeTo(null);
-        this.timer=timer;
+        this.timer=new TimerUnico(10000);
         panel_principal=new JPanel(new BorderLayout());
         boton_ok=new JButton("OK");
         ganador_baza = new JLabel();
         ganador_baza.setVisible(false);
-        ganador_baza.setFont(new Font("Arial", Font.BOLD, 20));
+        ganador_baza.setFont(new Font("Arial", Font.BOLD, 14));
         ganador_baza.setHorizontalAlignment(SwingConstants.CENTER);
         boton_ok.setEnabled(true);
         boton_ok.setVisible(true);
@@ -95,14 +96,22 @@ public class DPuntajes extends JDialog {
         accion_boton= () -> {
             ganador_baza.setVisible(false);
             try {
-                controlador.respuesta_puntaje();
                 timer.interrumpir();
+                controlador.respuesta_puntaje();
                 setVisible(false);
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
         };
-        timer.iniciar(accion_boton);
+        timer.iniciar(()->{
+            ganador_baza.setVisible(false);
+            try {
+                controlador.respuesta_puntaje_por_inactividad();
+                setVisible(false);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });
         System.out.println("timer iniciado. Accion:"+accion_boton);
         setVisible(true);
     }

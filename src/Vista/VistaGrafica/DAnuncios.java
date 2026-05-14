@@ -1,5 +1,7 @@
 package Vista.VistaGrafica;
 import Controlador.Controlador;
+import Vista.TimerUnico;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -20,15 +22,16 @@ public class DAnuncios extends JDialog {
     private Runnable accion_boton;
     private Controlador controlador;
     private VistaGrafica vistaPrincipal;
-    private TimerUnico timer;
+    private TimerUnico timer_canto;
+    private TimerUnico timer_oferta_canto;
 
 
-    public DAnuncios(JFrame v_padre, Controlador controlador, VistaGrafica vistaPrincipal, TimerUnico timer) {
+    public DAnuncios(JFrame v_padre, Controlador controlador, VistaGrafica vistaPrincipal) {
         super(v_padre, false);
-        inicializar(controlador, vistaPrincipal, timer);
+        inicializar(controlador, vistaPrincipal);
     }
 
-    private void inicializar(Controlador controlador, VistaGrafica vistaPrincipal, TimerUnico timer) {
+    private void inicializar(Controlador controlador, VistaGrafica vistaPrincipal) {
         this.controlador = controlador;
         this.vistaPrincipal = vistaPrincipal;
         setBounds(100, 100, 500, 109);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
@@ -40,7 +43,8 @@ public class DAnuncios extends JDialog {
         texto = new JLabel();
         panel_principal.add(texto, BorderLayout.CENTER);
         //texto.setVisible(true);
-        this.timer = timer;
+        this.timer_canto = new TimerUnico(10000);
+        this.timer_oferta_canto = new TimerUnico(10000);
         universal_si = new JButton("SI");
         universal_no = new JButton("NO");
         volver_jugar = new JButton("Volver a jugar");
@@ -73,11 +77,13 @@ public class DAnuncios extends JDialog {
         setVisible(false);
         texto.setHorizontalAlignment(SwingConstants.CENTER);
         texto.setVerticalAlignment(SwingConstants.CENTER);
-        panel_principal.setBackground(Color.BLUE);
+        //panel_principal.setBackground(Color.BLACK);
+        setBackground(Color.WHITE);
+
         universal_si.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                timer.interrumpir();
+                timer_oferta_canto.interrumpir();
                 setVisible(false);
                 universal_no.setVisible(false);
                 universal_si.setVisible(false);
@@ -93,7 +99,7 @@ public class DAnuncios extends JDialog {
         universal_no.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                timer.interrumpir();
+                timer_oferta_canto.interrumpir();
                 setVisible(false);
                 universal_no.setVisible(false);
                 universal_si.setVisible(false);
@@ -162,7 +168,7 @@ public class DAnuncios extends JDialog {
         universal_si.setVisible(true);
         universal_no.setEnabled(true);
         universal_si.setEnabled(true);
-        timer.iniciar(()->{
+        timer_oferta_canto.iniciar(()->{
             setVisible(false);
             universal_no.setVisible(false);
             universal_si.setVisible(false);
@@ -190,7 +196,7 @@ public class DAnuncios extends JDialog {
         boton_ok.setVisible(true);
         boton_ok.setEnabled(true);
         accion_boton = () -> {
-            timer.interrumpir();
+            timer_canto.interrumpir();
             setVisible(false);
             boton_ok.setEnabled(false);
             boton_ok.setVisible(false);
@@ -200,7 +206,16 @@ public class DAnuncios extends JDialog {
                 throw new RuntimeException(e);
             }
         };
-        timer.iniciar(accion_boton);//comienza el timer (timer.start()) y ademas se le asigna un runnable para cuando termine
+        timer_canto.iniciar(() -> {
+            setVisible(false);
+            boton_ok.setEnabled(false);
+            boton_ok.setVisible(false);
+            try {
+                controlador.respuesta_anuncio();
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });//comienza el timer (timer.start()) y ademas se le asigna un runnable para cuando termine
         setVisible(true);
     }
     public void dejar_de_verme(){
@@ -229,6 +244,7 @@ public class DAnuncios extends JDialog {
         boton_ok.setVisible(true);
         boton_ok.setEnabled(true);
         accion_boton = () -> {
+            setVisible(false);
             vistaPrincipal.mostrar_menu_principal();
             boton_ok.setVisible(false);//lo agregue el 12/5 (puede estar mal)
             boton_ok.setEnabled(false);//lo agregue el 12/5 (puede estar mal)

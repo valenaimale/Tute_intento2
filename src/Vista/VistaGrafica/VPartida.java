@@ -1,6 +1,7 @@
 package Vista.VistaGrafica;
 
 import Controlador.Controlador;
+import Vista.TimerUnico;
 import Vista.VistaGrafica.Utilidad.MapeoCartasGrafica;
 
 import javax.swing.*;
@@ -30,7 +31,6 @@ public class VPartida extends JFrame{
     private int oeste;
     private DAnuncios anuncios;
     private DPuntajes puntajes;
-    private TimerUnico timerUnico;
     private JLabel turno_actual;
 
 
@@ -45,9 +45,8 @@ public class VPartida extends JFrame{
         this.turno_actual = new JLabel("Turno de: ");
         this.controlador=controlador;
         this.vistaPrincipal=vistaPrincipal;
-        this.timerUnico=new TimerUnico(10000);
-        anuncios=new DAnuncios(this,controlador,vistaPrincipal, timerUnico);
-        puntajes=new DPuntajes(this,vistaPrincipal, controlador,timerUnico);
+        anuncios=new DAnuncios(this,controlador,vistaPrincipal);
+        puntajes=new DPuntajes(this,vistaPrincipal, controlador);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//que pasa al cerrar la ventana
         setBounds(50, 50, 1400, 1200);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
         setLocationRelativeTo(null);
@@ -192,11 +191,7 @@ public class VPartida extends JFrame{
         anuncios.oferta_canto(cadena);
     }
 
-    public void deshabilitar_botones(){
-        for(JButton b: cartas_jugador){
-            b.setEnabled(false);
-        }
-    }
+
     //implementacion JDialog puntajes
     public void aniadir_jugador(int id,  int puntaje,String nombre){
         puntajes.aniadir_jugador(id, puntaje, nombre);
@@ -211,7 +206,7 @@ public class VPartida extends JFrame{
         if(puntajes.isVisible()){
             puntajes.modificar_accion();
         }
-        if(anuncios.isVisible()){
+        if(anuncios.isVisible()){//nunca van a estar visibles los anuncios en esta intancia
             anuncios.dejar_de_verme();
         }
     }

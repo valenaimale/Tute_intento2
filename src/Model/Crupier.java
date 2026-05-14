@@ -11,7 +11,7 @@ public class Crupier {
     private void inicializar(Mazo mazo1){
         this.mazo1=mazo1;
     }
-    public Carta repartida(ArrayList<Jugador> jugadores){
+    /*public Carta repartida(ArrayList<Jugador> jugadores){
         mazo1.mezclate();
         System.out.println("Cartas en mazo antes de repartir: " + mazo1.getMazo().size());
         Carta carta_palo_triunfo=mazo1.getMazo().getLast();
@@ -23,8 +23,8 @@ public class Crupier {
             i++;
         }
         return carta_palo_triunfo;
-    }
-    /*public Carta repartida(ArrayList<Jugador> jugadores){
+    }*/
+    public Carta repartida(ArrayList<Jugador> jugadores){
         for(Jugador j: jugadores){
             switch (j.getId()){
                 case 0:
@@ -56,7 +56,7 @@ public class Crupier {
             i++;
         }
         return carta_palo_triunfo;
-    }*/
+    }
     public void setMazo1(Mazo mazo1){
         this.mazo1=mazo1;
     }

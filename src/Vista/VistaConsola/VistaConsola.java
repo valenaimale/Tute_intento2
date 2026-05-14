@@ -2,6 +2,7 @@ package Vista.VistaConsola;
 
 import Controlador.Controlador;
 import Vista.IVista;
+import Vista.TimerUnico;
 import Vista.VistaConsola.Utilidad.MapeoCartasConsola;
 
 import javax.swing.*;
@@ -33,6 +34,10 @@ public class VistaConsola extends JFrame implements IVista {
     private JScrollPane scroll;
     private String nombre_ganador_baza;
     private String nombre_jugador;//jugador de esta vista
+    private TimerUnico timer_puntaje;
+    private TimerUnico timer_oferta_canto;
+
+
 
 
     public VistaConsola (Controlador controlador){
@@ -61,6 +66,8 @@ public class VistaConsola extends JFrame implements IVista {
         panel_escritura.add(texto_entrada,BorderLayout.CENTER);
         id_nombre=new HashMap<>();
         id_puntaje=new HashMap<>();
+        timer_puntaje= new TimerUnico(10000);
+        timer_oferta_canto=new TimerUnico(10000);
         indicecarta_idcarta=new HashMap<>();
         indicecarta_idcartaclicleable=new HashMap<>();
         mapeoCartasConsola=new MapeoCartasConsola();
@@ -101,6 +108,7 @@ public class VistaConsola extends JFrame implements IVista {
                 procesar_tirada_de_carta(cadena);
                 break;
             case EstadoConsola.OFRECER_CANTO:
+                timer_oferta_canto.interrumpir();
                 procesar_respuesta_a_canto(cadena);
                 break;
             case EstadoConsola.RESPUESTA_TERMINO:
@@ -116,6 +124,7 @@ public class VistaConsola extends JFrame implements IVista {
                 procesar_respuesta_de_error(cadena);
                 break;
             case EstadoConsola.RESPUESTA_PUNTAJE:
+                timer_puntaje.interrumpir();
                 panel_escritura.setVisible(false);
                 controlador.respuesta_puntaje();
                 break;
@@ -202,17 +211,9 @@ public class VistaConsola extends JFrame implements IVista {
             nombre_ganador_baza=id_nombre.get(id);
         }
         id_puntaje.put(id,puntaje);
-        //texto_salida.setText("Esperando que haya 4 jugadores...\n");
-        //mostrar_espera();
+
     }
 
-    /*@Override
-    public void no_mostrar_espera(int cantidad_jugadores, int id_jugador) {
-        setTitle("Vista de: "+nombre_jugador);
-        texto_salida.setText("");
-        println("Ya hay "+ cantidad_jugadores + " jugadores. El juego va a comenzar!");
-        println("Comienza el juego. Es turno de "+nombre_ganador_baza);
-    }*/
     @Override
     public void iniciar_valores_partida(ArrayList<Integer> ids_cartas, String palo_triunfo) {
         println("El palo del triunfo es: "+ palo_triunfo);
@@ -320,7 +321,6 @@ public class VistaConsola extends JFrame implements IVista {
         estado = EstadoConsola.RESPUESTA_PUNTAJE;
         mostrar_puntajes_permanentes();
         println("");
-        //estado =EstadoConsola.RESPUESTA_PUNTAJES;
         println(nombre_ganador_baza + " gano la baza. Puntajes:");
         for(Integer i:id_puntaje.keySet()){
             println("-NOMBRE:"+ id_nombre.get(i)+ "  -ID:"+i+"  -PUNTAJE:"+id_puntaje.get(i));
@@ -329,6 +329,13 @@ public class VistaConsola extends JFrame implements IVista {
         println("");
         println("Presione enter para continuar!");
         panel_escritura.setVisible(true);
+        timer_puntaje.iniciar(()->{panel_escritura.setVisible(false);
+            try {
+                controlador.respuesta_puntaje_por_inactividad();
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
 
@@ -386,6 +393,13 @@ public class VistaConsola extends JFrame implements IVista {
         println("");
         println(s+ "! Ingrese 1 para cantar o 2 para no cantar. Luego presione enter!");
         panel_escritura.setVisible(true);
+        timer_oferta_canto.iniciar(()->{panel_escritura.setVisible(true);
+            try {
+                controlador.eleccion_no();
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
     }
 
@@ -590,6 +604,6 @@ public class VistaConsola extends JFrame implements IVista {
 
     @Override
     public void esperar_confirmacion(String s) {
-
+        println(s);
     }
 }
