@@ -28,7 +28,7 @@ public class Jugada {//tendria la responsabilidad de la jugada literalmente, act
         actualizo_lo_que_hago();
         mis_cartas.add(carta_tirada);
         mi_actual.tirar_carta(carta_tirada);
-        actualizar_mi_ganador();
+        actualizar_mi_ganador();//en todas las tiradas de carta se actualiza el ganador parcial
         if(mis_cartas.size()==4){
             que_hago=Estado_jugada.TERMINADA;
         }
@@ -152,32 +152,6 @@ public class Jugada {//tendria la responsabilidad de la jugada literalmente, act
         return orden;
     }
 
-    /*
-    public void tirada_de_carta(int id) throws RemoteException {
-        for(Carta c:jugador_actual.getMazo_jugador()) {
-            if(c.getId()==id){
-                jugador_actual.tirar_carta(c);//se quita la carta del mazo del jugador
-                cartas_jugadas_en_la_mano.add(c);//agrego carta a la mano
-                mazo.getMazo().add(c);//devuelvo carta al mazo
-                notificarObservadores(Eventos.CARTA_TIRADA);
-                actualizar_ganador_parcial(c, cartas_jugadas_en_la_mano);//si es que hay un nuevo ganador parcial de la mano
-                if(!comprobar_termino_mano()){//si la mano no termino, entonces se actualiza el turno
-                    actualizar_turno();
-                }
-                else{//si la mano termino
-                    for(Carta ca: cartas_jugadas_en_la_mano){
-                        System.out.println(ca.getNombre());
-                    }
-                    cerrar_mano();//el jugador actual es el ganador parcial, se le suma el puntaje al ganador parcial, se borran las cartas de la mesa y se cambia el estado de los cantos, si es necesario
-                    if(comprobar_termino_partida()){//si la partida no termino, solo termina la mano. El controlador se fija si hay algo para cantar y luego muestra los puntajes actuales
-                        cerrar_partida();//le suma 10 al ganador parcial, por las ultimas 10 y, si Estado_cantos==NADA, comprueba si hay ganador. Si tiene algo para cantar,
-                    }
-                    auxiliar();
-                }
-                break;
-            }
-        }
-    */
     private void actualizo_lo_que_hago(){
         if(que_hago!=Estado_jugada.JUGANDO){
             que_hago=Estado_jugada.JUGANDO;

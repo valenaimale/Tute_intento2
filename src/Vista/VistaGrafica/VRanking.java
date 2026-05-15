@@ -35,7 +35,7 @@ public class VRanking extends JFrame{
         };
         scroll = new JScrollPane();
         tabla.setModel(modelo_tabla);
-        scroll.setViewportView(tabla);
+        scroll.setViewportView(tabla);//hace scrolleable la tabla
         panel_principal.add(scroll, BorderLayout.CENTER);
         panel_principal.add(volver, BorderLayout.SOUTH);
         setContentPane(panel_principal);
@@ -48,26 +48,16 @@ public class VRanking extends JFrame{
                 setVisible(false);
             }
         });
-
     }
     public void cargarDatos(Object[][] datosRanking){
         String[] columnas = {"Nombre", "Puntaje ganador","Fecha"};
         modelo_tabla.setDataVector(datosRanking, columnas);
 
         //tabla.setModel(modelo_tabla);
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo_tabla); //ordena la tabla
-        tabla.setRowSorter(sorter); //asocia el ordenador a la tabla
-        sorter.setSortKeys(Arrays.asList(new RowSorter.SortKey(1, SortOrder.DESCENDING))); //manera en la que se ordena automaticamente(por puntaje, de menor a mayor)
-        System.out.println("datos ranking:\n");
-        int filas = tabla.getRowCount();
-        int columnas1 = tabla.getColumnCount();
-
-        for (int i = 0; i < filas; i++) {
-            for (int j = 0; j < columnas1; j++) {
-                System.out.print(tabla.getValueAt(i, j) + " ");
-            }
-            System.out.println();
-        }
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo_tabla); //se crea objeto que ordena las filas de la tabla
+        tabla.setRowSorter(sorter); //asocia el ordenador a la tabla y habilita al usuario a hacer click sobre el encabezado de columna
+        //para ordenarlo
+        sorter.setSortKeys(Arrays.asList(new RowSorter.SortKey(1, SortOrder.DESCENDING))); //manera en la que se ordena automaticamente(por puntaje, de mayor a menor)
     }
     public void mostrar_boton_volver_comienzo(){
         runnable = () ->{

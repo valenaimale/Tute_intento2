@@ -33,8 +33,9 @@ public class VPartida extends JFrame{
     private int este;//ubicaciones de cada jugador segun ID
     private int norte;//ubicaciones de cada jugador segun ID
     private int oeste;//ubicaciones de cada jugador segun ID
-    private DAnuncios anuncios;
-    private DPuntajes puntajes;
+    private DAnuncios anuncios;//JDialog de anuncios
+    private DPuntajes puntajes;//JDialog de puntajes
+    //los JDialogs son ventanas que aparecen dentro de esta ventana, es decir, toman el foco al aparecer teniendo de fondo este frame
 
 
 
@@ -52,9 +53,9 @@ public class VPartida extends JFrame{
         puntajes=new DPuntajes(this,vistaPrincipal, controlador);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//que pasa al cerrar la ventana
         setBounds(50, 50, 1400, 1200);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
-        setLocationRelativeTo(null);
-        ImageIcon fondo_i = new ImageIcon("src/Imagenes_cartas/MESA.png");
-        this.fondo= new JLabel(fondo_i);
+        setLocationRelativeTo(null);//centra la ventana en la pantalla
+        ImageIcon fondo_i = new ImageIcon("src/Imagenes_cartas/MESA.png");//se obtiene la imagen del fondo
+        this.fondo= new JLabel(fondo_i);//se crea un JLabel con la imagen del fondo
         fondo.setLayout(new BorderLayout());
         this.cartas_mano= new ArrayList<>();
         this.panel_cartas_jug=new JPanel(new FlowLayout());
@@ -92,15 +93,14 @@ public class VPartida extends JFrame{
     public void iniciar_cartas_jugador(ArrayList<Integer> id_cartas){//cambiar de id carta (del controlador)
         System.out.println("Mis cartas:\n");
         for(Integer i:id_cartas){
-            ImageIcon original=mapeoCartas.obtener_carta(i);
-            System.out.println(mapeoCartas.obtener_carta(i)+"\n");
-            Image imagen=original.getImage().getScaledInstance(80,140,Image.SCALE_SMOOTH);
-            ImageIcon carta_modificada=new ImageIcon(imagen);
-            JButton boton_carta=new JButton(carta_modificada);
-            boton_carta.setBorderPainted(false);
-            boton_carta.setContentAreaFilled(false);
-            boton_carta.setFocusPainted(false);
-            boton_carta.setEnabled(false);
+            ImageIcon original=mapeoCartas.obtener_carta(i);//obtengo la imagen original para esa carta
+            Image imagen=original.getImage().getScaledInstance(80,140,Image.SCALE_SMOOTH);//creo la imagen con los tamanios adecuados
+            ImageIcon carta_modificada=new ImageIcon(imagen);//creo el ImageIcon con el tamanio de carta defintiivo
+            JButton boton_carta=new JButton(carta_modificada);//creo un boton con el ImageIcon
+            boton_carta.setBorderPainted(false);//oculta el borde del boton
+            boton_carta.setContentAreaFilled(false);//elimina el fondo del boton haciendolo transparente
+            boton_carta.setFocusPainted(false);//elimina el resaltado cuando el boton tiene el foco
+            boton_carta.setEnabled(false);//deshabilita el boton
             mapeo_botones.put(boton_carta, i);
             panel_cartas_jug.add(boton_carta);
             boton_carta.addActionListener(new ActionListener() {
@@ -122,7 +122,7 @@ public class VPartida extends JFrame{
             });
         }
     }
-    public void iniciar_cartas_mano(int id_carta,int id_jugador){//cambiar a id de carta
+    public void iniciar_cartas_mano(int id_carta,int id_jugador){
         ImageIcon original=mapeoCartas.obtener_carta(id_carta);
         Image imagen=original.getImage().getScaledInstance(80,140,Image.SCALE_SMOOTH);
         ImageIcon carta_modificada=new ImageIcon(imagen);

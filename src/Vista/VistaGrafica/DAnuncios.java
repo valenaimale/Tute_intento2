@@ -246,8 +246,8 @@ public class DAnuncios extends JDialog {
         accion_boton = () -> {
             setVisible(false);
             vistaPrincipal.mostrar_menu_principal();
-            boton_ok.setVisible(false);//lo agregue el 12/5 (puede estar mal)
-            boton_ok.setEnabled(false);//lo agregue el 12/5 (puede estar mal)
+            boton_ok.setVisible(false);
+            boton_ok.setEnabled(false);
         };
         setVisible(true);
     }

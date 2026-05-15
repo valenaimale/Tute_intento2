@@ -94,22 +94,22 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
         resolutorJugada.setPalo_del_triunfo(carta_palo_triunfo.getPalo());
         notificarObservadores(CARTAS_REPARTIDAS);
     }
-
     public void tirada_de_carta(int id) throws RemoteException {
         for(Carta c:jugada.getMi_actual().getMazo_jugador()) {
             if (c.getId() == id) {
-                jugada.recibo_carta(c);
-                resolutorJugada.agregar_carta_mazo(c);
-                notificarObservadores(CARTA_TIRADA);
+                jugada.recibo_carta(c);//jugada recibe la carta tirada y actualiza ganador de baza si ese es el caso
+                resolutorJugada.agregar_carta_mazo(c);//se devuelve la carta al mazo
+                notificarObservadores(CARTA_TIRADA);//se notifica sobre la carta tirada
                 break;
             }
         }
-        if(jugada.getQue_hago()==Estado_jugada.TERMINADA){
-            resolutorJugada.setGanador_baza(jugada.getMi_ganador());
-            resolutorJugada.actualizar_puntaje(jugada.getMis_cartas());
-            resolutorJugada.chequeo_canto_ganador_baza();
-            jugada.cerrar_jugada();
-            termino_jugada();
+        if(jugada.getQue_hago()==Estado_jugada.TERMINADA){//si la jugada/baza termino (se tiraron 4 cartas)
+            resolutorJugada.setGanador_baza(jugada.getMi_ganador());//se actualiza el ganador de la baza en resolutor jugada
+            resolutorJugada.actualizar_puntaje(jugada.getMis_cartas());//el resolutor actualiza el puntaje del ganador
+            resolutorJugada.chequeo_canto_ganador_baza();//el resolutor chequea si el ganador de la baza puede realizar algun canto
+            jugada.cerrar_jugada();//se borran las cartas tiradas de la baza y se actualiza el actual a actual=ganador
+            termino_jugada();//segun el estado del ganador de la baza, decidido por resolutor jugada, se notifica lo que corresponde
+            //segun lo que cambio en el modelo
         }
         else{
             jugada.actualizar_turno();
@@ -139,28 +139,28 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
     }
 
 
-    public void canto_positivo() throws RemoteException{
+    public void canto_positivo() throws RemoteException{//el jugador ganador de la baza eligio realizar el canto
         switch (resolutorJugada.getEstado_ganador_baza()){
             case Estado_ganador_baza.LAS_20:
-                resolutorJugada.aceptacion_canto();
-                notificarObservadores(Eventos.CANTA_LAS_20);
+                resolutorJugada.aceptacion_canto();//se acepta el canto y el resolutor se encarga de sumar los puntos correspondientes (20)
+                notificarObservadores(Eventos.CANTA_LAS_20);//se notifica el canto
                 break;
             case Estado_ganador_baza.LAS_40:
-                resolutorJugada.aceptacion_canto();
-                notificarObservadores(Eventos.CANTA_LAS_40);
+                resolutorJugada.aceptacion_canto();//se acepta el canto y el resolutor se encarga de sumar los puntos correspondientes (40)
+                notificarObservadores(Eventos.CANTA_LAS_40);//se notifica el canto
                 break;
             case Estado_ganador_baza.TUTE:
-                resolutorJugada.aceptacion_canto();
-                notificarObservadores(Eventos.GANADOR_POR_TUTE);
-                reiniciar_juego();
+                resolutorJugada.aceptacion_canto();//se acepta el canto y el resolutor se encarga de actualizar el ganador final
+                notificarObservadores(Eventos.GANADOR_POR_TUTE);//se notifica el canto y que el jugador gano
+                reiniciar_juego();//se borran los datos de esta partida por si se quiere volver a jugar
                 break;
         }
     }
     public void canto_negativo() throws RemoteException {
-        resolutorJugada.negacion_canto();
-        notificarObservadores(Eventos.BAZA_TERMINADA);
+        resolutorJugada.negacion_canto();//el resolutor cambia el estado del ganador de la baza a NADA
+        notificarObservadores(Eventos.BAZA_TERMINADA);//se muestra que la mano termino, quien la gano y los puntajes
     }
-    public ArrayList<Integer> cartas_posibles(){
+    public ArrayList<Integer> cartas_posibles(){//metodo para obtener las cartas que puede tirar el jugador actual
         ArrayList<Carta> posibles=jugada.determinar_cartas_disponibles();
         ArrayList<Integer> ids_posibles=new ArrayList<>();
         for(Carta c:jugada.getMi_actual().getMazo_jugador()){
@@ -170,7 +170,8 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
                 }
             }
         }
-        return ids_posibles;
+        return ids_posibles;//se retornan los IDs con el objetivo de que el controlador obtenga solo Integers y no conozca al objeto
+        //carta
     }
 
     @Override
@@ -192,7 +193,7 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
         return jugada.getMis_cartas();
     }
 
-    public void reiniciar_juego(){
+    public void reiniciar_juego(){//se reinician los valores del juego
         jugadores.clear();
         siguiente_id=-1;
         partida_iniciada = false;
@@ -201,7 +202,8 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
         jugada.reinicio();
         resolutorJugada.reiniciar(mazo);
     }
-    public ArrayList<Integer> cartas_repartidas_al_jugador(int id_jugador) throws RemoteException {
+    public ArrayList<Integer> cartas_repartidas_al_jugador(int id_jugador) throws RemoteException {//se obtienen las cartas
+        // repartidas al jugador con el id recibido por parametro
         ArrayList<Integer> id_cartas = new ArrayList<>();
         for(Jugador j: jugadores){
             if(j.getId()==id_jugador){
@@ -210,7 +212,8 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
                 }
             }
         }
-        return id_cartas;
+        return id_cartas;//se retornan los IDs con el objetivo de que el controlador obtenga solo Integers y no conozca al objeto
+        //carta
     }
     private Boolean nombre_existente(String nombre){
         ArrayList<String> nombres = new ArrayList<>();
@@ -240,19 +243,20 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
         for(Integer i:jugadores_confirmados){
             System.out.println(i);
         }
-        if(jugadores_confirmados.size()==4) {
+        if(jugadores_confirmados.size()==4) {//significa que todos los jugadores confirmaron que vieron los puntajes y que estan listos
+            //para seguir jugando
             jugadores_confirmados.clear();
             switch (resolutorJugada.getEstado_ganador_baza()) {
-                case LAS_20, LAS_40, NADA:
+                case LAS_20, LAS_40, NADA://si no es la ultima mano se notifica la actualizacion del turno
                     notificarObservadores(ACTUALIZACION_TURNO);
                     break;
-                case ULTIMAS_10:
-                    if (resolutorJugada.chequear_si_hay_ganador(jugadores)) {
-                        resolutorJugada.actualizar_ganador(jugadores);
-                        notificarObservadores(GANADOR_POR_PUNTOS);
-                        actualizar_ranking();
-                        reiniciar_juego();
-                    } else {
+                case ULTIMAS_10://si esta fue la ultima mano
+                    if (resolutorJugada.chequear_si_hay_ganador(jugadores)) {//se chequea si hay un ganador por puntos
+                        resolutorJugada.actualizar_ganador(jugadores);//se actualiza el ganador final
+                        notificarObservadores(GANADOR_POR_PUNTOS);//se notific que hay un ganador final
+                        actualizar_ranking();//se actualiza el ranking
+                        reiniciar_juego();//se reinician los valores de la partida
+                    } else {//si no hay ganador final, se vuelve a repartir
                         repartir();
                     }
                     break;

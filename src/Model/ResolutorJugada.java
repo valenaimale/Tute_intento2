@@ -125,7 +125,7 @@ public class ResolutorJugada { //tiene la responsabilidad de encargarse de todo 
     }
     public void agregar_carta_mazo(Carta carta){
         mazo.setMazo(carta);
-    }
+    }//la carta que se tiro vuelve al mazo
 
     public Boolean chequear_si_hay_ganador(ArrayList<Jugador> jugadors){
         Boolean rta=false;

@@ -20,7 +20,6 @@ public class TimerUnico {
         timer.start();
         System.out.println("timer iniciado en clase timer. Accion:"+accion);
     }
-
     public void interrumpir() {
         timer.stop();
     }

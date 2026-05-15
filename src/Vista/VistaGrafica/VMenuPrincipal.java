@@ -15,14 +15,12 @@ public class VMenuPrincipal extends JFrame {
     private JButton ranking;
     private JLabel opcion;
     private JPanel panel_botones;
-    private Controlador controlador;
     private VistaGrafica vistaPrincipal;
 
     public VMenuPrincipal(Controlador controlador, VistaGrafica vistaPrincipal){
         inicializar_comp(controlador, vistaPrincipal);
     }
     private void inicializar_comp(Controlador controlador, VistaGrafica vistaPrincipal){
-        this.controlador=controlador;
         this.vistaPrincipal=vistaPrincipal;
         setResizable(false);//No permitir cambio de tamanio en la ventana
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//que pasa al cerrar la ventana
@@ -55,7 +53,7 @@ public class VMenuPrincipal extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                try {
+                try {//requiere try catch ya que el controlador ejecuta un metodo del juego
                     vistaPrincipal.mostrar_ranking_al_comienzo();
                 } catch (RemoteException ex) {
                     throw new RuntimeException(ex);

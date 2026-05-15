@@ -12,12 +12,12 @@ import java.rmi.RemoteException;
 
 
 
-public class DPuntajes extends JDialog {
+public class DPuntajes extends JDialog {//JDialog a su vez extiende de JFrame, por lo que DPuntajes tambien es un JFrame
     private JTable tabla_puntajes;
     private JScrollPane panel;
     private JPanel panel_principal;
     private DefaultTableModel modelo_de_tabla;
-    private Runnable accion_boton;
+    private Runnable accion_boton;//evita tener que tener dos botones OK
     private VistaGrafica vistaPrincipal;
     private JButton boton_ok;
     private JLabel ganador_baza;
@@ -34,7 +34,7 @@ public class DPuntajes extends JDialog {
         setResizable(false);//No permitir cambio de tamanio en la ventana
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//que pasa al cerrar la ventana
         setSize(500, 500);//posicion x (horizontal)=100, posicion y (vertical)=100, ancho=247 , largo=109
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(null);//centra la ventana en la pantalla
         this.timer=new TimerUnico(10000);
         panel_principal=new JPanel(new BorderLayout());
         boton_ok=new JButton("OK");
