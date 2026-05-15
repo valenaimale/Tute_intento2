@@ -74,8 +74,9 @@ public class Controlador implements IControladorRemoto {
                         }
                         break;
                     case GANADOR_POR_TUTE:
-                        vista.no_mostrar_espera();
+                        vista.no_mostrar_espera_confirmaciones();
                         vista.limpiar_cartas_mesa();
+                        vista.limpiar_partida();
                         jugando=false;
                         vista.cartel_ganador(juego.getGanador().getNombre()+ " canto Tute. Gano el juego!");
                         break;

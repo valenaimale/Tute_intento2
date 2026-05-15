@@ -163,9 +163,6 @@ public class ResolutorJugada { //tiene la responsabilidad de encargarse de todo 
         return ganador_final;
     }
 
-    public Mazo getMazo() {
-        return mazo;
-    }
     public void setGanador_baza(Jugador ganador_baza){
         this.ganador_baza=ganador_baza;
     }

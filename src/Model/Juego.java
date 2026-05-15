@@ -71,8 +71,8 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
 
 
 
-    @Override
-    public int siguienteId() throws RemoteException {
+
+    private int siguienteId() throws RemoteException {
         siguiente_id=siguiente_id+1;
         return siguiente_id;
     }
@@ -137,10 +137,7 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
                 break;
         }
     }
-    private void actualizar_ranking(){
-        ranking.add(resolutorJugada.getGanador_final());
-        administradorRanking.guardarRanking(ranking);
-    }
+
 
     public void canto_positivo() throws RemoteException{
         switch (resolutorJugada.getEstado_ganador_baza()){
@@ -226,16 +223,7 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
         }
         return rta;
     }
-    @Override
-    public Boolean baza_comenzada(){
-        if(jugada.getQue_hago()==Estado_jugada.JUGANDO){
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-    @Override
+
     public void confirmacion_baza_terminada(int id_confirmado) throws RemoteException {
         jugadores_confirmados.add(id_confirmado);
         System.out.println("Jugadores confirmados:\n");
@@ -252,6 +240,7 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
                     if (resolutorJugada.chequear_si_hay_ganador(jugadores)) {
                         resolutorJugada.actualizar_ganador(jugadores);
                         notificarObservadores(GANADOR_POR_PUNTOS);
+                        actualizar_ranking();
                         reiniciar_juego();
                     } else {
                         repartir();
@@ -259,5 +248,9 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
                     break;
             }
         }
+    }
+    private void actualizar_ranking(){
+        ranking.add(resolutorJugada.getGanador_final());
+        administradorRanking.guardarRanking(ranking);
     }
 }

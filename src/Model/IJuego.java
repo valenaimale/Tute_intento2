@@ -8,7 +8,7 @@ import Exception.*;
 
 public interface IJuego extends IObservableRemoto {
     public int iniciarJugador(String nombre) throws RemoteException, NombreInvalido, PartidaIniciada;
-    public int siguienteId() throws RemoteException;
+
     public ArrayList<Jugador> getJugadores() throws RemoteException;
     public String getPalo_triunfo() throws RemoteException;
     public void repartir() throws RemoteException;
@@ -24,6 +24,5 @@ public interface IJuego extends IObservableRemoto {
     public ArrayList<Integer> cartas_repartidas_al_jugador(int id) throws RemoteException;
     public void confirmacion_baza_terminada(int id_confirmado) throws RemoteException;
     public void jugador_agregado() throws RemoteException;
-    public Boolean baza_comenzada() throws RemoteException;
 
 }
