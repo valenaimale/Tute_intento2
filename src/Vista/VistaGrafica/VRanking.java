@@ -57,7 +57,7 @@ public class VRanking extends JFrame{
         //tabla.setModel(modelo_tabla);
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo_tabla); //ordena la tabla
         tabla.setRowSorter(sorter); //asocia el ordenador a la tabla
-        sorter.setSortKeys(Arrays.asList(new RowSorter.SortKey(1, SortOrder.ASCENDING))); //manera en la que se ordena automaticamente(por puntaje, de menor a mayor)
+        sorter.setSortKeys(Arrays.asList(new RowSorter.SortKey(1, SortOrder.DESCENDING))); //manera en la que se ordena automaticamente(por puntaje, de menor a mayor)
         System.out.println("datos ranking:\n");
         int filas = tabla.getRowCount();
         int columnas1 = tabla.getColumnCount();

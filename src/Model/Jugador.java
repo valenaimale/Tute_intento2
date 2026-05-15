@@ -9,7 +9,6 @@ public class Jugador implements Serializable {
     private String nombre;
     private int puntaje;
     private ArrayList<Carta> mazo_jugador;
-
     private int id;
     private String fecha_ranking;
 

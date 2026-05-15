@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class VistaConsola extends JFrame implements IVista {
@@ -79,6 +80,7 @@ public class VistaConsola extends JFrame implements IVista {
         setContentPane(panel_principal);
         setSize(900, 500);
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         texto_entrada.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -174,6 +176,11 @@ public class VistaConsola extends JFrame implements IVista {
         texto_salida.setText("");
         setTitle("RANKING");
         println("Ranking historico de ganadores:");
+        Arrays.sort(tabla, (a, b) -> {
+            int puntajeA = Integer.parseInt(a[1].toString());
+            int puntajeB = Integer.parseInt(b[1].toString());
+            return Integer.compare(puntajeB, puntajeA);
+        });
         for(Object[] fila: tabla){
             print("-Nombre:"+fila[0]+"  ");
             print("-Puntaje ganador:"+fila[1]+"  ");

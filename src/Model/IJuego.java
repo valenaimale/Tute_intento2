@@ -11,7 +11,6 @@ public interface IJuego extends IObservableRemoto {
 
     public ArrayList<Jugador> getJugadores() throws RemoteException;
     public String getPalo_triunfo() throws RemoteException;
-    public void repartir() throws RemoteException;
     public void tirada_de_carta(int indice) throws RemoteException;
     public Jugador getGanador_parcial() throws RemoteException;
     public Jugador getJugador_actual() throws RemoteException;

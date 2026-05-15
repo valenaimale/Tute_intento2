@@ -150,9 +150,11 @@ public class Controlador implements IControladorRemoto {
     }
     public void respuesta_puntaje() throws RemoteException {
         vista.esperar_confirmacion("Esperando que todos los jugadores esten listos...");
+        System.out.println("Entro a respuesta_puntaje, se hace juego.confirmacion_baza_terminada("+id_jugador+")");
         juego.confirmacion_baza_terminada(id_jugador);
     }
     public void respuesta_puntaje_por_inactividad() throws RemoteException{
+        System.out.println("Entro a respuesta_puntaje_por_inactividad, se hace juego.confirmacion_baza_terminada("+id_jugador+")");
         juego.confirmacion_baza_terminada(id_jugador);
     }
     private void manejar_error_de_conexion(RemoteException e) {

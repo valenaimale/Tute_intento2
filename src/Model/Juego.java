@@ -87,8 +87,8 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
         return resolutorJugada.getPalo_del_triunfo();
     }
 
-    @Override
-    public void repartir() throws RemoteException {
+
+    private void repartir() throws RemoteException {
         Carta carta_palo_triunfo=crupier.repartida(jugadores);
         jugada.setPalo_triunfo(carta_palo_triunfo.getPalo());
         resolutorJugada.setPalo_del_triunfo(carta_palo_triunfo.getPalo());
@@ -224,9 +224,19 @@ public class Juego extends ObservableRemoto implements Serializable, IJuego {
         return rta;
     }
 
-    public void confirmacion_baza_terminada(int id_confirmado) throws RemoteException {
+    public synchronized void confirmacion_baza_terminada(int id_confirmado) throws RemoteException {//es necesario el synchornized para darle
+        //una especie de lock a este metodo, debido a que este mismo puede ser ejecutado en simultaneo por cada cliente, es decir,
+        //todos los hilos clientes pueden ejecutar este metodo al mismo tiempo, lo que genera condiciones de carrera y mala lectura de los datos.
+        //Ademas, es muy probable que esto ocurra (que los hilos clientes ejecuten este metodo al mismo tiempo) debido a que el timer
+        //de expiracion que genera la ejecucion de este metodo, se acaba al mismo tiempo para todos los clientes.
+        //Con synchronized los hilos ejecutan este metodo uno a la vez, si lo quieren ejecutar al mismo tiempo, uno entra y el otro
+        //espera a que el otro termine
+        System.out.println("Jugadores confirmados antes:\n");
+        for(Integer i:jugadores_confirmados){
+            System.out.println(i);
+        }
         jugadores_confirmados.add(id_confirmado);
-        System.out.println("Jugadores confirmados:\n");
+        System.out.println("Jugadores confirmados despues:\n");
         for(Integer i:jugadores_confirmados){
             System.out.println(i);
         }

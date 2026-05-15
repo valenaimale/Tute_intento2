@@ -80,7 +80,7 @@ public class DPuntajes extends JDialog {
     }
     public void actualizar_puntaje_ganador(int id, int puntaje, String nombre){
         System.out.println("actualizar_puntaje_ganador. Puntajes");
-        ganador_baza.setText("El ganador de la baza es "+nombre+". Suma "+puntaje+"! Puntajes totales:");
+        ganador_baza.setText("El ganador de la baza es "+nombre+". Tiene "+puntaje+" puntos! Puntajes totales:");
         modelo_de_tabla.setValueAt(puntaje, id, 2);
         if(isVisible()){
             setVisible(false);
